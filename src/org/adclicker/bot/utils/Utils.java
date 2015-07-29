@@ -1,7 +1,10 @@
 package org.adclicker.bot.utils;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -40,10 +43,18 @@ public class Utils {
 		return min+(Math.random()*(max-min));
 	}
 	
-	public static String readFile(String path) 
-			  throws IOException 
-	{
-	  byte[] encoded = Files.readAllBytes(Paths.get(path));
-	  return new String(encoded);
+	public static String loadResource(String path) throws IOException {
+		
+		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		InputStream in = classloader.getResourceAsStream(path);
+
+		DataInputStream dis = new DataInputStream(in);
+		byte[] bytes = new byte[dis.available()];
+		
+		dis.readFully(bytes, 0, bytes.length);
+
+		
+		
+		return new String(bytes);
 	}
 }

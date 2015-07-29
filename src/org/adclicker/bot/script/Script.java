@@ -48,7 +48,7 @@ public class Script extends LoadAdapter{
 	
 	public ElementRect findElementHighestWeight(long frameID) {
 		try {
-			browser.executeJavaScript(frameID, Utils.readFile("resources/js/findLinks.js"));
+			browser.executeJavaScript(frameID, Utils.loadResource("resources/js/findLinks.js"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
