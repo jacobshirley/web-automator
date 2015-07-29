@@ -37,12 +37,10 @@ public class MouseSimulator implements PaintListener {
 	}
 	
 	public final void clickMouse(int x, int y, int button) {
-		moveMouse(x, y);
-		
 		MouseEvent event = new MouseEvent(target, MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, x, y, 1, false, button);
 		target.dispatchEvent(event);
 		
-		Utils.wait((int)(50+Utils.randomRange(20, 50)));
+		Utils.wait((int)(Utils.randomRange(20, 50)));
 		event = new MouseEvent(target, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, x, y, 1, false, button);
 		target.dispatchEvent(event);
 	}
