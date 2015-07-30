@@ -18,7 +18,9 @@ import org.auriferous.bot.tabs.Tabs;
 import org.auriferous.bot.tasks.ClickAdTask;
 import org.auriferous.bot.tasks.TaskExecutor;
 
-public class Bot {
+import com.teamdev.jxbrowser.chromium.LoggerProvider;
+
+public class Bot implements ScriptSelectorListener {
 	private static final int ACTION_ADD_TASK = 0;
 	private static final int ACTION_REMOVE_TASK = 1;
 	private static final int ACTION_ENABLE_DEBUG = 2;
@@ -30,7 +32,7 @@ public class Bot {
 	private Tabs tabs = null;
 	
 	public Bot() {
-		//LoggerProvider.setLevel(Level.OFF);
+		LoggerProvider.setLevel(Level.OFF);
 		
 		//Create bot frame
 		
@@ -43,19 +45,15 @@ public class Bot {
 		//Menu bar
 		
 		JMenuBar menuBar = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
-		
-		JMenu tasksItem = new JMenu("Tasks");
+		JMenu scriptMenu = new JMenu("Scripts");
 		
 		JMenuItem addTasksItem = new JMenuItem(new MenuAction("Add", ACTION_ADD_TASK));
 		JMenuItem removeTasksItem = new JMenuItem(new MenuAction("Remove", ACTION_REMOVE_TASK));
 		
-		tasksItem.add(addTasksItem);
-		tasksItem.add(removeTasksItem);
-		
-		fileMenu.add(tasksItem);
-		
-		menuBar.add(fileMenu);
+		scriptMenu.add(addTasksItem);
+		scriptMenu.add(removeTasksItem);
+
+		menuBar.add(scriptMenu);
 		
 		frame.setJMenuBar(menuBar);
 		
@@ -63,8 +61,7 @@ public class Bot {
 	
 		tabs = new Tabs(this);
 		tabs.openTab("www.google.co.uk");
-		//tabs.openTab("www.runescape.com");
-		//tabs.openTab("www.bbc.co.uk");
+		tabs.openTab("www.bbc.co.uk");
 		
 		System.out.println(tabs.getCurrentTab().getBrowserWindow());
         
@@ -85,8 +82,6 @@ public class Bot {
         //paintListeners.add(task);
         
         //new Humaniser(this).start();
-		
-		//createScriptSelector();
 	}
 
 	ScriptContext context = null;//new ScriptContext(this);
@@ -99,41 +94,13 @@ public class Bot {
 		return frame;
 	}
 	
-	private JFrame createScriptSelector() {
+	private ScriptSelector createScriptSelector() {
 		return new ScriptSelector();
 	}
 	
-	private void createAddTaskDialog() {
-		JTextField url = new JTextField();
-		JTextField timeOnAd = new JTextField();
-		JTextField shuffles = new JTextField();
-		JTextField shuffleInterval = new JTextField();
-		JTextField adClicks = new JTextField();
-		JTextField adShuffles = new JTextField();
-		JTextField subClicks = new JTextField();
-		
-		Object[] message = {
-		    "URL:", url,
-		    "Time on ad:", timeOnAd,
-		    "Shuffles:", shuffles,
-		    "Shuffle Interval:", shuffleInterval,
-		    "Ad Clicks:", adClicks,
-		    "Sub Clicks:", subClicks,
-		};		
-
-		int option = JOptionPane.showConfirmDialog(null, message, "Add Task", JOptionPane.OK_CANCEL_OPTION);
-		if (option == JOptionPane.OK_OPTION) {
-			ClickAdTask task = new ClickAdTask(context, url.getText(), 
-					Double.parseDouble(timeOnAd.getText()), 
-					Integer.parseInt(adClicks.getText()), 
-					Integer.parseInt(shuffles.getText()),
-					Integer.parseInt(shuffleInterval.getText()),
-					Integer.parseInt(subClicks.getText()));
-			
-			tasks.addTask(task);
-		} else {
-		    System.out.println("Cancelled");
-		}
+	@Override
+	public void onScriptSelected(String name) {
+		ClickAdTask adTask = new ClickAdTask(new ScriptContext(this, tabs.getCurrentTab()));
 	}
 
 	class MenuAction extends AbstractAction {
@@ -149,8 +116,10 @@ public class Bot {
 		public void actionPerformed(ActionEvent e) {
 			switch (this.actionID) {
 			case ACTION_ADD_TASK:
-				createAddTaskDialog();
+				createScriptSelector().addScriptSelectorListener(Bot.this);
 			}
 		}
 	}
+
+	
 }

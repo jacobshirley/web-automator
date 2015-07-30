@@ -1,6 +1,10 @@
 package org.auriferous.bot.tasks;
 
 import java.awt.Point;
+
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ElementRect;
 import org.auriferous.bot.script.Script;
@@ -8,8 +12,7 @@ import org.auriferous.bot.script.ScriptContext;
 
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 
-public class ClickAdTask extends Script implements BotTask {
-	
+public class ClickAdTask extends Script implements Runnable{
 	private static final int STAGE_SHUFFLES = 0;
 	private static final int STAGE_URL = 1;
 	private static final int STAGE_WAIT_ON_AD = 2;
@@ -31,32 +34,42 @@ public class ClickAdTask extends Script implements BotTask {
 	
 	private ScriptContext ctx;
 	
-	public ClickAdTask(ScriptContext ctx, String url, double timeOnAd, int adClicks, int shuffles, int timeInterval, int subClicks) {
+	public ClickAdTask(ScriptContext ctx) {
 		super(ctx);
 		
-		this.url = url;
-		this.timeOnAd = timeOnAd;
-		this.adClicks = adClicks;
-		this.shuffles = shuffles;
-		this.timeInterval = timeInterval;
-		this.subClicks = subClicks;
-	}
-	
-	@Override
-	public int getPriority() {
-		return 0;
+		createAddTaskDialog();
 	}
 
-	@Override
-	public int perform() {
-		this.browser.addLoadListener(this);
-		this.browser.loadURL(this.url);
+	private void createAddTaskDialog() {
+		JTextField url = new JTextField();
+		JTextField timeOnAd = new JTextField();
+		JTextField shuffles = new JTextField();
+		JTextField shuffleInterval = new JTextField();
+		JTextField adClicks = new JTextField();
+		JTextField adShuffles = new JTextField();
+		JTextField subClicks = new JTextField();
 		
-		while (successCode == -1) {
-			Thread.yield();
+		Object[] message = {
+		    "URL:", url,
+		    "Time on ad:", timeOnAd,
+		    "Shuffles:", shuffles,
+		    "Shuffle Interval:", shuffleInterval,
+		    "Ad Clicks:", adClicks,
+		    "Ad Shuffles: ", adShuffles,
+		    "Sub Clicks:", subClicks,
+		};		
+
+		int option = JOptionPane.showConfirmDialog(null, message, "Add Task", JOptionPane.OK_CANCEL_OPTION);
+		if (option == JOptionPane.OK_OPTION) {
+			this.url = url.getText();
+			this.timeOnAd = Double.parseDouble(timeOnAd.getText());
+			this.adClicks = Integer.parseInt(adClicks.getText());
+			this.shuffles = Integer.parseInt(shuffles.getText());
+			this.timeInterval = Integer.parseInt(shuffleInterval.getText());
+			this.subClicks = Integer.parseInt(subClicks.getText());
+		} else {
+		    System.out.println("Cancelled");
 		}
-		
-		return successCode;
 	}
 	
 	@Override
@@ -109,9 +122,12 @@ public class ClickAdTask extends Script implements BotTask {
     }
 
 	@Override
-	public double getPercentageComplete() {
-		return (curAdClick/adClicks)*100.0;
+	public void run() {
+		this.browser.addLoadListener(this);
+		this.browser.loadURL(this.url);
+		
+		while (successCode == -1) {
+			Thread.yield();
+		}
 	}
-	
-	
 }
