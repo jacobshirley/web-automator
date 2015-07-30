@@ -11,19 +11,22 @@ import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
 import org.auriferous.bot.Bot;
+import org.auriferous.bot.ScriptBundle;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.scripts.OnAdTask;
 import org.auriferous.bot.tabs.Tabs;
 import org.auriferous.bot.tabs.gui.TabBar;
 
-public class BotGUI extends JFrame  implements ScriptSelectorListener{
+public class BotGUI extends JFrame implements ScriptSelectorListener{
 	private static final int ACTION_ADD_TASK = 0;
 	private static final int ACTION_REMOVE_TASK = 1;
 	private static final int ACTION_ENABLE_DEBUG = 2;
 	
-	public BotGUI(Tabs tabs) {
+	private Bot bot;
+	public BotGUI(Bot bot) {
 		super("Ad Clicker");
+		this.bot = bot;
 		
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setSize(1300, 1000);
@@ -44,10 +47,10 @@ public class BotGUI extends JFrame  implements ScriptSelectorListener{
 		
 		setJMenuBar(menuBar);
 		
-		JTabbedPane tC = new TabBar(tabs);
+		JTabbedPane tC = new TabBar(bot.getTabs());
 		add(tC);
 		
-		tabs.openTab("www.google.co.uk");
+		bot.getTabs().openTab("www.google.co.uk");
 	}
 	
 	private ScriptSelector createScriptSelector() {
@@ -56,9 +59,15 @@ public class BotGUI extends JFrame  implements ScriptSelectorListener{
 	
 	@Override
 	public void onScriptSelected(String name) {
+		bot.getTabs().openTab("www.youtube.com");
+		//System.out.println(bot.getTabs().getCurrentTab().getID());
 		
-		//Script linkClicker = new OnAdTask(new ScriptContext(this, tabs.getCurrentTab()));
-		//tasks.add(linkClicker);
+		ScriptContext context = new ScriptContext(bot, bot.getTabs().getCurrentTab());
+		
+		Script linkClicker = new OnAdTask(context);
+		ScriptBundle bundle = new ScriptBundle(context, new Script[] {linkClicker});
+		
+		bundle.processScripts();//*/
 	}
 	
 	class MenuAction extends AbstractAction {

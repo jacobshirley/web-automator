@@ -3,8 +3,6 @@ package org.auriferous.bot.tabs;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JTabbedPane;
-
 import org.auriferous.bot.Bot;
 
 public class Tabs {
@@ -22,7 +20,7 @@ public class Tabs {
 	public synchronized Tab openTab(String url) {
 		Tab tab = new Tab(url);
 		tabs.add(tab);
-		
+
 		tab.setID(tabs.indexOf(tab));
 		
 		for (TabControlListener listener : tabListeners) {

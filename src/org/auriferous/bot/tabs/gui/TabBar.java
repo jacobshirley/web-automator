@@ -1,14 +1,9 @@
 package org.auriferous.bot.tabs.gui;
 
-import java.awt.Component;
-
-import javax.swing.Icon;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.auriferous.bot.Utils;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlListener;
 import org.auriferous.bot.tabs.TabListener;
@@ -40,6 +35,8 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 	public void onTabAdded(Tab tab) {
 		tab.addTabListener(this);
 		addTab("New Tab", tab.getTabView());
+		
+		setSelectedIndex(this.tabs.getTabList().size()-1);
 	}
 
 	@Override

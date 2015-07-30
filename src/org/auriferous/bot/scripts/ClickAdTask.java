@@ -8,7 +8,6 @@ import javax.swing.JTextField;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ElementRect;
 import org.auriferous.bot.script.Script;
-import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.ScriptContext;
 
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;

@@ -3,7 +3,6 @@ package org.auriferous.bot.script;
 import java.awt.Frame;
 
 import org.auriferous.bot.Bot;
-import org.auriferous.bot.gui.BotGUI;
 import org.auriferous.bot.input.KeyboardSimulator;
 import org.auriferous.bot.input.MouseSimulator;
 import org.auriferous.bot.tabs.Tab;
