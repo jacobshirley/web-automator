@@ -1,4 +1,4 @@
-package org.auriferous.bot.tasks;
+package org.auriferous.bot.scripts;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ElementRect;
 import org.auriferous.bot.script.Script;
+import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.tabs.TabPaintListener;
 
@@ -13,27 +14,16 @@ import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.FrameLoadEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadEvent;
 
-public class OnAdTask extends Script implements BotTask, TabPaintListener{
+public class OnAdTask extends Script implements TabPaintListener{
 
 	public OnAdTask(ScriptContext context) {
 		super(context);
 	}
 
-	@Override
-	public int getPriority() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getPercentageComplete() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 	private int successCode = -1;
 
 	@Override
-	public int perform() {
+	public int tick() {
 		this.browser.addLoadListener(this);
 		//this.browser.loadURL("https://business.twitter.com/help/how-twitter-ads-work");
 		//this.browser.loadURL("http://stackoverflow.com/questions/596467/how-do-i-convert-a-float-number-to-a-whole-number-in-javascript");
@@ -92,5 +82,23 @@ public class OnAdTask extends Script implements BotTask, TabPaintListener{
 			g.setColor(Color.green);
 			g.drawRect(r.x, r.y, r.width, r.height);
 		}
+	}
+
+	@Override
+	public void onStart() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTerminate() {
+		// TODO Auto-generated method stub
+		
 	}
 }

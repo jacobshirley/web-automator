@@ -1,4 +1,4 @@
-package org.auriferous.bot.tasks;
+package org.auriferous.bot.scripts;
 
 import java.awt.Point;
 
@@ -8,11 +8,12 @@ import javax.swing.JTextField;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ElementRect;
 import org.auriferous.bot.script.Script;
+import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.ScriptContext;
 
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 
-public class ClickAdTask extends Script implements Runnable{
+public class ClickAdTask extends Script {
 	private static final int STAGE_SHUFFLES = 0;
 	private static final int STAGE_URL = 1;
 	private static final int STAGE_WAIT_ON_AD = 2;
@@ -116,18 +117,35 @@ public class ClickAdTask extends Script implements Runnable{
 			taskStage++;
 		} 
 		if (taskStage == STAGE_DONE) {
-			successCode = BotTask.EXIT_SUCCESS;
+			successCode = STATE_EXIT_SUCCESS;
 			this.browser.removeLoadListener(this);
 		}
     }
 
 	@Override
-	public void run() {
+	public int tick() {
+		return 0;
+	}
+
+	@Override
+	public void onStart() {
 		this.browser.addLoadListener(this);
 		this.browser.loadURL(this.url);
 		
 		while (successCode == -1) {
 			Thread.yield();
 		}
+	}
+
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTerminate() {
+		// TODO Auto-generated method stub
+		
 	}
 }

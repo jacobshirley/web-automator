@@ -7,26 +7,20 @@ import javax.swing.JTabbedPane;
 
 import org.auriferous.bot.gui.Bot;
 
-public class Tabs implements TabListener{
+public class Tabs {
 	private Bot bot;
 	
 	private LinkedList<Tab> tabs = new LinkedList<Tab>();
 
 	private List<TabControlListener> tabListeners = new LinkedList<TabControlListener>();
 	
-	private JTabbedPane tabbedPane = new JTabbedPane();
-	
-	public Tabs(Bot bot) {
-		this.bot = bot;
-		
-		this.bot.getFrame().add(tabbedPane);
+	private int currentTab;
+
+	public Tabs() {
 	}
 	
-	public Tab openTab(String url) {
+	public synchronized Tab openTab(String url) {
 		Tab tab = new Tab(url);
-		tab.addTabListener(this);
-		
-		tabbedPane.addTab("New Tab", tab.getTabView());
 		tabs.add(tab);
 		
 		tab.setID(tabs.indexOf(tab));
@@ -43,7 +37,7 @@ public class Tabs implements TabListener{
 	}
 	
 	public Tab getCurrentTab() {
-		return tabs.get(tabbedPane.getSelectedIndex());
+		return tabs.get(currentTab);
 	}
 	
 	public Tab getTab(int index) {
@@ -53,20 +47,12 @@ public class Tabs implements TabListener{
 	public List<Tab> getTabList() {
 		return tabs;
 	}
-
-	@Override
-	public void onTitleChange(Tab tab, String newTitle) {
-		System.out.println("TAB LOADED: "+newTitle);
-		
-		int index = tabbedPane.indexOfComponent(tab.getTabView());
-		tabbedPane.setTitleAt(index, newTitle);
+	
+	public void addTabControlListener(TabControlListener tcL) {
+		this.tabListeners.add(tcL);
 	}
-
-	@Override
-	public void onTabUpdating(Tab tab) {
-	}
-
-	@Override
-	public void onTabReloaded(Tab tab) {
+	
+	public void removeTabControlListener(TabControlListener tcL) {
+		this.tabListeners.remove(tcL);
 	}
 }

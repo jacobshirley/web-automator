@@ -10,13 +10,20 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
+import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.ScriptContext;
+import org.auriferous.bot.script.ScriptQueue;
+import org.auriferous.bot.scripts.ClickAdTask;
+import org.auriferous.bot.scripts.OnAdTask;
+import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.tabs.TabControlListener;
 import org.auriferous.bot.tabs.Tabs;
-import org.auriferous.bot.tasks.ClickAdTask;
-import org.auriferous.bot.tasks.TaskExecutor;
+import org.auriferous.bot.tabs.gui.TabBar;
 
 import com.teamdev.jxbrowser.chromium.LoggerProvider;
 
@@ -25,7 +32,7 @@ public class Bot implements ScriptSelectorListener {
 	private static final int ACTION_REMOVE_TASK = 1;
 	private static final int ACTION_ENABLE_DEBUG = 2;
 
-	private TaskExecutor tasks = new TaskExecutor();
+	private ScriptQueue tasks = new ScriptQueue();
 	
 	private JFrame frame;
 	
@@ -58,12 +65,15 @@ public class Bot implements ScriptSelectorListener {
 		frame.setJMenuBar(menuBar);
 		
 		//Tabs
-	
-		tabs = new Tabs(this);
+		tabs = new Tabs();
+
+		JTabbedPane tC = new TabBar(tabs);
+		
+		frame.add(tC);
+		
 		tabs.openTab("www.google.co.uk");
 		tabs.openTab("www.bbc.co.uk");
-		
-		System.out.println(tabs.getCurrentTab().getBrowserWindow());
+		//System.out.println(tabs.getCurrentTab().getTitle());
         
         //Tasks
         
@@ -100,7 +110,7 @@ public class Bot implements ScriptSelectorListener {
 	
 	@Override
 	public void onScriptSelected(String name) {
-		ClickAdTask adTask = new ClickAdTask(new ScriptContext(this, tabs.getCurrentTab()));
+		ScriptMethods adTask = new OnAdTask(new ScriptContext(this, tabs.getCurrentTab()));
 	}
 
 	class MenuAction extends AbstractAction {
@@ -120,6 +130,4 @@ public class Bot implements ScriptSelectorListener {
 			}
 		}
 	}
-
-	
 }

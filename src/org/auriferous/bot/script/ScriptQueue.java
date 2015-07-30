@@ -1,15 +1,11 @@
-package org.auriferous.bot.tasks;
+package org.auriferous.bot.script;
 
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class TaskExecutor implements Runnable{
-	private Queue<BotTask> taskQueue = new ConcurrentLinkedQueue<BotTask>();
+public class ScriptQueue extends PriorityQueue<Script> implements Runnable{
 	private boolean started = false;
-
-	public void addTask(BotTask task) {
-		this.taskQueue.add(task);
-	}
 	
 	public void processTasks() {
 		if (!this.started) {
@@ -25,9 +21,13 @@ public class TaskExecutor implements Runnable{
 	@Override
 	public void run() {
 		while (this.started) {
-			BotTask t = null;
-			while ((t = taskQueue.poll()) != null) {
-				t.perform();
+			Script s = null;
+			while ((s = this.poll()) != null) {
+				int state = 0; 
+				while ((state = s.tick()) == Script.STATE_RUNNING) {
+					Thread.yield();
+				}
+				System.out.println("Script exited with code: "+state);
 			}
 			Thread.yield();
 		}
