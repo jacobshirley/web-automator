@@ -20,6 +20,7 @@ public class OnAdTask extends Script implements TabPaintListener{
 	public OnAdTask(ScriptContext context) {
 		super(context);
 		
+		//this.browser.loadURL("www.youtube.com");
 		this.browser.loadURL("www.google.co.uk");
 		this.browser.addLoadListener(this);
 		//this.browser.loadURL("https://business.twitter.com/help/how-twitter-ads-work");
@@ -36,7 +37,6 @@ public class OnAdTask extends Script implements TabPaintListener{
 
 	@Override
 	public int tick() {
-		//System.out.println("DD");
 		return STATE_RUNNING;
 	}
 	
@@ -58,11 +58,14 @@ public class OnAdTask extends Script implements TabPaintListener{
 			//browser.executeJavaScript("elementFromPoint("+r.x+", "+r.getCenterY()+");");
 			
 			while (true) {
-				//ElementRect rect = getRandomLink(event.getFrameId());
+				ElementRect rect = getRandomLink(event.getFrameId());
 				
-				context.getKeyboard().type("hello");
+				r = rect;
+				//context.getKeyboard().type("hello");
 				
-				//clickElement(rect);
+				hoverElement(rect);
+				//type("shirly lou");
+				//type(KeyEvent.VK_ENTER);
 				//scrollTo(50);
 				Utils.wait(2000);
 			}

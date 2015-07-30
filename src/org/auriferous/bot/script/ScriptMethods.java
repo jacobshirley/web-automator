@@ -90,6 +90,10 @@ public class ScriptMethods extends LoadAdapter {
 	public double getWindowHeight() {
 		return browser.executeJavaScriptAndReturnValue("$(window).height()").getNumber();
 	}
+	
+	public ElementRect getRandomTextField(long frameID) {
+		return getElementRect(frameID, "getRandomTextField()");
+	}
 
 	public ElementRect getRandomLink(long frameID) {
 		return getElementRect(frameID, "getRandomLink()");
@@ -236,5 +240,14 @@ public class ScriptMethods extends LoadAdapter {
 
 		if ((Math.round(xe) != Math.round(xs)) || (Math.round(ye) != Math.round(ys)))
 			mouse.moveMouse((int) Math.round(xe), (int) Math.round(ye));
+	}
+	
+	
+	public void type(String text) {
+		keyboard.type(text);
+	}
+	
+	public void type(int id) {
+		keyboard.type(id);
 	}
 }

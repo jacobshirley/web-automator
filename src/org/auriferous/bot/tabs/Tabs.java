@@ -1,5 +1,6 @@
 package org.auriferous.bot.tabs;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,9 +11,9 @@ public class Tabs {
 	
 	private LinkedList<Tab> tabs = new LinkedList<Tab>();
 
-	private List<TabControlListener> tabListeners = new LinkedList<TabControlListener>();
+	private List<TabControlListener> tabListeners = new ArrayList<TabControlListener>();
 	
-	private int currentTabIndex;
+	private int currentTabIndex = 0;
 
 	public Tabs() {
 	}
@@ -36,6 +37,10 @@ public class Tabs {
 	
 	public Tab getCurrentTab() {
 		return tabs.get(currentTabIndex);
+	}
+	
+	public boolean hasTabs() {
+		return !tabs.isEmpty();
 	}
 	
 	public void setCurrentTab(int id) {

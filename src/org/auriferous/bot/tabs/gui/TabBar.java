@@ -7,6 +7,7 @@ import javax.swing.event.ChangeListener;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlListener;
 import org.auriferous.bot.tabs.TabListener;
+import org.auriferous.bot.tabs.TabView;
 import org.auriferous.bot.tabs.Tabs;
 
 public class TabBar extends JTabbedPane implements TabListener, TabControlListener, ChangeListener {
@@ -16,7 +17,25 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 	public TabBar(Tabs tabs) {
 		this.tabs = tabs;
 		this.tabs.addTabControlListener(this);
+		
 		addChangeListener(this);
+		
+		new Thread(new Runnable() {
+			public void run() {
+				while (true) {
+					if (TabBar.this.tabs.hasTabs()) {
+						Tab cur = TabBar.this.tabs.getCurrentTab();
+						TabView view = cur.getTabView();
+						
+						if (System.currentTimeMillis() - view.lastPainted >= 10) {
+							//System.out.println("Repainting");
+							view.repaint();
+						}
+					}
+					Thread.yield();
+				}
+			}
+		}).start();
 	}
 
 	@Override

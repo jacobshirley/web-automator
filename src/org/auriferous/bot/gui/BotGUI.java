@@ -15,6 +15,8 @@ import org.auriferous.bot.ScriptBundle;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.scripts.OnAdTask;
+import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.tabs.TabPaintListener;
 import org.auriferous.bot.tabs.Tabs;
 import org.auriferous.bot.tabs.gui.TabBar;
 
@@ -61,11 +63,17 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 	public void onScriptSelected(String name) {
 		//bot.getTabs().openTab("www.youtube.com");
 		//System.out.println(bot.getTabs().getCurrentTab().getID());
+		Tab currentTab = bot.getTabs().getCurrentTab();
 		
-		ScriptContext context = new ScriptContext(bot, bot.getTabs().getCurrentTab());
+		ScriptContext context = new ScriptContext(bot, currentTab);
 		
 		Script linkClicker = new OnAdTask(context);
 		ScriptBundle bundle = new ScriptBundle(context, new Script[] {linkClicker});
+		
+		if (linkClicker instanceof TabPaintListener) {
+			System.out.println("Instance");
+			currentTab.getTabView().addTabPaintListener((TabPaintListener)linkClicker);
+		}
 		
 		bundle.processScripts();//*/
 	}

@@ -1,10 +1,10 @@
-function getLinks() {
+function getVisibleElements(jquerySelector) {
 	var results = [];
 	
 	var pageOffX = window.pageXOffset;
 	var pageOffY = window.pageYOffset;
 	
-	$("a, button, input[type='button'], input[type='submit']").each(function(index) {
+	$(jquerySelector).each(function(index) {
 		var $this = $(this);
 		var offset = $this.offset();
 		var width = getElementWidth($this);
@@ -29,11 +29,19 @@ function getLinks() {
 	return results;
 }
 
+function getRandomElement(elems) {
+	var random = Math.round(Math.random()*(elems.length-1));
+	return elems[random];
+}
+
+function getRandomTextField() {
+	var elems = getVisibleElements("input[type='text']");
+	return getRandomElement(elems);
+}
+
 function getRandomLink() {
-	var links = getLinks();
-	var random = Math.round((links.length-1)*Math.random());
-	
-	return links[random];
+	var links = getVisibleElements("a, button, input[type='button'], input[type='submit']");
+	return getRandomElement(links);
 }
 
 function getElementWidth(elem) {
