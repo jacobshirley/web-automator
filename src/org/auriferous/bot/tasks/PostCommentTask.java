@@ -1,4 +1,4 @@
-package org.adclicker.bot.tasks;
+package org.auriferous.bot.tasks;
 
 public class PostCommentTask {
 

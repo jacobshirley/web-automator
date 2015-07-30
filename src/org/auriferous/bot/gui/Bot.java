@@ -1,74 +1,32 @@
-package org.adclicker.bot;
+package org.auriferous.bot.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
-
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.WindowConstants;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 
-import org.adclicker.bot.tabs.TabControlListener;
-import org.adclicker.bot.tabs.Tabs;
-import org.adclicker.bot.tasks.BotTask;
-import org.adclicker.bot.tasks.ClickAdTask;
-import org.adclicker.bot.tasks.OnAdTask;
-import org.adclicker.input.KeyboardSimulator;
-import org.adclicker.input.MouseSimulator;
-
-import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.CertificateErrorParams;
-import com.teamdev.jxbrowser.chromium.JSValue;
-import com.teamdev.jxbrowser.chromium.LoadHandler;
-import com.teamdev.jxbrowser.chromium.LoadParams;
-import com.teamdev.jxbrowser.chromium.LoggerProvider;
-import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
-import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
-import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
-import com.teamdev.jxbrowser.chromium.swing.BrowserView;
+import org.auriferous.bot.script.ScriptContext;
+import org.auriferous.bot.tabs.Tabs;
+import org.auriferous.bot.tasks.ClickAdTask;
+import org.auriferous.bot.tasks.TaskExecutor;
 
 public class Bot {
 	private static final int ACTION_ADD_TASK = 0;
 	private static final int ACTION_REMOVE_TASK = 1;
 	private static final int ACTION_ENABLE_DEBUG = 2;
 
-	private MouseSimulator mouseSimulator;
-	private KeyboardSimulator keyboardSimulator;
-
 	private TaskExecutor tasks = new TaskExecutor();
 	
 	private JFrame frame;
 	
-	private List<TabControlListener> paintListeners = new LinkedList<TabControlListener>();
-	
 	private Tabs tabs = null;
 	
 	public Bot() {
-		LoggerProvider.setLevel(Level.OFF);
+		/*LoggerProvider.setLevel(Level.OFF);
+		
+		//Create bot frame
 		
         frame = new JFrame("Ad Clicker");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -99,20 +57,20 @@ public class Bot {
 	
 		tabs = new Tabs(this);
 		tabs.openTab("www.google.co.uk");
-		tabs.openTab("www.runescape.com");
-		tabs.openTab("www.bbc.co.uk");
+		//tabs.openTab("www.runescape.com");
+		//tabs.openTab("www.bbc.co.uk");
 		
-		//Mouse simulator
-		
-        
-        
-       // paintListeners.add(this.mouseSimulator);
+		System.out.println(tabs.getCurrentTab().getBrowserWindow());
         
         //Tasks
         
-        tasks.processTasks();
+        /*tasks.processTasks();
         
         context = new ScriptContext(this, tabs.getCurrentTab());
+        
+        OnAdTask task = new OnAdTask(context);
+        
+        tasks.addTask(task);*/
         
         //OnAdTask task = new OnAdTask(context);
         
@@ -121,6 +79,8 @@ public class Bot {
         //paintListeners.add(task);
         
         //new Humaniser(this).start();
+		
+		createScriptSelector();
 	}
 
 	ScriptContext context = null;//new ScriptContext(this);
@@ -132,9 +92,9 @@ public class Bot {
 	public Frame getFrame() {
 		return frame;
 	}
-
-	public MouseSimulator getMouseSimulator() {
-		return mouseSimulator;
+	
+	private JFrame createScriptSelector() {
+		return new ScriptSelector();
 	}
 	
 	private void createAddTaskDialog() {

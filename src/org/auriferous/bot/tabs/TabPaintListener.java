@@ -1,4 +1,4 @@
-package org.adclicker.bot.tabs;
+package org.auriferous.bot.tabs;
 
 import java.awt.Graphics;
 

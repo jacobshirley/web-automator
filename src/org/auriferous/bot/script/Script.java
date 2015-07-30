@@ -1,16 +1,14 @@
-package org.adclicker.bot.script;
+package org.auriferous.bot.script;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 
-import org.adclicker.bot.ScriptContext;
-import org.adclicker.bot.utils.Utils;
-import org.adclicker.input.KeyboardSimulator;
-import org.adclicker.input.MouseSimulator;
+import org.auriferous.bot.Utils;
+import org.aurifierous.bot.input.KeyboardSimulator;
+import org.aurifierous.bot.input.MouseSimulator;
 
 import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
@@ -55,20 +53,26 @@ public class Script extends LoadAdapter {
 	public ElementRect getElementRect(long frameID, String elementCode) {
 		browser.executeJavaScript(frameID,
 				"var clicker_element = " + elementCode + "; var clicker_offset = clicker_element.offset();");
-
-		JSValue val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_offset.left;");
-		double x = val.getNumber();
-
-		val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_offset.top;");
-		double y = val.getNumber();
-
-		val = browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(clicker_element);");
-		double width = val.getNumber();
-
-		val = browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(clicker_element);");
-		double height = val.getNumber();
-
-		return new ElementRect((int) x, (int) y, (int) width, (int) height);
+		
+		JSValue val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_element == null");
+		boolean b = val.getBoolean();
+		
+		if (!b) {
+			val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_offset.left;");
+			double x = val.getNumber();
+	
+			val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_offset.top;");
+			double y = val.getNumber();
+	
+			val = browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(clicker_element);");
+			double width = val.getNumber();
+	
+			val = browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(clicker_element);");
+			double height = val.getNumber();
+	
+			return new ElementRect((int) x, (int) y, (int) width, (int) height);
+		} else
+			return null;
 	}
 	
 	public double getPageXOffset() {
@@ -140,10 +144,6 @@ public class Script extends LoadAdapter {
 		moveMouse(p.x, p.y);
 	}
 	
-	private boolean inRange(double x, double min, double max) {
-		return x >= min && x <= max;
-	}
-	
 	public void scrollTo(double percentageX, double percentageY) {
 		
 	}
@@ -158,12 +158,13 @@ public class Script extends LoadAdapter {
 
 	private void humanWindMouse(double xs, double ys, double xe, double ye, double gravity, double wind, double minWait,
 			double maxWait, double targetArea) {
+		double veloX = 0, veloY = 0, windX = 0, windY = 0, veloMag, maxStep, D, randomDist, W, lastDist = 0;
+		
 		int MSP = MOUSE_SPEED;
+		
 		double sqrt2 = Math.sqrt(2);
 		double sqrt3 = Math.sqrt(3);
 		double sqrt5 = Math.sqrt(5);
-
-		double veloX = 0, veloY = 0, windX = 0, windY = 0, veloMag, maxStep, D, randomDist, W, lastDist = 0;
 
 		double dx = xe - xs;
 		double dy = ye - ys;

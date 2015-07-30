@@ -1,4 +1,4 @@
-package org.adclicker.input;
+package org.aurifierous.bot.input;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -9,9 +9,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import org.adclicker.bot.tabs.TabControlListener;
-import org.adclicker.bot.tabs.TabPaintListener;
-import org.adclicker.bot.utils.Utils;
+import org.auriferous.bot.Utils;
+import org.auriferous.bot.tabs.TabPaintListener;
 
 public class MouseSimulator implements TabPaintListener {
 	private Component target;

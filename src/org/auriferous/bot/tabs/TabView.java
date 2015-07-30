@@ -1,4 +1,4 @@
-package org.adclicker.bot.tabs;
+package org.auriferous.bot.tabs;
 
 import java.awt.Graphics;
 import java.util.LinkedList;
@@ -8,7 +8,6 @@ import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 
 public class TabView extends BrowserView {
-
 	private List<TabPaintListener> paintListeners = new LinkedList<TabPaintListener>();
 	
 	public TabView(Browser browser) {
@@ -21,5 +20,13 @@ public class TabView extends BrowserView {
 		
 		for (TabPaintListener listener : paintListeners) 
 			listener.onPaint(g);
+	}
+	
+	public void addTabPaintListener(TabPaintListener listener) {
+		this.paintListeners.add(listener);
+	}
+	
+	public void removeTabPaintListener(TabPaintListener listener) {
+		this.paintListeners.remove(listener);
 	}
 }

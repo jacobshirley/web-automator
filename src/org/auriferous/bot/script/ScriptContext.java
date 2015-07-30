@@ -1,13 +1,12 @@
-package org.adclicker.bot;
+package org.auriferous.bot.script;
 
 import java.awt.Frame;
 
-import org.adclicker.bot.tabs.Tab;
-import org.adclicker.bot.tabs.Tabs;
-import org.adclicker.input.KeyboardSimulator;
-import org.adclicker.input.MouseSimulator;
-
-import com.teamdev.jxbrowser.chromium.Browser;
+import org.auriferous.bot.gui.Bot;
+import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.tabs.Tabs;
+import org.aurifierous.bot.input.KeyboardSimulator;
+import org.aurifierous.bot.input.MouseSimulator;
 
 public class ScriptContext {
 	private Bot bot;
@@ -29,6 +28,9 @@ public class ScriptContext {
 		//Inputs
 		this.mouse = new MouseSimulator(tab.getTabView());
 		this.keyboard = new KeyboardSimulator();
+		
+		//Paint listeners
+		tab.getTabView().addTabPaintListener(this.mouse);
 	}
 	
 	public Tabs getTabs() {

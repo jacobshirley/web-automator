@@ -1,23 +1,12 @@
-package org.adclicker.bot.tasks;
+package org.auriferous.bot.tasks;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
+import org.auriferous.bot.Utils;
+import org.auriferous.bot.script.ElementRect;
+import org.auriferous.bot.script.Script;
+import org.auriferous.bot.script.ScriptContext;
 
-import org.adclicker.bot.Bot;
-import org.adclicker.bot.ScriptContext;
-import org.adclicker.bot.script.ElementRect;
-import org.adclicker.bot.script.Script;
-import org.adclicker.bot.tabs.TabControlListener;
-import org.adclicker.bot.utils.Utils;
-
-import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.JSValue;
-import com.teamdev.jxbrowser.chromium.dom.By;
-import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
-import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
 public class ClickAdTask extends Script implements BotTask {
 	
@@ -37,8 +26,6 @@ public class ClickAdTask extends Script implements BotTask {
 	private int curShuffles = 0;
 	private int curSubClick = 0;
 	
-	private Bot bot;
-	
 	private int successCode = -1;
 	private int taskStage = 1;
 	
@@ -53,8 +40,6 @@ public class ClickAdTask extends Script implements BotTask {
 		this.shuffles = shuffles;
 		this.timeInterval = timeInterval;
 		this.subClicks = subClicks;
-		
-		this.bot = ctx.bot;
 	}
 	
 	@Override
@@ -103,7 +88,7 @@ public class ClickAdTask extends Script implements BotTask {
 	        	
 	        	System.out.println("Clicking at "+p.x+", "+p.y);
 	        	
-	        	bot.getMouseSimulator().clickMouse((int)p.x, (int)p.y);
+	        	mouse(p.x, p.y);
 	        	
 	        	taskStage++;
 	        	curAdClick++;

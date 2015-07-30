@@ -1,18 +1,15 @@
-package org.adclicker.bot.tabs;
+package org.auriferous.bot.tabs;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
-import com.teamdev.jxbrowser.chromium.events.LoadEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleListener;
 
 public class Tab {
-	public int id;
-	public String title = "Untitled";
-	public String url;
+	private int id;
+	private String originalURL;
 	
 	private Browser browser;
 	private TabView tabView;
@@ -26,13 +23,14 @@ public class Tab {
 		this.tabView = new TabView(browser);
 
 		browser.addTitleListener(new TitleListener() {
-            public void onTitleChange(TitleEvent event) {
+            @Override
+			public void onTitleChange(TitleEvent event) {
             	for (TabListener listener : tabListeners) 
 					listener.onTitleChange(Tab.this, event.getTitle());
             }
         });
 		
-		this.browser.loadURL(url);
+		loadURL(url);
 	}
 	
 	public Tab(String url) {
@@ -40,6 +38,8 @@ public class Tab {
 	}
 	
 	public void loadURL(String url) {
+		this.originalURL = url;
+		
 		this.browser.loadURL(url);
 		
 		for (TabListener listener : tabListeners) 
@@ -51,6 +51,22 @@ public class Tab {
 		
 		for (TabListener listener : tabListeners) 
 			listener.onTabReloaded(this);
+	}
+	
+	public String getTitle() {
+		return browser.getTitle();
+	}
+	
+	public String getOriginalURL() {
+		return originalURL;
+	}
+	
+	public int getID() {
+		return id;
+	}
+	
+	public void setID(int id) {
+		this.id = id;
 	}
 	
 	public Browser getBrowserWindow() {

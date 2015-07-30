@@ -1,9 +1,7 @@
-package org.adclicker.bot;
+package org.auriferous.bot.tasks;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import org.adclicker.bot.tasks.BotTask;
 
 public class TaskExecutor implements Runnable{
 	private Queue<BotTask> taskQueue = new ConcurrentLinkedQueue<BotTask>();

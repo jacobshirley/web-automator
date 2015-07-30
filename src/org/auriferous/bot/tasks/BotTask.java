@@ -1,4 +1,4 @@
-package org.adclicker.bot.tasks;
+package org.auriferous.bot.tasks;
 
 public interface BotTask {
 	public static final int EXIT_FAILURE = 0;

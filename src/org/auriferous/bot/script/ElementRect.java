@@ -1,11 +1,7 @@
-package org.adclicker.bot.script;
+package org.auriferous.bot.script;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-
-import org.adclicker.bot.utils.Utils;
-
-import com.teamdev.jxbrowser.chromium.dom.DOMElement;
 
 public class ElementRect extends Rectangle{
 	public ElementRect(int x, int y, int width, int height) {

@@ -1,6 +1,6 @@
-package org.adclicker;
+package org.auriferous.bot;
 
-import org.adclicker.bot.Bot;
+import org.auriferous.bot.gui.Bot;
 
 public class Main {
     public static void main(String[] args) {

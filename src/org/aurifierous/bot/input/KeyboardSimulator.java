@@ -1,4 +1,4 @@
-package org.adclicker.input;
+package org.aurifierous.bot.input;
 
 public class KeyboardSimulator {
 

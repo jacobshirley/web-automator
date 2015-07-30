@@ -1,6 +1,4 @@
-package org.adclicker.bot.tabs;
-
-import java.awt.Graphics;
+package org.auriferous.bot.tabs;
 
 public interface TabListener {
 	public void onTitleChange(Tab tab, String newTitle);

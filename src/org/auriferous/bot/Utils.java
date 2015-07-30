@@ -1,16 +1,12 @@
-package org.adclicker.bot.utils;
+package org.auriferous.bot;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class Utils {
 	public static final void wait(int ms) {
@@ -43,6 +39,10 @@ public class Utils {
 		return min+(Math.random()*(max-min));
 	}
 	
+	public static boolean inRange(double x, double min, double max) {
+		return x >= min && x <= max;
+	}
+	
 	public static String loadResource(String path) throws IOException {
 		
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -52,8 +52,6 @@ public class Utils {
 		byte[] bytes = new byte[dis.available()];
 		
 		dis.readFully(bytes, 0, bytes.length);
-
-		
 		
 		return new String(bytes);
 	}

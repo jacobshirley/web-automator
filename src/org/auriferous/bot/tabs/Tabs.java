@@ -1,13 +1,13 @@
-package org.adclicker.bot.tabs;
+package org.auriferous.bot.tabs;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JTabbedPane;
 
-import org.adclicker.bot.Bot;
+import org.auriferous.bot.gui.Bot;
 
-public class Tabs {
+public class Tabs implements TabListener{
 	private Bot bot;
 	
 	private LinkedList<Tab> tabs = new LinkedList<Tab>();
@@ -24,27 +24,12 @@ public class Tabs {
 	
 	public Tab openTab(String url) {
 		Tab tab = new Tab(url);
-		tab.addTabListener(new TabListener() {
-			@Override
-			public void onTitleChange(Tab tab, String newTitle) {
-				System.out.println("TAB LOADED: "+newTitle);
-				int index = tabbedPane.indexOfComponent(tab.getTabView());
-				tabbedPane.setTitleAt(index, newTitle);
-			}
-			
-			@Override
-			public void onTabUpdating(Tab tab) {
-			}
-			
-			@Override
-			public void onTabReloaded(Tab tab) {
-			}
-		});
+		tab.addTabListener(this);
 		
 		tabbedPane.addTab("New Tab", tab.getTabView());
 		tabs.add(tab);
 		
-		tab.id = tabs.indexOf(tab);
+		tab.setID(tabs.indexOf(tab));
 		
 		for (TabControlListener listener : tabListeners) {
 			listener.onTabAdded(tab);
@@ -54,7 +39,7 @@ public class Tabs {
 	}
 	
 	public Tab openTab() {
-		return openTab("_blank");
+		return openTab("about:blank");
 	}
 	
 	public Tab getCurrentTab() {
@@ -67,5 +52,21 @@ public class Tabs {
 	
 	public List<Tab> getTabList() {
 		return tabs;
+	}
+
+	@Override
+	public void onTitleChange(Tab tab, String newTitle) {
+		System.out.println("TAB LOADED: "+newTitle);
+		
+		int index = tabbedPane.indexOfComponent(tab.getTabView());
+		tabbedPane.setTitleAt(index, newTitle);
+	}
+
+	@Override
+	public void onTabUpdating(Tab tab) {
+	}
+
+	@Override
+	public void onTabReloaded(Tab tab) {
 	}
 }

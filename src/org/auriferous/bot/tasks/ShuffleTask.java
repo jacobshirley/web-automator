@@ -1,6 +1,6 @@
-package org.adclicker.bot.tasks;
+package org.auriferous.bot.tasks;
 
-import org.adclicker.bot.tasks.BotTask;
+import org.auriferous.bot.tasks.BotTask;
 
 public class ShuffleTask implements BotTask {
 
