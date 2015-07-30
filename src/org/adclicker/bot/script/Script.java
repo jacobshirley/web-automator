@@ -9,6 +9,7 @@ import org.adclicker.bot.utils.Utils;
 import org.adclicker.input.MouseSimulator;
 
 import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
@@ -35,10 +36,16 @@ public class Script extends LoadAdapter {
 			e.printStackTrace();
 		}
 	}
+	
+	public void injectCode(long frameID) {
+		try {
+			browser.executeJavaScript(frameID, Utils.loadResource("resources/js/inject.js"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public ElementRect getElementRect(long frameID, String elementCode) {
-		// http://www.holidayautos.co.uk/?_$ja=cid:1510255|cgid:119904326|tsid:70217|crid:63895368&clientID=581725
-
 		browser.executeJavaScript(frameID,
 				"var clicker_element = " + elementCode + "; var clicker_offset = clicker_element.offset();");
 
@@ -48,13 +55,53 @@ public class Script extends LoadAdapter {
 		val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_offset.top;");
 		double y = val.getNumber();
 
-		val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_element.width();");
+		val = browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(clicker_element);");
 		double width = val.getNumber();
+		
+		System.out.println(x);
 
-		val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_element.height();");
+		val = browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(clicker_element);");
 		double height = val.getNumber();
 
 		return new ElementRect((int) x, (int) y, (int) width, (int) height);
+	}
+	
+	public double getPageXOffset() {
+		return browser.executeJavaScriptAndReturnValue("window.pageXOffset").getNumber();
+	}
+	
+	public double getPageYOffset() {
+		return browser.executeJavaScriptAndReturnValue("window.pageYOffset").getNumber();
+	}
+	
+	public double getWindowWidth() {
+		return browser.executeJavaScriptAndReturnValue("$(window).width()").getNumber();
+	}
+	
+	public double getWindowHeight() {
+		return browser.executeJavaScriptAndReturnValue("$(window).height()").getNumber();
+	}
+
+	public ElementRect getRandomLink(long frameID) {
+		return getElementRect(frameID, "getRandomLink()");
+	}
+
+	public void clickElement(ElementRect element) {
+		Point p = element.getRandomPointInRect();
+		
+		p.x -= getPageXOffset();
+		p.y -= getPageYOffset();
+		
+		mouse(p);
+	}
+
+	public void hoverElement(ElementRect element) {
+		Point p = element.getRandomPointInRect();
+		
+		p.x -= getPageXOffset();
+		p.y -= getPageYOffset();
+		
+		moveMouse(p);
 	}
 	
 	public void mouse(int x, int y, ClickType clickType) {
@@ -65,8 +112,9 @@ public class Script extends LoadAdapter {
 		
 		double randSpeed = ((Math.random() * MOUSE_SPEED) / 2.0 + MOUSE_SPEED) / 10.0;
 		
-		humanWindMouse(x1, y1, x, y, 7, 5, 10.0 / randSpeed, 15.0 / randSpeed,
-				10.0 * randSpeed);
+		humanWindMouse(x1, y1, x, y, 7, 5, 10.0 / randSpeed, 15.0 / randSpeed, 10.0 * randSpeed);
+		
+		//sim.moveMouse(x, y);
 		
 		if (clickType == ClickType.LCLICK) {
 			sim.clickMouse(x, y, MouseEvent.BUTTON1);
@@ -91,42 +139,18 @@ public class Script extends LoadAdapter {
 		moveMouse(p.x, p.y);
 	}
 	
-	public double getPageXOffset() {
-		return browser.executeJavaScriptAndReturnValue("window.pageXOffset").getNumber();
+	private boolean inRange(double x, double min, double max) {
+		return x >= min && x <= max;
 	}
 	
-	public double getPageYOffset() {
-		return browser.executeJavaScriptAndReturnValue("window.pageYOffset").getNumber();
-	}
-
-	public ElementRect getRandomLink(long frameID) {
-		try {
-			browser.executeJavaScript(frameID, Utils.loadResource("resources/js/findLinks.js"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return getElementRect(frameID, "getRandomLink()");
-	}
-
-	public void clickElement(ElementRect element) {
-		Point p = element.getRandomPointInRect();
+	public void scrollBy(double percentageX, double percentageY) {
 		
-		p.x -= getPageXOffset();
-		p.y -= getPageYOffset();
-		
-		mouse(p);
 	}
-
-	public void hoverElement(ElementRect element) {
-		Point p = element.getRandomPointInRect();
-		
-		p.x -= getPageXOffset();
-		p.y -= getPageYOffset();
-		
-		moveMouse(p);
+	
+	public void scrollMouse(boolean up, int notches) {
+		context.bot.getMouseSimulator().scrollMouse(up, notches);
 	}
-
+	
 	private double hypot(double dx, double dy) {
 		return Math.sqrt((dx * dx) + (dy * dy));
 	}
@@ -210,8 +234,5 @@ public class Script extends LoadAdapter {
 
 		if ((Math.round(xe) != Math.round(xs)) || (Math.round(ye) != Math.round(ys)))
 			context.bot.getMouseSimulator().moveMouse((int) Math.round(xe), (int) Math.round(ye));
-
-		// mouseSpeed = MSP;
 	}
-
 }

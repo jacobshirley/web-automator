@@ -1,15 +1,18 @@
 package org.adclicker.input;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
-import org.adclicker.bot.PaintListener;
+import org.adclicker.bot.tabs.TabControlListener;
 import org.adclicker.bot.utils.Utils;
 
-public class MouseSimulator implements PaintListener {
+public class MouseSimulator implements TabControlListener {
 	private Component target;
 	
 	private int mouseX;
@@ -43,10 +46,22 @@ public class MouseSimulator implements PaintListener {
 		Utils.wait((int)(Utils.randomRange(20, 50)));
 		event = new MouseEvent(target, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, x, y, 1, false, button);
 		target.dispatchEvent(event);
+		
+		event = new MouseEvent(target, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0, x, y, 1, false, button);
+		target.dispatchEvent(event);
 	}
 	
 	public final void clickMouse(int x, int y) {
 		clickMouse(x, y, MouseEvent.BUTTON1);
+	}
+	
+	public final void scrollMouse(boolean up, int rotation) {
+		MouseWheelEvent mwe = new MouseWheelEvent(target, MouseEvent.MOUSE_WHEEL, System.currentTimeMillis(), 0, mouseX, mouseY, 0, false, MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, up ? -rotation : rotation);
+		target.dispatchEvent(mwe);
+	}
+	
+	public final int getScrollIncrement() {
+		return 3;
 	}
 	
 	public int getMouseX() {
@@ -68,8 +83,11 @@ public class MouseSimulator implements PaintListener {
 
 	@Override
 	public void onPaint(Graphics g) {
-		g.setColor(Color.red);
-		g.drawLine(mouseX-10, mouseY, mouseX+10, mouseY);
-		g.drawLine(mouseX, mouseY-10, mouseX, mouseY+10);
+		Graphics2D g2d = (Graphics2D)g;
+		
+		g2d.setColor(Color.green);
+		g2d.setStroke(new BasicStroke(3));
+		g2d.drawLine(mouseX-10, mouseY, mouseX+10, mouseY);
+		g2d.drawLine(mouseX, mouseY-10, mouseX, mouseY+10);
 	}
 }

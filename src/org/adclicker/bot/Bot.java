@@ -2,10 +2,14 @@ package org.adclicker.bot;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,11 +26,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import org.adclicker.bot.tabs.TabControlListener;
+import org.adclicker.bot.tabs.Tabs;
 import org.adclicker.bot.tasks.BotTask;
 import org.adclicker.bot.tasks.ClickAdTask;
 import org.adclicker.bot.tasks.OnAdTask;
@@ -51,37 +58,25 @@ public class Bot {
 
 	private Browser browser = new Browser();
 	
-	private MouseSimulator mouseSimulation;
+	private MouseSimulator mouseSimulator;
 	private KeyboardSimulator keyboardSimulation;
 
-	private BrowserView browserView;
 	private TaskExecutor tasks = new TaskExecutor();
 	
 	private JFrame frame;
 	
-	private List<PaintListener> paintListeners = new LinkedList<PaintListener>();
+	private List<TabControlListener> paintListeners = new LinkedList<TabControlListener>();
 	
 	public Bot() {
 		LoggerProvider.setLevel(Level.OFF);
 		
-		this.browserView = new BrowserView(browser) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void paint(Graphics g) {
-				super.paint(g);
-				
-				for (PaintListener listener : paintListeners)
-					listener.onPaint(g);
-			}
-		};
-
         frame = new JFrame("Ad Clicker");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frame.add(this.browserView, BorderLayout.CENTER);
 		frame.setSize(1300, 1000);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		
+		//Menu bar
 		
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
@@ -99,28 +94,44 @@ public class Bot {
 		menuBar.add(fileMenu);
 		
 		frame.setJMenuBar(menuBar);
+		
+		//Tabs
+	
+		Tabs tabs = new Tabs(this);
+		tabs.openTab("www.google.co.uk");
+		tabs.openTab("www.runescape.com");
+		
+		//Mouse simulator
+		
+        this.mouseSimulator = null;//new MouseSimulator(browserView, frame.getWidth(), frame.getHeight());
         
-        this.mouseSimulation = new MouseSimulator(browserView, frame.getWidth(), frame.getHeight());
-        
-        paintListeners.add(this.mouseSimulation);
+        paintListeners.add(this.mouseSimulator);
         
         this.browser.loadURL("www.google.co.uk");
         
         tasks.processTasks();
         
-        tasks.addTask(new OnAdTask(context));
+        //OnAdTask task = new OnAdTask(context);
+        
+        //tasks.addTask(task);
+        
+        //paintListeners.add(task);
         
         //new Humaniser(this).start();
 	}
-	
+
 	ScriptContext context = new ScriptContext(this);
 
 	public Browser getBrowser() {
 		return browser;
 	}
 	
+	public Frame getFrame() {
+		return frame;
+	}
+
 	public MouseSimulator getMouseSimulator() {
-		return mouseSimulation;
+		return mouseSimulator;
 	}
 	
 	private void createAddTaskDialog() {
@@ -139,9 +150,7 @@ public class Bot {
 		    "Shuffle Interval:", shuffleInterval,
 		    "Ad Clicks:", adClicks,
 		    "Sub Clicks:", subClicks,
-		};
-		
-		
+		};		
 
 		int option = JOptionPane.showConfirmDialog(null, message, "Add Task", JOptionPane.OK_CANCEL_OPTION);
 		if (option == JOptionPane.OK_OPTION) {

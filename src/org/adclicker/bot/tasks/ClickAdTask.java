@@ -6,10 +6,10 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import org.adclicker.bot.Bot;
-import org.adclicker.bot.PaintListener;
 import org.adclicker.bot.ScriptContext;
 import org.adclicker.bot.script.ElementRect;
 import org.adclicker.bot.script.Script;
+import org.adclicker.bot.tabs.TabControlListener;
 import org.adclicker.bot.utils.Utils;
 
 import com.teamdev.jxbrowser.chromium.Browser;
