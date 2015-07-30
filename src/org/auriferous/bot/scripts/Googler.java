@@ -12,8 +12,6 @@ public class Googler extends Script{
 	@Override
 	public int tick() {
 		
-		
-		
 		return 0;
 	}
 

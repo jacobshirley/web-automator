@@ -162,7 +162,15 @@ public class ScriptMethods extends LoadAdapter {
 
 	private void humanWindMouse(double xs, double ys, double xe, double ye, double gravity, double wind, double minWait,
 			double maxWait, double targetArea) {
-		double veloX = 0, veloY = 0, windX = 0, windY = 0, veloMag, maxStep, D, randomDist, W, lastDist = 0;
+		double veloX = 0;
+		double veloY = 0;
+		double windX = 0;
+		double windY = 0;
+		double veloMag = 0;
+		double maxStep = 0;
+		double D = 0;
+		double randomDist = 0;
+		int W = 0;
 		
 		int MSP = MOUSE_SPEED;
 		
@@ -173,7 +181,7 @@ public class ScriptMethods extends LoadAdapter {
 		double dx = xe - xs;
 		double dy = ye - ys;
 
-		double distance = Math.sqrt((dx * dx) + (dy * dy));
+		double distance = hypot(dx, dy);
 		long t = System.currentTimeMillis() + 10000;
 		while (true) {
 			if (System.currentTimeMillis() > t)
@@ -190,7 +198,7 @@ public class ScriptMethods extends LoadAdapter {
 			if (D < 5)
 				D = 5;
 
-			double rCnc = Math.random() * 6;
+			double rCnc = Utils.random(6);
 			if (rCnc == 1)
 				D = Utils.randomRange(2, 3);
 
@@ -200,8 +208,8 @@ public class ScriptMethods extends LoadAdapter {
 				maxStep = Math.round(dist);
 
 			if (dist >= targetArea) {
-				windX = windX / sqrt3 + (Math.random() * (Math.round(wind) * 2 + 1) - wind) / sqrt5;
-				windY = windY / sqrt3 + (Math.random() * (Math.round(wind) * 2 + 1) - wind) / sqrt5;
+				windX = windX / sqrt3 + (Utils.random(Math.round(wind) * 2 + 1) - wind) / sqrt5;
+				windY = windY / sqrt3 + (Utils.random(Math.round(wind) * 2 + 1) - wind) / sqrt5;
 			} else {
 				windX = windX / sqrt2;
 				windY = windY / sqrt2;
@@ -213,27 +221,26 @@ public class ScriptMethods extends LoadAdapter {
 			veloY = veloY + gravity * (ye - ys) / dist;
 
 			if (hypot(veloX, veloY) > maxStep) {
-				randomDist = maxStep / 2.0 + Math.random() * (Math.round(maxStep) / 2);
-				veloMag = Math.sqrt(veloX * veloX + veloY * veloY);
+				randomDist = maxStep / 2.0 + Utils.random(Math.round(maxStep) / 2);
+				veloMag = Math.sqrt((veloX * veloX) + (veloY * veloY));
 				veloX = (veloX / veloMag) * randomDist;
 				veloY = (veloY / veloMag) * randomDist;
 			}
 
-			double lastX = Math.round(xs);
-			double lastY = Math.round(ys);
+			int lastX = (int) Math.round(xs);
+			int lastY = (int) Math.round(ys);
 			xs = xs + veloX;
 			ys = ys + veloY;
 
 			if ((lastX != Math.round(xs)) || (lastY != Math.round(ys)))
 				mouse.moveMouse((int) Math.round(xs), (int) Math.round(ys));
 
-			W = (Math.random() * (Math.round(100 / MSP))) * 6;
+			W = (int) (Utils.random((Math.round(100/MSP)))*6);
 			if (W < 5)
 				W = 5;
-			W = Math.round(W * 0.9);
+			W = (int) Math.round(W * 0.9);
 
 			Utils.wait((int) W);
-			lastDist = dist;
 			if (hypot(xs - xe, ys - ye) < 1)
 				break;
 		}

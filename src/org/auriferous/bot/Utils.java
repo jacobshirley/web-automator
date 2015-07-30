@@ -56,7 +56,7 @@ public class Utils {
 		return new String(bytes);
 	}
 
-	public static int random(int n) {
-		return (int) (n*Math.random());
+	public static int random(double n) {
+		return (int)(n*Math.random());
 	}
 }

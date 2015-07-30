@@ -67,7 +67,7 @@ public class OnAdTask extends Script implements TabPaintListener{
 				//type("shirly lou");
 				//type(KeyEvent.VK_ENTER);
 				//scrollTo(50);
-				Utils.wait(2000);
+				Utils.wait(500);
 			}
 			
 			//context.getKeyboard().type("hello");
