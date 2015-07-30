@@ -59,7 +59,7 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 	
 	@Override
 	public void onScriptSelected(String name) {
-		bot.getTabs().openTab("www.youtube.com");
+		//bot.getTabs().openTab("www.youtube.com");
 		//System.out.println(bot.getTabs().getCurrentTab().getID());
 		
 		ScriptContext context = new ScriptContext(bot, bot.getTabs().getCurrentTab());

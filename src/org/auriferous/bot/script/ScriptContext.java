@@ -25,7 +25,7 @@ public class ScriptContext {
 		
 		//Inputs
 		this.mouse = new MouseSimulator(tab.getTabView());
-		this.keyboard = new KeyboardSimulator();
+		this.keyboard = new KeyboardSimulator(tab.getTabView());
 		
 		//Paint listeners
 		tab.getTabView().addTabPaintListener(this.mouse);

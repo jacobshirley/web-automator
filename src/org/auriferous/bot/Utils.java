@@ -55,4 +55,8 @@ public class Utils {
 		
 		return new String(bytes);
 	}
+
+	public static int random(int n) {
+		return (int) (n*Math.random());
+	}
 }
