@@ -56,16 +56,16 @@ public class Bot {
 	private static final int ACTION_REMOVE_TASK = 1;
 	private static final int ACTION_ENABLE_DEBUG = 2;
 
-	private Browser browser = new Browser();
-	
 	private MouseSimulator mouseSimulator;
-	private KeyboardSimulator keyboardSimulation;
+	private KeyboardSimulator keyboardSimulator;
 
 	private TaskExecutor tasks = new TaskExecutor();
 	
 	private JFrame frame;
 	
 	private List<TabControlListener> paintListeners = new LinkedList<TabControlListener>();
+	
+	private Tabs tabs = null;
 	
 	public Bot() {
 		LoggerProvider.setLevel(Level.OFF);
@@ -97,19 +97,22 @@ public class Bot {
 		
 		//Tabs
 	
-		Tabs tabs = new Tabs(this);
+		tabs = new Tabs(this);
 		tabs.openTab("www.google.co.uk");
 		tabs.openTab("www.runescape.com");
+		tabs.openTab("www.bbc.co.uk");
 		
 		//Mouse simulator
 		
-        this.mouseSimulator = null;//new MouseSimulator(browserView, frame.getWidth(), frame.getHeight());
         
-        paintListeners.add(this.mouseSimulator);
         
-        this.browser.loadURL("www.google.co.uk");
+       // paintListeners.add(this.mouseSimulator);
+        
+        //Tasks
         
         tasks.processTasks();
+        
+        context = new ScriptContext(this, tabs.getCurrentTab());
         
         //OnAdTask task = new OnAdTask(context);
         
@@ -120,10 +123,10 @@ public class Bot {
         //new Humaniser(this).start();
 	}
 
-	ScriptContext context = new ScriptContext(this);
+	ScriptContext context = null;//new ScriptContext(this);
 
-	public Browser getBrowser() {
-		return browser;
+	public Tabs getTabs() {
+		return tabs;
 	}
 	
 	public Frame getFrame() {

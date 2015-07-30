@@ -10,25 +10,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import org.adclicker.bot.tabs.TabControlListener;
+import org.adclicker.bot.tabs.TabPaintListener;
 import org.adclicker.bot.utils.Utils;
 
-public class MouseSimulator implements TabControlListener {
+public class MouseSimulator implements TabPaintListener {
 	private Component target;
 	
 	private int mouseX;
 	private int mouseY;
 	
-	private int width;
-	private int height;
-	
-	public MouseSimulator(Component target, int width, int height) {
+	public MouseSimulator(Component target) {
 		this.target = target;
-		
-		this.width = width;
-		this.height = height;
-		
-		this.mouseX = this.width/2;
-		this.mouseY = this.height/2;
 	}
 	
 	public final void moveMouse(int x, int y) {

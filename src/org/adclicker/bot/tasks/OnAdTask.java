@@ -7,6 +7,7 @@ import org.adclicker.bot.ScriptContext;
 import org.adclicker.bot.script.ElementRect;
 import org.adclicker.bot.script.Script;
 import org.adclicker.bot.tabs.TabControlListener;
+import org.adclicker.bot.tabs.TabPaintListener;
 import org.adclicker.bot.utils.Utils;
 
 import com.teamdev.jxbrowser.chromium.dom.DOMNodeAtPoint;
@@ -16,7 +17,7 @@ import com.teamdev.jxbrowser.chromium.events.FrameLoadEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadEvent;
 import com.teamdev.jxbrowser.chromium.events.StartLoadingEvent;
 
-public class OnAdTask extends Script implements BotTask, TabControlListener{
+public class OnAdTask extends Script implements BotTask, TabPaintListener{
 
 	public OnAdTask(ScriptContext context) {
 		super(context);
@@ -70,7 +71,7 @@ public class OnAdTask extends Script implements BotTask, TabControlListener{
 				//ElementRect rect = getRandomLink(event.getFrameId());
 				
 				//hoverElement(rect);
-				scrollTo(50);
+				//scrollTo(50);
 				Utils.wait(2000);
 			}
 		}

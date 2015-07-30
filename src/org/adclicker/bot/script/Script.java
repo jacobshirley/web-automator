@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.adclicker.bot.ScriptContext;
 import org.adclicker.bot.utils.Utils;
+import org.adclicker.input.KeyboardSimulator;
 import org.adclicker.input.MouseSimulator;
 
 import com.teamdev.jxbrowser.chromium.Browser;
@@ -17,6 +18,9 @@ public class Script extends LoadAdapter {
 	protected ScriptContext context;
 	protected Browser browser;
 	
+	private MouseSimulator mouse;
+	private KeyboardSimulator keyboard;
+	
 	public static final int MOUSE_SPEED = 20;
 	
 	public enum ClickType {
@@ -25,7 +29,10 @@ public class Script extends LoadAdapter {
 
 	public Script(ScriptContext context) {
 		this.context = context;
-		this.browser = context.getBrowser();
+		this.browser = context.getCurrentTab().getBrowserWindow();
+		
+		this.mouse = context.getMouse();
+		this.keyboard = context.getKeyboard();
 	}
 
 	public void injectJQuery(long frameID) {
@@ -57,8 +64,6 @@ public class Script extends LoadAdapter {
 
 		val = browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(clicker_element);");
 		double width = val.getNumber();
-		
-		System.out.println(x);
 
 		val = browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(clicker_element);");
 		double height = val.getNumber();
@@ -105,21 +110,17 @@ public class Script extends LoadAdapter {
 	}
 	
 	public void mouse(int x, int y, ClickType clickType) {
-		MouseSimulator sim = context.bot.getMouseSimulator();
-		
-		double x1 = sim.getMouseX();
-		double y1 = sim.getMouseY();
+		double x1 = mouse.getMouseX();
+		double y1 = mouse.getMouseY();
 		
 		double randSpeed = ((Math.random() * MOUSE_SPEED) / 2.0 + MOUSE_SPEED) / 10.0;
 		
 		humanWindMouse(x1, y1, x, y, 7, 5, 10.0 / randSpeed, 15.0 / randSpeed, 10.0 * randSpeed);
 		
-		//sim.moveMouse(x, y);
-		
 		if (clickType == ClickType.LCLICK) {
-			sim.clickMouse(x, y, MouseEvent.BUTTON1);
+			mouse.clickMouse(x, y, MouseEvent.BUTTON1);
 		} else if (clickType == ClickType.RCLICK) {
-			sim.clickMouse(x, y, MouseEvent.BUTTON2);
+			mouse.clickMouse(x, y, MouseEvent.BUTTON2);
 		}
 	}
 	
@@ -143,12 +144,12 @@ public class Script extends LoadAdapter {
 		return x >= min && x <= max;
 	}
 	
-	public void scrollBy(double percentageX, double percentageY) {
+	public void scrollTo(double percentageX, double percentageY) {
 		
 	}
 	
 	public void scrollMouse(boolean up, int notches) {
-		context.bot.getMouseSimulator().scrollMouse(up, notches);
+		context.getMouse().scrollMouse(up, notches);
 	}
 	
 	private double hypot(double dx, double dy) {
@@ -219,7 +220,7 @@ public class Script extends LoadAdapter {
 			ys = ys + veloY;
 
 			if ((lastX != Math.round(xs)) || (lastY != Math.round(ys)))
-				context.bot.getMouseSimulator().moveMouse((int) Math.round(xs), (int) Math.round(ys));
+				mouse.moveMouse((int) Math.round(xs), (int) Math.round(ys));
 
 			W = (Math.random() * (Math.round(100 / MSP))) * 6;
 			if (W < 5)
@@ -233,6 +234,6 @@ public class Script extends LoadAdapter {
 		}
 
 		if ((Math.round(xe) != Math.round(xs)) || (Math.round(ye) != Math.round(ys)))
-			context.bot.getMouseSimulator().moveMouse((int) Math.round(xe), (int) Math.round(ye));
+			mouse.moveMouse((int) Math.round(xe), (int) Math.round(ye));
 	}
 }

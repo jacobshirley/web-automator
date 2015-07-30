@@ -1,7 +1,5 @@
 package org.adclicker.bot.tabs;
 
-import java.awt.Graphics;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,5 +55,17 @@ public class Tabs {
 	
 	public Tab openTab() {
 		return openTab("_blank");
+	}
+	
+	public Tab getCurrentTab() {
+		return tabs.get(tabbedPane.getSelectedIndex());
+	}
+	
+	public Tab getTab(int index) {
+		return tabs.get(index);
+	}
+	
+	public List<Tab> getTabList() {
+		return tabs;
 	}
 }
