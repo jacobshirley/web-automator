@@ -2,10 +2,16 @@ package org.auriferous.bot.gui;
 
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
+
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.tabs.Tabs;
@@ -24,7 +30,7 @@ public class Bot {
 	private Tabs tabs = null;
 	
 	public Bot() {
-		/*LoggerProvider.setLevel(Level.OFF);
+		//LoggerProvider.setLevel(Level.OFF);
 		
 		//Create bot frame
 		
@@ -80,7 +86,7 @@ public class Bot {
         
         //new Humaniser(this).start();
 		
-		createScriptSelector();
+		//createScriptSelector();
 	}
 
 	ScriptContext context = null;//new ScriptContext(this);

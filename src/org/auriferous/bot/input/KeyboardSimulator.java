@@ -1,4 +1,4 @@
-package org.aurifierous.bot.input;
+package org.auriferous.bot.input;
 
 public class KeyboardSimulator {
 

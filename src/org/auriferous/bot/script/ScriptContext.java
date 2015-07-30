@@ -3,10 +3,10 @@ package org.auriferous.bot.script;
 import java.awt.Frame;
 
 import org.auriferous.bot.gui.Bot;
+import org.auriferous.bot.input.KeyboardSimulator;
+import org.auriferous.bot.input.MouseSimulator;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.Tabs;
-import org.aurifierous.bot.input.KeyboardSimulator;
-import org.aurifierous.bot.input.MouseSimulator;
 
 public class ScriptContext {
 	private Bot bot;

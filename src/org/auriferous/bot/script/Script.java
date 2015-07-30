@@ -5,8 +5,8 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import org.auriferous.bot.Utils;
-import org.aurifierous.bot.input.KeyboardSimulator;
-import org.aurifierous.bot.input.MouseSimulator;
+import org.auriferous.bot.input.KeyboardSimulator;
+import org.auriferous.bot.input.MouseSimulator;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.JSValue;

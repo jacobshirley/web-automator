@@ -1,4 +1,4 @@
-package org.aurifierous.bot.input;
+package org.auriferous.bot.input;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
