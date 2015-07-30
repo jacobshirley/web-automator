@@ -30,7 +30,7 @@ public class OnAdTask extends Script implements TabPaintListener{
 		//this.browser.loadURL("http://www.holidayautos.co.uk/?_$ja=cid:1510255|cgid:119904326|tsid:70217|crid:63895368&clientID=581725");
 		this.browser.loadURL("https://www.youtube.com/");
 		
-		System.out.println(context.getCurrentTab().getTitle());
+		System.out.println(context.getScriptTab().getTitle());
 		
 		context.getTabs().openTab("www.bbc.co.uk");
 		//this.browser.loadURL("https://www.google.com/intx/en_uk/work/apps/business/products/gmail/index.html?utm_source=gdn&utm_medium=display&utm_campaign=emea-gb-en-gmail-rmkt-all-trial-120077397&utm_content=puppyscrubber");

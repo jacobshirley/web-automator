@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.swing.JTabbedPane;
 
-import org.auriferous.bot.gui.Bot;
+import org.auriferous.bot.Bot;
 
 public class Tabs {
 	private Bot bot;
@@ -14,7 +14,7 @@ public class Tabs {
 
 	private List<TabControlListener> tabListeners = new LinkedList<TabControlListener>();
 	
-	private int currentTab;
+	private int currentTabIndex;
 
 	public Tabs() {
 	}
@@ -37,7 +37,16 @@ public class Tabs {
 	}
 	
 	public Tab getCurrentTab() {
-		return tabs.get(currentTab);
+		return tabs.get(currentTabIndex);
+	}
+	
+	public void setCurrentTab(int id) {
+		if (currentTabIndex != id) {
+			currentTabIndex = id;
+			for (TabControlListener listener : tabListeners) {
+				listener.onChangeTab(tabs.get(currentTabIndex));
+			}
+		}
 	}
 	
 	public Tab getTab(int index) {

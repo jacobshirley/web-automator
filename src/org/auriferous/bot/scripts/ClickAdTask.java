@@ -124,17 +124,13 @@ public class ClickAdTask extends Script {
 
 	@Override
 	public int tick() {
-		return 0;
+		return STATE_RUNNING;
 	}
 
 	@Override
 	public void onStart() {
 		this.browser.addLoadListener(this);
 		this.browser.loadURL(this.url);
-		
-		while (successCode == -1) {
-			Thread.yield();
-		}
 	}
 
 	@Override

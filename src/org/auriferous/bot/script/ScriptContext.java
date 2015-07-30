@@ -2,7 +2,8 @@ package org.auriferous.bot.script;
 
 import java.awt.Frame;
 
-import org.auriferous.bot.gui.Bot;
+import org.auriferous.bot.Bot;
+import org.auriferous.bot.gui.BotGUI;
 import org.auriferous.bot.input.KeyboardSimulator;
 import org.auriferous.bot.input.MouseSimulator;
 import org.auriferous.bot.tabs.Tab;
@@ -10,7 +11,6 @@ import org.auriferous.bot.tabs.Tabs;
 
 public class ScriptContext {
 	private Bot bot;
-	private Frame botFrame;
 	
 	private Tabs tabs;
 	private Tab tab;
@@ -20,7 +20,6 @@ public class ScriptContext {
 	
 	public ScriptContext(Bot bot, Tab tab) {
 		this.bot = bot;
-		this.botFrame = bot.getFrame();
 		
 		this.tabs = bot.getTabs();
 		this.tab = tab;
@@ -33,16 +32,16 @@ public class ScriptContext {
 		tab.getTabView().addTabPaintListener(this.mouse);
 	}
 	
-	public Tabs getTabs() {
-		return tabs;
-	}
-	
-	public Tab getCurrentTab() {
+	public Tab getScriptTab() {
 		return tab;
 	}
 	
-	public Frame getBotFrame() {
-		return botFrame;
+	public Tabs getTabs() {
+		return tabs;
+	}
+
+	public Frame getBotGUI() {
+		return bot.getBotGUI();
 	}
 
 	public MouseSimulator getMouse() {

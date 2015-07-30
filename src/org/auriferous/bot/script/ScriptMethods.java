@@ -27,7 +27,7 @@ public class ScriptMethods extends LoadAdapter {
 
 	public ScriptMethods(ScriptContext context) {
 		this.context = context;
-		this.browser = context.getCurrentTab().getBrowserWindow();
+		this.browser = context.getScriptTab().getBrowserWindow();
 		
 		this.mouse = context.getMouse();
 		this.keyboard = context.getKeyboard();

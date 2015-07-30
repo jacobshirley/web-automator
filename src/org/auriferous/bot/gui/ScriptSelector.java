@@ -3,6 +3,7 @@ package org.auriferous.bot.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,7 +26,7 @@ public class ScriptSelector extends JFrame implements ActionListener{
 	private JList list = null;
 	private LinkedList<ScriptSelectorListener> scriptSelListeners = new LinkedList<ScriptSelectorListener>();
 	
-	public ScriptSelector() {
+	public ScriptSelector(Frame parent) {
 		super("Script Selector");
 		
 		JPanel content = new JPanel();
@@ -58,9 +59,10 @@ public class ScriptSelector extends JFrame implements ActionListener{
 		setContentPane(content);
 		
 		setSize(500, 500);
+		setLocationRelativeTo(parent);
 		setVisible(true);
 		//pack();
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		//setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 	
 	@Override
