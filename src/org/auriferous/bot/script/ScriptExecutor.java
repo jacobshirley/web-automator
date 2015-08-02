@@ -1,19 +1,17 @@
-package org.auriferous.bot;
+package org.auriferous.bot.script;
 
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.auriferous.bot.script.Script;
-import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.tabs.Tab;
 
-public class ScriptBundle implements Runnable{
+public class ScriptExecutor implements Runnable{
 	private Queue<Script> scripts = new ConcurrentLinkedQueue<Script>();
 	private boolean started;
 	private ScriptContext context;
 	
-	public ScriptBundle(ScriptContext context, Script[] scriptsArray) {
+	public ScriptExecutor(ScriptContext context, Script[] scriptsArray) {
 		this.context = context;
 		
 		for (Script s : scriptsArray)

@@ -4,6 +4,8 @@ function getVisibleElements(jquerySelector) {
 	var pageOffX = window.pageXOffset;
 	var pageOffY = window.pageYOffset;
 	
+	//document.write($("input"));
+	
 	$(jquerySelector).each(function(index) {
 		var $this = $(this);
 		var offset = $this.offset();
@@ -59,3 +61,58 @@ function getElementHeight(elem) {
 	});
 	return height;
 }
+
+function Offset() {
+	this.x = 0;
+	this.y = 0;
+}
+
+var c = 0;
+
+function _getElementOffIframes(parent, sel, offset) {
+	var el = parent.find(sel);
+	
+	var off = el.first().offset();
+
+	if (el != undefined && el != null && off != undefined) {
+    	offset.x += off.left;
+    	offset.y += off.top;
+    		
+    	return el;
+	} else {
+    	parent.find("iframe").each(function(i) {
+    		try {
+	    		var $this = $(this);
+	    		var off = $this.offset();
+	    		
+	    		offset.x += off.left;
+	    		offset.y += off.top;
+	    		
+	    		c++;
+	    		el = _getElementOffIframes($this.contents(), sel, offset);
+				
+	    		if (el != null)
+	    			return false;
+    		} catch (e) {
+    			document.title = "error";
+    		}
+    	});
+	}
+	
+	if (el != null)
+		return el;
+	
+	return null;
+}
+
+function getElementOffIframes(sel) {
+	var offset = new Offset();
+	_getElementOffIframes($(document), sel, offset);
+	
+	document.title = "got shit done 2 "+offset.x;
+	
+	return offset;
+}
+
+
+

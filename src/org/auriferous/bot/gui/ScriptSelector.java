@@ -14,6 +14,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class ScriptSelector extends JFrame implements ActionListener{
@@ -59,11 +60,11 @@ public class ScriptSelector extends JFrame implements ActionListener{
 		setLocationRelativeTo(parent);
 		setVisible(true);
 		//pack();
-		//setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		this.dispose();
 		for (ScriptSelectorListener listener : scriptSelListeners)
 			listener.onScriptSelected((String)list.getSelectedValue());
 	}

@@ -11,12 +11,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
 import org.auriferous.bot.Bot;
-import org.auriferous.bot.ScriptBundle;
+import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.Script;
+import org.auriferous.bot.script.ScriptExecutor;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.scripts.OnAdTask;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabPaintListener;
+import org.auriferous.bot.tabs.TabView;
 import org.auriferous.bot.tabs.Tabs;
 import org.auriferous.bot.tabs.gui.TabBar;
 
@@ -24,6 +26,9 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 	private static final int ACTION_ADD_TASK = 0;
 	private static final int ACTION_REMOVE_TASK = 1;
 	private static final int ACTION_ENABLE_DEBUG = 2;
+	
+	private static final int REFRESH_RATE = 50;
+	private static final int UPDATE_INTERVAL = 1000/REFRESH_RATE;
 	
 	private Bot bot;
 	public BotGUI(Bot bot) {
@@ -52,6 +57,25 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 		JTabbedPane tC = new TabBar(bot.getTabs());
 		add(tC);
 		
+		final Tabs tabs = bot.getTabs();
+		
+		new Thread(new Runnable() {
+			public void run() {
+				while (true) {
+					if (tabs.hasTabs()) {
+						Tab cur = tabs.getCurrentTab();
+						TabView view = cur.getTabView();
+						
+						if (System.currentTimeMillis() - view.lastPainted >= UPDATE_INTERVAL) {
+							view.repaint();
+						}
+						Utils.wait(UPDATE_INTERVAL);
+					}
+					Thread.yield();
+				}
+			}
+		}).start();
+		
 		bot.getTabs().openTab("www.google.co.uk");
 	}
 	
@@ -68,7 +92,7 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 		ScriptContext context = new ScriptContext(bot, currentTab);
 		
 		Script linkClicker = new OnAdTask(context);
-		ScriptBundle bundle = new ScriptBundle(context, new Script[] {linkClicker});
+		ScriptExecutor bundle = new ScriptExecutor(context, new Script[] {linkClicker});
 		
 		if (linkClicker instanceof TabPaintListener) {
 			System.out.println("Instance");

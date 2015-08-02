@@ -13,4 +13,9 @@ public class ElementRect extends Rectangle{
 	public Point getRandomPointInRect() {
 		return new Point((int)(x+Utils.random(width)), (int)(y+Utils.random(height)));
 	}
+	
+	public void appendParent(ElementRect parent) {
+		this.x += parent.x;
+		this.y += parent.y;
+	}
 }

@@ -35,9 +35,8 @@ public class ScriptMethods extends LoadAdapter {
 
 	public void injectJQuery(long frameID) {
 		try {
-			browser.executeJavaScript(frameID,
-					Utils.getText("https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"));
-		} catch (Exception e) {
+			browser.executeJavaScript(frameID, Utils.loadResource("resources/js/jquery.min.js"));
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

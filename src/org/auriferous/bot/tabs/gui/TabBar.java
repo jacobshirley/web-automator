@@ -14,33 +14,11 @@ import org.auriferous.bot.tabs.Tabs;
 public class TabBar extends JTabbedPane implements TabListener, TabControlListener, ChangeListener {
 	private static final long serialVersionUID = 1L;
 	private Tabs tabs;
-	
-	private static final int REFRESH_RATE = 10;
-	private static final int UPDATE_INTERVAL = 1000/REFRESH_RATE;
-
 	public TabBar(Tabs tabs) {
 		this.tabs = tabs;
 		this.tabs.addTabControlListener(this);
 		
 		addChangeListener(this);
-		
-		new Thread(new Runnable() {
-			public void run() {
-				while (true) {
-					if (TabBar.this.tabs.hasTabs()) {
-						Tab cur = TabBar.this.tabs.getCurrentTab();
-						TabView view = cur.getTabView();
-						
-						if (System.currentTimeMillis() - view.lastPainted >= UPDATE_INTERVAL) {
-							//System.out.println("Repainting");
-							view.repaint();
-						}
-						Utils.wait(UPDATE_INTERVAL);
-					}
-					Thread.yield();
-				}
-			}
-		}).start();
 	}
 
 	@Override
