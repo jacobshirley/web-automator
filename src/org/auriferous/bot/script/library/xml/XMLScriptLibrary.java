@@ -1,11 +1,13 @@
-package org.auriferous.bot.script.library;
+package org.auriferous.bot.script.library.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,23 +19,31 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.auriferous.bot.script.library.LibraryRef;
+import org.auriferous.bot.script.library.ScriptLibrary;
+import org.auriferous.bot.script.library.ScriptManifest;
+import org.auriferous.bot.script.library.ScriptManifestRef;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class LocalScriptLibrary implements ScriptLibrary {
+public class XMLScriptLibrary implements ScriptLibrary {
 	private Document document;
 	
 	private Element libraryElement;
 	private Element scriptsElement;
 	private Element librariesElement;
 	
-	private String version;
+	private String libraryPath;
 	private String name;
+	private String version;
 	private String desc;
+	
+	private Map<ScriptManifest, String> manifests = new HashMap<ScriptManifest, String>();
 
-	public LocalScriptLibrary(String path) {
+	public XMLScriptLibrary(String path) {
+		this.libraryPath = path;
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -42,9 +52,9 @@ public class LocalScriptLibrary implements ScriptLibrary {
 			
 			libraryElement = (Element)document.getElementsByTagName("library").item(0);
 			
-			//this.name = XMLUtils.getElementAttr(document.getDocumentElement(), "name");
-			//this.version = XMLUtils.getElementAttr(libraryElement, "version");
-			//this.desc = XMLUtils.getElementAttr(libraryElement, "desc");
+			this.name = XMLUtils.getElementAttr(document.getDocumentElement(), "name");
+			this.version = XMLUtils.getElementAttr(libraryElement, "version");
+			this.desc = XMLUtils.getElementAttr(libraryElement, "desc");
 			
 			scriptsElement = (Element)document.getElementsByTagName("scripts").item(0);
 			librariesElement = (Element)document.getElementsByTagName("libraries").item(0);
@@ -53,7 +63,7 @@ public class LocalScriptLibrary implements ScriptLibrary {
 		}
 	}
 	
-	public LocalScriptLibrary(String name, String version, String description) {
+	public XMLScriptLibrary(String name, String version, String description) {
 		this.name = name;
 		this.version = version;
 		this.desc = description;
@@ -81,6 +91,11 @@ public class LocalScriptLibrary implements ScriptLibrary {
 	}
 	
 	@Override
+	public String getLibraryPath() {
+		return libraryPath;
+	}
+	
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -96,15 +111,19 @@ public class LocalScriptLibrary implements ScriptLibrary {
 	}
 	
 	@Override
-	public void addScript(ScriptManifest entry) {
+	public void addScript(ScriptManifest entry, boolean merge) {
 		Element scriptElement = document.createElement("script");
 		
-		XMLUtils.appendAttrNode(document, scriptElement, "id", entry.getID());
-		XMLUtils.appendAttrNode(document, scriptElement, "name", entry.getName());
-		XMLUtils.appendAttrNode(document, scriptElement, "version", entry.getVersion());
-		XMLUtils.appendAttrNode(document, scriptElement, "desc", entry.getDesc());
-		XMLUtils.appendAttrNode(document, scriptElement, "path", entry.getPath());
+		scriptElement.setAttribute("src", entry.getManifestPath());
 		
+		if (merge) {
+			XMLUtils.appendAttrNode(document, scriptElement, "mainClass", entry.getMainClass());
+			XMLUtils.appendAttrNode(document, scriptElement, "id", entry.getID());
+			XMLUtils.appendAttrNode(document, scriptElement, "name", entry.getName());
+			XMLUtils.appendAttrNode(document, scriptElement, "version", entry.getVersion());
+			XMLUtils.appendAttrNode(document, scriptElement, "desc", entry.getDesc());
+			XMLUtils.appendAttrNode(document, scriptElement, "path", entry.getFilesPath());
+		}
 		scriptsElement.appendChild(scriptElement);
 	}
 
@@ -114,21 +133,25 @@ public class LocalScriptLibrary implements ScriptLibrary {
 		
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Element scriptElement = (Element)nodes.item(i);
-			
+			boolean empty = scriptElement.getChildNodes().getLength() == 0;
 			String src = scriptElement.getAttribute("src");
-			if (src.isEmpty()) {
-				String id = scriptElement.getAttribute("id");
+			
+			if (!empty) {
+				String id = XMLUtils.getElementAttr(scriptElement, "id");
 				
-				if (id.equals(selector)) {
-					String name = scriptElement.getAttribute("name");
-					String version = scriptElement.getAttribute("version");
-					String desc = scriptElement.getAttribute("desc");
-					String path = scriptElement.getAttribute("path");
+				if (id != null && id.equals(selector)) {
+					//src = scriptElement.getAttribute("src");
 					
-					return new LocalScriptManifest(id, name, version, desc, path);
+					String mainClass = XMLUtils.getElementAttr(scriptElement, "mainClass");
+					String name = XMLUtils.getElementAttr(scriptElement, "name");
+					String version = XMLUtils.getElementAttr(scriptElement, "version");
+					String desc = XMLUtils.getElementAttr(scriptElement, "desc");
+					String path = XMLUtils.getElementAttr(scriptElement, "path");
+					
+					return new XMLScriptManifest(src, mainClass, id, name, version, desc, path);
 				}
 			} else {
-				return new LocalScriptManifest(src);
+				return new XMLScriptManifest(src);
 			}
 		}
 		
@@ -145,15 +168,18 @@ public class LocalScriptLibrary implements ScriptLibrary {
 			Element scriptElement = (Element)nodes.item(i);
 			String src = scriptElement.getAttribute("src");
 			if (src.isEmpty()) {
+				src = scriptElement.getAttribute("src");
+				
+				String mainClass = scriptElement.getAttribute("mainClass");
 				String id = scriptElement.getAttribute("id");
 				String name = scriptElement.getAttribute("name");
 				String version = scriptElement.getAttribute("version");
 				String desc = scriptElement.getAttribute("desc");
 				String path = scriptElement.getAttribute("path");
 					
-				manifests.add(new LocalScriptManifest(id, name, version, desc, path));
+				manifests.add(new XMLScriptManifest(src, mainClass, id, name, version, desc, path));
 			} else {
-				manifests.add(new LocalScriptManifest(src));
+				manifests.add(new XMLScriptManifest(src));
 			}
 		}
 		ScriptManifest[] r = new ScriptManifest[manifests.size()];
@@ -172,7 +198,7 @@ public class LocalScriptLibrary implements ScriptLibrary {
 	}
 
 	@Override
-	public void addLibrary(ScriptLibrary library) {
+	public void addLibrary(ScriptLibrary library, boolean merge) {
 	}
 
 	@Override
@@ -199,26 +225,5 @@ public class LocalScriptLibrary implements ScriptLibrary {
 			e.printStackTrace();
 		}
 		return false;
-	}
-
-	@Override
-	public void addScript(String src) {
-		Element scriptElement = document.createElement("script");
-		
-		scriptElement.setAttribute("src", src);
-		
-		scriptsElement.appendChild(scriptElement);
-	}
-
-	@Override
-	public void addLibrary(String source) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeLibrary(String source) {
-		// TODO Auto-generated method stub
-		
 	}
 }

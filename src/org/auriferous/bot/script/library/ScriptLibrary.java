@@ -4,10 +4,8 @@ import java.io.File;
 
 public interface ScriptLibrary {
 	//Script functions
-	
-	public void addScript(String src);
-	
-	public void addScript(ScriptManifest entry);
+
+	public void addScript(ScriptManifest entry, boolean merge);
 	
 	public ScriptManifest getScriptManifest(String selector);
 	
@@ -19,19 +17,17 @@ public interface ScriptLibrary {
 	
 	//Library functions
 	
+	public String getLibraryPath();
+	
 	public String getName();
 	
 	public String getVersion();
 	
 	public String getDescription();
-	
-	public void addLibrary(String source);
-	
-	public void addLibrary(ScriptLibrary library);
+
+	public void addLibrary(ScriptLibrary library, boolean merge);
 	
 	public void removeLibrary(ScriptLibrary library);
-	
-	public void removeLibrary(String source);
 	
 	public ScriptLibrary[] getLibraries();
 	

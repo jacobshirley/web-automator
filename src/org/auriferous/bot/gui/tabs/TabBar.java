@@ -1,4 +1,4 @@
-package org.auriferous.bot.tabs.gui;
+package org.auriferous.bot.gui.tabs;
 
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -8,7 +8,6 @@ import org.auriferous.bot.Utils;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlListener;
 import org.auriferous.bot.tabs.TabListener;
-import org.auriferous.bot.tabs.TabView;
 import org.auriferous.bot.tabs.Tabs;
 
 public class TabBar extends JTabbedPane implements TabListener, TabControlListener, ChangeListener {

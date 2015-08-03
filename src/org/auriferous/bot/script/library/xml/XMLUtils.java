@@ -1,7 +1,8 @@
-package org.auriferous.bot.script.library;
+package org.auriferous.bot.script.library.xml;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class XMLUtils {
 	public static final Element createAttrNode(Document document, String name, String value) {
@@ -15,6 +16,10 @@ public class XMLUtils {
 	}
 	
 	public static final String getElementAttr(Element parent, String name) {
-		return parent.getElementsByTagName(name).item(0).getTextContent();
+		Node n = parent.getElementsByTagName(name).item(0);
+		if (n == null)
+			return null;
+		
+		return n.getTextContent();
 	}
 }

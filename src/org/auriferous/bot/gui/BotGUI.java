@@ -12,15 +12,15 @@ import javax.swing.WindowConstants;
 
 import org.auriferous.bot.Bot;
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.gui.tabs.TabBar;
+import org.auriferous.bot.gui.tabs.TabView;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptExecutor;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.scripts.OnAdTask;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabPaintListener;
-import org.auriferous.bot.tabs.TabView;
 import org.auriferous.bot.tabs.Tabs;
-import org.auriferous.bot.tabs.gui.TabBar;
 
 public class BotGUI extends JFrame implements ScriptSelectorListener{
 	private static final int ACTION_ADD_TASK = 0;
@@ -66,7 +66,7 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 						Tab cur = tabs.getCurrentTab();
 						TabView view = cur.getTabView();
 						
-						if (System.currentTimeMillis() - view.lastPainted >= UPDATE_INTERVAL) {
+						if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
 							view.repaint();
 						}
 						Utils.wait(UPDATE_INTERVAL);

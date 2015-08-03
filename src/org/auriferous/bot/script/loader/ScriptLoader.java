@@ -21,5 +21,5 @@ public abstract class ScriptLoader {
 		libraries.remove(library);
 	}
 	
-	public abstract Script loadScript(String selector);
+	public abstract Script loadScript(String selector) throws ClassNotFoundException;
 }

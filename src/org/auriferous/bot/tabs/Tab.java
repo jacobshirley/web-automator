@@ -3,6 +3,8 @@ package org.auriferous.bot.tabs;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.auriferous.bot.gui.tabs.TabView;
+
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.events.TitleEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleListener;
