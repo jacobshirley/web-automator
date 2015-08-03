@@ -1,4 +1,4 @@
-package org.auriferous.bot.input;
+package org.auriferous.bot.script.input;
 
 import java.awt.Component;
 import java.awt.event.InputEvent;
@@ -8,24 +8,13 @@ import java.awt.event.MouseEvent;
 
 import org.auriferous.bot.Utils;
 
-public class Keyboard {
+public class Keyboard extends Input {
 	private static final String SHIFT_KEYS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ¬!\"£$%^&*()_+{}:@~<>?|€";
 	private static final int DEFAULT_MOUSE_TIME = 100;
 	private static final int DEFAULT_KEY_TIME = 200;
 	
-	private Component target;
-
 	public Keyboard(Component target) {
-		this.target = target;
-	}
-	
-	public final void type(int c) {
-		int mods = 0;
-		if (SHIFT_KEYS.contains(""+(char)c)) {
-			type(KeyEvent.VK_SHIFT, DEFAULT_KEY_TIME, InputEvent.SHIFT_DOWN_MASK);
-			mods |= InputEvent.SHIFT_DOWN_MASK;
-		}
-		type(c, DEFAULT_KEY_TIME, mods);
+		super(target);
 	}
 	
 	public final void type(String message) {
@@ -35,6 +24,15 @@ public class Keyboard {
 	
 	public void type(int c, int time) {
 		type(c, time, 0);
+	}
+	
+	public final void type(int c) {
+		int mods = 0;
+		if (SHIFT_KEYS.contains(""+(char)c)) {
+			type(KeyEvent.VK_SHIFT, DEFAULT_KEY_TIME, InputEvent.SHIFT_DOWN_MASK);
+			mods |= InputEvent.SHIFT_DOWN_MASK;
+		}
+		type(c, DEFAULT_KEY_TIME, mods);
 	}
 	
 	public void type(int c, int time, int mods) {

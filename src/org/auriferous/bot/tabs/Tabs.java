@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.auriferous.bot.script.Script;
 
 public class Tabs {
-	private Map<Script, List<Tab>> scriptTabMap = new HashMap<Script, List<Tab>>();
+	private Map<Tab, Script> tabScriptMap = new HashMap<Tab, Script>();
 	
 	private List<Tab> tabsList = new ArrayList<Tab>();
 
@@ -22,12 +24,7 @@ public class Tabs {
 	public Tab openTab(String url, Script script) {
 		Tab newTab = this.openTab(url);
 		
-		List<Tab> tabsOfScript = scriptTabMap.get(script);
-		if (tabsOfScript == null) {
-			tabsOfScript = new LinkedList<Tab>();
-			scriptTabMap.put(script, tabsOfScript);
-		}
-		tabsOfScript.add(newTab);
+		tabScriptMap.put(newTab, script);
 		
 		return newTab;
 	}
@@ -86,11 +83,23 @@ public class Tabs {
 	}
 	
 	public List<Tab> getTabsByScript(Script script) {
-		return scriptTabMap.get(script);
+		List<Tab> scriptTabs = new ArrayList<Tab>();
+
+		for (Entry<Tab, Script> set : tabScriptMap.entrySet()) {
+			if (set.getValue().equals(script))
+				scriptTabs.add(set.getKey());
+		}
+		
+		return scriptTabs;
 	}
 	
 	public void closeTab(int id) {
-		closeTab(tabsList.get(id));
+		Tab tab = tabsList.get(id);
+		
+		if (tabScriptMap.containsKey(tab))
+			tabScriptMap.remove(tab);
+		
+		closeTab(tab);
 	}
 	
 	public void closeTab(Tab tab) {
@@ -101,7 +110,7 @@ public class Tabs {
 	}
 	
 	public void closeTabsByScript(Script script) {
-		for (Tab tab : scriptTabMap.get(script)) {
+		for (Tab tab : getTabsByScript(script)) {
 			closeTab(tab);
 		}
 	}

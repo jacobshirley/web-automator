@@ -1,4 +1,4 @@
-package org.auriferous.bot.input;
+package org.auriferous.bot.script.input;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -12,14 +12,12 @@ import java.awt.event.MouseWheelEvent;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.tabs.TabPaintListener;
 
-public class Mouse implements TabPaintListener {
-	private Component target;
-	
+public class Mouse extends Input implements TabPaintListener {
 	private int mouseX;
 	private int mouseY;
 	
 	public Mouse(Component target) {
-		this.target = target;
+		super(target);
 	}
 	
 	public final void moveMouse(int x, int y) {
@@ -78,7 +76,9 @@ public class Mouse implements TabPaintListener {
 		
 		g2d.setColor(Color.green);
 		g2d.setStroke(new BasicStroke(3));
-		g2d.drawLine(mouseX-10, mouseY, mouseX+10, mouseY);
-		g2d.drawLine(mouseX, mouseY-10, mouseX, mouseY+10);
+		
+		int mouseSize = 20;
+		g2d.drawLine(mouseX-mouseSize, mouseY, mouseX+mouseSize, mouseY);
+		g2d.drawLine(mouseX, mouseY-mouseSize, mouseX, mouseY+mouseSize);
 	}
 }

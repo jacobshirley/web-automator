@@ -41,11 +41,10 @@ public class ClickAdTask extends Script implements LoadListener{
 	private int taskStage = 1;
 	
 	private ScriptContext ctx;
+	private int status = STATE_RUNNING;
 	
 	public ClickAdTask(ScriptContext ctx) {
 		super(ctx);
-		
-		createAddTaskDialog();
 	}
 
 	private void createAddTaskDialog() {
@@ -76,13 +75,13 @@ public class ClickAdTask extends Script implements LoadListener{
 			this.timeInterval = Integer.parseInt(shuffleInterval.getText());
 			this.subClicks = Integer.parseInt(subClicks.getText());
 		} else {
-		    System.out.println("Cancelled");
+		    status = STATE_EXIT_SUCCESS;
 		}
 	}
 
 	@Override
 	public int tick() {
-		return STATE_RUNNING;
+		return status;
 	}
 	
 	private ScriptMethods methods;
@@ -90,6 +89,8 @@ public class ClickAdTask extends Script implements LoadListener{
 	
 	@Override
 	public void onStart() {
+		createAddTaskDialog();
+		
 		methods = new ScriptMethods(openTab("www.google.co.uk"));
 		this.browser = methods.getBrowser();
 		this.browser.addLoadListener(this);
@@ -102,7 +103,7 @@ public class ClickAdTask extends Script implements LoadListener{
 
 	@Override
 	public void onTerminate() {
-		
+		this.browser.removeLoadListener(this);
 	}
 
 	@Override

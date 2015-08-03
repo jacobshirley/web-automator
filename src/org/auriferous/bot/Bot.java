@@ -29,13 +29,15 @@ public class Bot {
 		
 		tabs = new Tabs();
 		
-		scriptLibrary = new XMLScriptLibrary("library.xml");
+		scriptLibrary = new XMLScriptLibrary("library.xml");//new XMLScriptLibrary("Local Script Library", "1.0", "Local script library that contains the scripts on the local machine.");
 		
-		XMLScriptManifest manifest = new XMLScriptManifest("C:/Users/Jacob/workspace/Ad Clicker/bin", "org.auriferous.bot.scripts.OnAdTask", "1", "hi there", "1.0", "RAARR", "dsfsdf");
+		/*XMLScriptManifest manifest = new XMLScriptManifest("C:/Users/Jacob/workspace/Ad Clicker/bin", "org.auriferous.bot.scripts.OnAdTask", "1", "OnAdTask", "1.0", "RAARR", "dsfsdf");
+		XMLScriptManifest manifest2 = new XMLScriptManifest("C:/Users/Jacob/workspace/Ad Clicker/bin", "org.auriferous.bot.scripts.ClickAdTask", "2", "ClickAdTask", "1.0", "RAARR", "dsfsdf");
 		
 		scriptLibrary.addScript(manifest, true);
+		scriptLibrary.addScript(manifest2, true);
 		
-		//scriptLibrary.save(new File("library.xml"));
+		scriptLibrary.save(new File("library.xml"));*/
 		
 		scriptLoader = new ScriptLoaderImpl(new ScriptContext(this));
 		scriptLoader.addLibrary(scriptLibrary);
