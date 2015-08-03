@@ -21,7 +21,6 @@ public class XMLScriptManifest implements ScriptManifest {
 	private String path;
 	
 	private Document document;
-	private Element scriptNode;
 
 	private String mainClass;
 	
@@ -31,7 +30,7 @@ public class XMLScriptManifest implements ScriptManifest {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 
 			document = builder.parse(new File(src));
-			init();
+			init((Element)document.getElementsByTagName("script").item(0));
 			
 			this.manifestPath = src;
 		} catch (Exception e) {
@@ -45,7 +44,7 @@ public class XMLScriptManifest implements ScriptManifest {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 
 			document = builder.parse(source);
-			init();
+			init((Element)document.getElementsByTagName("script").item(0));
 			
 			this.manifestPath = src;
 		} catch (Exception e) {
@@ -53,15 +52,19 @@ public class XMLScriptManifest implements ScriptManifest {
 		}
 	}
 	
-	private void init() {
-		scriptNode = (Element)document.getElementsByTagName("script").item(0);
-
-		this.mainClass = XMLUtils.getElementAttr(scriptNode, "mainClass");
-		this.id = XMLUtils.getElementAttr(scriptNode, "id");
-		this.name = XMLUtils.getElementAttr(scriptNode, "name");
-		this.version = XMLUtils.getElementAttr(scriptNode, "version");
-		this.desc = XMLUtils.getElementAttr(scriptNode, "desc");
-		this.path = XMLUtils.getElementAttr(scriptNode, "path");
+	private void init(Element element) {
+		this.manifestPath = element.getAttribute("src");
+		
+		this.mainClass = XMLUtils.getElementAttr(element, "mainClass");
+		this.id = XMLUtils.getElementAttr(element, "id");
+		this.name = XMLUtils.getElementAttr(element, "name");
+		this.version = XMLUtils.getElementAttr(element, "version");
+		this.desc = XMLUtils.getElementAttr(element, "desc");
+		this.path = XMLUtils.getElementAttr(element, "path");
+	}
+	
+	public XMLScriptManifest(Element scriptElement) {
+		init(scriptElement);
 	}
 	
 	public XMLScriptManifest(String src, String mainClass, String id, String name, String version, String desc, String path) {
@@ -74,7 +77,7 @@ public class XMLScriptManifest implements ScriptManifest {
 		this.desc = desc;
 		this.path = path;
 	}
-	
+
 	@Override
 	public String getMainClass() {
 		return mainClass;
@@ -96,7 +99,7 @@ public class XMLScriptManifest implements ScriptManifest {
 	}
 
 	@Override
-	public String getDesc() {
+	public String getDescription() {
 		return desc;
 	}
 

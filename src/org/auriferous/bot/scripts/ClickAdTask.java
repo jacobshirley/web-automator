@@ -9,10 +9,18 @@ import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ElementRect;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
+import org.auriferous.bot.script.ScriptMethods;
 
+import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.events.FailLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
+import com.teamdev.jxbrowser.chromium.events.FrameLoadEvent;
+import com.teamdev.jxbrowser.chromium.events.LoadEvent;
+import com.teamdev.jxbrowser.chromium.events.LoadListener;
+import com.teamdev.jxbrowser.chromium.events.ProvisionalLoadingEvent;
+import com.teamdev.jxbrowser.chromium.events.StartLoadingEvent;
 
-public class ClickAdTask extends Script {
+public class ClickAdTask extends Script implements LoadListener{
 	private static final int STAGE_SHUFFLES = 0;
 	private static final int STAGE_URL = 1;
 	private static final int STAGE_WAIT_ON_AD = 2;
@@ -71,9 +79,64 @@ public class ClickAdTask extends Script {
 		    System.out.println("Cancelled");
 		}
 	}
+
+	@Override
+	public int tick() {
+		return STATE_RUNNING;
+	}
+	
+	private ScriptMethods methods;
+	private Browser browser;
 	
 	@Override
-    public void onFinishLoadingFrame(FinishLoadingEvent event) {
+	public void onStart() {
+		methods = new ScriptMethods(openTab("www.google.co.uk"));
+		this.browser = methods.getBrowser();
+		this.browser.addLoadListener(this);
+	}
+
+	@Override
+	public void onPause() {
+		
+	}
+
+	@Override
+	public void onTerminate() {
+		
+	}
+
+	@Override
+	public void onDocumentLoadedInFrame(FrameLoadEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDocumentLoadedInMainFrame(LoadEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFailLoadingFrame(FailLoadingEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProvisionalLoadingFrame(ProvisionalLoadingEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStartLoadingFrame(StartLoadingEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFinishLoadingFrame(FinishLoadingEvent event) {
 		long frameID = event.getFrameId();
 		
 		ElementRect adElement = null;
@@ -93,15 +156,15 @@ public class ClickAdTask extends Script {
 		} 
 		if (taskStage == STAGE_URL) {
 	        if (event.isMainFrame()) {
-	        	injectJQuery(frameID);
+	        	methods.injectJQuery(frameID);
 	
-	        	adElement = getElementRect(frameID, "$('.adsbygoogle').first()");
+	        	adElement = methods.getElementRect(frameID, "$('.adsbygoogle').first()");
 	        	
 	        	Point p = adElement.getRandomPointInRect();
 	        	
 	        	System.out.println("Clicking at "+p.x+", "+p.y);
 	        	
-	        	mouse(p.x, p.y);
+	        	methods.mouse(p.x, p.y);
 	        	
 	        	taskStage++;
 	        	curAdClick++;
@@ -119,28 +182,5 @@ public class ClickAdTask extends Script {
 			successCode = STATE_EXIT_SUCCESS;
 			this.browser.removeLoadListener(this);
 		}
-    }
-
-	@Override
-	public int tick() {
-		return STATE_RUNNING;
-	}
-
-	@Override
-	public void onStart() {
-		this.browser.addLoadListener(this);
-		this.browser.loadURL(this.url);
-	}
-
-	@Override
-	public void onPause() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onTerminate() {
-		// TODO Auto-generated method stub
-		
 	}
 }

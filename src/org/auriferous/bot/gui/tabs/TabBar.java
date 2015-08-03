@@ -1,5 +1,7 @@
 package org.auriferous.bot.gui.tabs;
 
+import java.awt.Component;
+
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -24,6 +26,7 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 	public void onTitleChange(Tab tab, String newTitle) {
 		int id = this.indexOfComponent(tab.getTabView());
 		setTitleAt(id, newTitle);
+		getTabComponentAt(id).revalidate();
 	}
 
 	@Override
@@ -41,24 +44,65 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 	}
 
 	@Override
-	public void onTabRemoved(Tab tab) {}
+	public void onTabClosed(Tab tab) {}
 
 	@Override
 	public void onTabUpdate(Tab tab) {}
 
 	@Override
 	public void onChangeTab(Tab tab) {
+		setSelectedIndex(getBarIndexByTab(tab));
+	}
+	
+	@Override
+	public void addTab(String arg0, Component arg1) {
+		super.addTab(arg0, arg1);
 		
+		int index = this.tabs.getTabList().size()-1;
+		setTabComponentAt(index, new TabComponent(this));
+	}
+	
+	@Override
+	public void remove(int index) {
+		Tab tab = getTabByBarIndex(index);
+		if (tab != null)
+			this.tabs.closeTab(tab);
+		
+		super.remove(index);
+	}
+	
+	@Override
+	public String getTitleAt(int index) {
+		String s = super.getTitleAt(index);
+		return s;
+	}
+	
+	private int getBarIndexByTab(Tab tab) {
+		for (int i = 0; i < getTabCount(); i++) {
+			if (tab.getTabView().equals(getComponentAt(i))) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	private Tab getTabByBarIndex(int index) {
+		for (Tab tab : tabs.getTabList()) {
+			if (tab.getTabView().equals(getComponentAt(index))) {
+				return tab;
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent event) {
 		int index = getSelectedIndex();
-		for (Tab tab : tabs.getTabList()) {
-			if (tab.getTabView().equals(getComponentAt(index))) {
-				tabs.setCurrentTab(tab.getID());
-				break;
-			}
+		
+		if (index >= 0) {
+			tabs.setCurrentTab(getTabByBarIndex(index));
+		} else {
+			tabs.setCurrentTab(-1);
 		}
 	}
 }

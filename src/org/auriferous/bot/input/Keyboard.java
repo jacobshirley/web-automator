@@ -8,14 +8,14 @@ import java.awt.event.MouseEvent;
 
 import org.auriferous.bot.Utils;
 
-public class KeyboardSimulator {
+public class Keyboard {
 	private static final String SHIFT_KEYS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ¬!\"£$%^&*()_+{}:@~<>?|€";
 	private static final int DEFAULT_MOUSE_TIME = 100;
 	private static final int DEFAULT_KEY_TIME = 200;
 	
 	private Component target;
 
-	public KeyboardSimulator(Component target) {
+	public Keyboard(Component target) {
 		this.target = target;
 	}
 	

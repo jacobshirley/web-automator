@@ -60,11 +60,19 @@ public class Tabs {
 		return !tabsList.isEmpty();
 	}
 	
+	public void setCurrentTab(Tab tab) {
+		if (tab != null) {
+			currentTabIndex = tabsList.indexOf(tab);
+		}
+	}
+	
 	public void setCurrentTab(int id) {
 		if (currentTabIndex != id) {
 			currentTabIndex = id;
-			for (TabControlListener listener : tabListeners) {
-				listener.onChangeTab(tabsList.get(currentTabIndex));
+			if (currentTabIndex >= 0) {
+				for (TabControlListener listener : tabListeners) {
+					listener.onChangeTab(tabsList.get(currentTabIndex));
+				}
 			}
 		}
 	}
@@ -88,7 +96,7 @@ public class Tabs {
 	public void closeTab(Tab tab) {
 		tabsList.remove(tab);
 		for (TabControlListener listener : tabListeners) {
-			listener.onTabRemoved(tab);
+			listener.onTabClosed(tab);
 		}
 	}
 	

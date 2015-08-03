@@ -34,9 +34,12 @@ public class ScriptExecutor implements Runnable{
 		Script s = null;
 		while (((s = scripts.poll()) != null) && this.started) {
 			int state = 0; 
+			s.onStart();
 			while ((state = s.tick()) == Script.STATE_RUNNING) {
 				Thread.yield();
 			}
+			s.onTerminate();
+			
 			System.out.println("Script exited with code: "+state);
 		}
 		Thread.yield();

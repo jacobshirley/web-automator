@@ -6,7 +6,7 @@ public interface ScriptManifest {
 	public String getID();
 	public String getName();
 	public String getVersion();
-	public String getDesc();
+	public String getDescription();
 	public String getFilesPath();
 	
 	public String getMainClass();

@@ -9,6 +9,8 @@ public interface ScriptLibrary {
 	
 	public ScriptManifest getScriptManifest(String selector);
 	
+	public ScriptManifest getScriptManifestAt(int index);
+	
 	public boolean hasScript(String selector);
 	
 	public void removeScript(String selector);

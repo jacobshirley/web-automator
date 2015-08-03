@@ -12,17 +12,20 @@ import javax.swing.WindowConstants;
 
 import org.auriferous.bot.Bot;
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.gui.scriptselector.ScriptSelector;
+import org.auriferous.bot.gui.scriptselector.ScriptSelectorListener;
 import org.auriferous.bot.gui.tabs.TabBar;
 import org.auriferous.bot.gui.tabs.TabView;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptExecutor;
+import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.scripts.OnAdTask;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabPaintListener;
 import org.auriferous.bot.tabs.Tabs;
 
-public class BotGUI extends JFrame implements ScriptSelectorListener{
+public class BotGUI extends JFrame{
 	private static final int ACTION_ADD_TASK = 0;
 	private static final int ACTION_REMOVE_TASK = 1;
 	private static final int ACTION_ENABLE_DEBUG = 2;
@@ -62,44 +65,27 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 		new Thread(new Runnable() {
 			public void run() {
 				while (true) {
-					if (tabs.hasTabs()) {
-						Tab cur = tabs.getCurrentTab();
-						TabView view = cur.getTabView();
-						
-						if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
-							view.repaint();
+					synchronized (tabs) {
+						if (tabs.hasTabs()) {
+							Tab cur = tabs.getCurrentTab();
+							TabView view = cur.getTabView();
+							
+							if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
+								view.repaint(UPDATE_INTERVAL);
+							}
+							Utils.wait(UPDATE_INTERVAL);
 						}
-						Utils.wait(UPDATE_INTERVAL);
 					}
 					Thread.yield();
 				}
 			}
 		}).start();
 		
-		bot.getTabs().openTab("www.google.co.uk");
+		tabs.openTab("www.google.co.uk");
 	}
 	
 	private ScriptSelector createScriptSelector() {
-		return new ScriptSelector(this);
-	}
-	
-	@Override
-	public void onScriptSelected(String name) {
-		//bot.getTabs().openTab("www.youtube.com");
-		//System.out.println(bot.getTabs().getCurrentTab().getID());
-		Tab currentTab = bot.getTabs().getCurrentTab();
-		
-		ScriptContext context = new ScriptContext(bot, currentTab);
-		
-		Script linkClicker = new OnAdTask(context);
-		ScriptExecutor bundle = new ScriptExecutor(context, new Script[] {linkClicker});
-		
-		if (linkClicker instanceof TabPaintListener) {
-			System.out.println("Instance");
-			currentTab.getTabView().addTabPaintListener((TabPaintListener)linkClicker);
-		}
-		
-		bundle.processScripts();//*/
+		return new ScriptSelector(this, bot);
 	}
 	
 	class MenuAction extends AbstractAction {
@@ -115,7 +101,7 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 		public void actionPerformed(ActionEvent e) {
 			switch (this.actionID) {
 			case ACTION_ADD_TASK:
-				createScriptSelector().addScriptSelectorListener(BotGUI.this);
+				createScriptSelector();
 			}
 		}
 	}

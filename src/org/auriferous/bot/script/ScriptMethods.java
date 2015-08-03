@@ -5,32 +5,42 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.input.KeyboardSimulator;
-import org.auriferous.bot.input.MouseSimulator;
+import org.auriferous.bot.input.Keyboard;
+import org.auriferous.bot.input.Mouse;
+import org.auriferous.bot.tabs.Tab;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
-public class ScriptMethods extends LoadAdapter {
-	protected ScriptContext context;
+public class ScriptMethods {
 	protected Browser browser;
 	
-	private MouseSimulator mouse;
-	private KeyboardSimulator keyboard;
+	private Mouse mouse;
+	private Keyboard keyboard;
 	
-	public static final int MOUSE_SPEED = 20;
+	private Tab target;
+	
+	public static final int DEFAULT_MOUSE_SPEED = 20;
+	
+	private int mouseSpeed = DEFAULT_MOUSE_SPEED;
 	
 	public enum ClickType {
 		LCLICK, RCLICK, NOCLICK
 	}
 
-	public ScriptMethods(ScriptContext context) {
-		this.context = context;
-		this.browser = context.getScriptTab().getBrowserWindow();
+	public ScriptMethods(Tab target) {
+		this.target = target;
 		
-		this.mouse = context.getMouse();
-		this.keyboard = context.getKeyboard();
+		this.browser = this.target.getBrowserWindow();
+		this.mouse = new Mouse(this.target.getTabView());
+		this.keyboard = new Keyboard(this.target.getTabView());
+		
+		this.target.getTabView().addTabPaintListener(this.mouse);
+	}
+	
+	public Tab getTarget() {
+		return target;
 	}
 
 	public void injectJQuery(long frameID) {
@@ -116,11 +126,19 @@ public class ScriptMethods extends LoadAdapter {
 		moveMouse(p);
 	}
 	
+	public void setMouseSpeed(int mouseSpeed) {
+		this.mouseSpeed = mouseSpeed;
+	}
+	
+	public int getMouseSpeed() {
+		return mouseSpeed;
+	}
+	
 	public void mouse(int x, int y, ClickType clickType) {
 		double x1 = mouse.getMouseX();
 		double y1 = mouse.getMouseY();
 		
-		double randSpeed = ((Math.random() * MOUSE_SPEED) / 2.0 + MOUSE_SPEED) / 10.0;
+		double randSpeed = ((Math.random() * mouseSpeed) / 2.0 + mouseSpeed) / 10.0;
 		
 		humanWindMouse(x1, y1, x, y, 7, 5, 10.0 / randSpeed, 15.0 / randSpeed, 10.0 * randSpeed);
 		
@@ -152,7 +170,7 @@ public class ScriptMethods extends LoadAdapter {
 	}
 	
 	public void scrollMouse(boolean up, int notches) {
-		context.getMouse().scrollMouse(up, notches);
+		this.mouse.scrollMouse(up, notches);
 	}
 	
 	private double hypot(double dx, double dy) {
@@ -171,7 +189,7 @@ public class ScriptMethods extends LoadAdapter {
 		double randomDist = 0;
 		int W = 0;
 		
-		int MSP = MOUSE_SPEED;
+		int MSP = mouseSpeed;
 		
 		double sqrt2 = Math.sqrt(2);
 		double sqrt3 = Math.sqrt(3);
@@ -255,5 +273,9 @@ public class ScriptMethods extends LoadAdapter {
 	
 	public void type(int id) {
 		keyboard.type(id);
+	}
+
+	public Browser getBrowser() {
+		return browser;
 	}
 }
