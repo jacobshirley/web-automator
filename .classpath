@@ -9,6 +9,5 @@
 			<attribute name="javadoc_location" value="file:/C:/Users/Jacob/Desktop/chromium/doc/javadoc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/asm-5.0.4/lib/asm-5.0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

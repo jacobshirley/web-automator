@@ -16,11 +16,6 @@ public class ScriptContext {
 	public ScriptContext(Bot bot) {
 		this.bot = bot;
 		
-		this.tabs = bot.getTabs();
-	}
-	
-	public Tabs getTabs() {
-		return tabs;
 	}
 
 	public Frame getBotGUI() {

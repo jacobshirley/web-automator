@@ -39,6 +39,8 @@ public class Tabs {
 
 		tab.setID(tabsList.indexOf(tab));
 		
+		System.out.println(tabListeners.size());
+		
 		for (TabControlListener listener : tabListeners) {
 			listener.onTabAdded(tab);
 		}

@@ -46,7 +46,7 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 		//this.browser.loadURL("https://www.google.com/intx/en_uk/work/apps/business/products/gmail/index.html?utm_source=gdn&utm_medium=display&utm_campaign=emea-gb-en-gmail-rmkt-all-trial-120077397&utm_content=puppyscrubber");
 		
 		currentTab = openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
-		context.getTabs().addTabControlListener(new TabControlAdapter() {
+		getTabs().addTabControlListener(new TabControlAdapter() {
 			@Override
 			public void onTabClosed(Tab tab) {
 				super.onTabClosed(tab);

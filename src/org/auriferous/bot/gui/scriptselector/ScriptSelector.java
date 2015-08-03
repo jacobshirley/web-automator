@@ -63,6 +63,7 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
         for (ScriptManifest script : bot.getScriptLibrary().getScripts()) {
         	top.add(new ScriptTreeNode(script));
         }
+        
         for (int i = 0; i < tree.getRowCount(); i++) {
             tree.expandRow(i);
         }
@@ -106,8 +107,9 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
 			
 			executor.processScripts();
 			
-			for (ScriptSelectorListener listener : scriptSelListeners)
-				listener.onScriptSelected(lastSelected.manifest);
+			for (ScriptSelectorListener listener : scriptSelListeners) {
+				listener.onScriptSelected(script);
+			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -126,7 +128,9 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
 	
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
-		lastSelected = (ScriptTreeNode) tree.getLastSelectedPathComponent();
+		Object o = tree.getLastSelectedPathComponent();
+		if (o instanceof ScriptTreeNode)
+			lastSelected = (ScriptTreeNode)o;
 	}
 	
 	class ScriptTreeNode extends DefaultMutableTreeNode {

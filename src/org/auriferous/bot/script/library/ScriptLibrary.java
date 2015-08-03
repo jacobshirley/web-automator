@@ -5,7 +5,7 @@ import java.io.File;
 public interface ScriptLibrary {
 	//Script functions
 
-	public void addScript(ScriptManifest entry, boolean merge);
+	public void addScript(ScriptManifest manifest, boolean merge);
 	
 	public ScriptManifest getScriptManifest(String selector);
 	
