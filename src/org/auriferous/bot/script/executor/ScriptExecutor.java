@@ -46,14 +46,7 @@ public class ScriptExecutor implements Runnable{
 			scripts.remove(script);
 		}
 	}
-	
-	public void processScripts() {
-		if (!this.started) {
-			this.started = true;
-			new Thread(this).start();
-		}
-	}
-	
+
 	public void resumeCurrentScript() {
 		this.pauseScript = false;
 	}
@@ -69,48 +62,57 @@ public class ScriptExecutor implements Runnable{
 	public void stop() {
 		this.started = false;
 	}
+	
+	public void processScripts() {
+		if (!this.started) {
+			this.started = true;
+			new Thread(this).start();
+		}
+	}
 
 	@Override
 	public void run() {
-		Script script = null;
-		while (((script = scripts.poll()) != null) && this.started) {
-			int state = 0;
-			
-			script.onStart();
-			
-			for (ScriptExecutionListener listener : listeners)
-				listener.onRunScript(script);
-			
-			boolean terminated = false;
-			while ((state = script.tick()) == Script.STATE_RUNNING) {
-				if (this.pauseScript) {
-					script.onPause();
-					for (ScriptExecutionListener listener : listeners)
-						listener.onPauseScript(script);
-					
-					while (this.pauseScript) {
-						Thread.yield();
+		while (this.started) {
+			Script script = null;
+			while (((script = scripts.poll()) != null)) {
+				int state = 0;
+				
+				script.onStart();
+				
+				for (ScriptExecutionListener listener : listeners)
+					listener.onRunScript(script);
+				
+				boolean terminated = false;
+				while ((state = script.tick()) == Script.STATE_RUNNING) {
+					if (this.pauseScript) {
+						script.onPause();
+						for (ScriptExecutionListener listener : listeners)
+							listener.onPauseScript(script);
+						
+						while (this.pauseScript) {
+							Thread.yield();
+						}
 					}
+					if (this.terminateScript || !this.started) {
+						terminated = true;
+						this.terminateScript = false;
+						script.onTerminate();
+						for (ScriptExecutionListener listener : listeners)
+							listener.onScriptFinished(script);
+						
+						break;
+					}
+					Thread.yield();
 				}
-				if (this.terminateScript || !this.started) {
-					terminated = true;
-					this.terminateScript = false;
-					script.onTerminate();
+				
+				if (!terminated) {
 					for (ScriptExecutionListener listener : listeners)
 						listener.onScriptFinished(script);
-					
-					break;
 				}
-				Thread.yield();
+				
+				System.out.println("Script exited with code: "+state);
 			}
-			
-			if (!terminated) {
-				for (ScriptExecutionListener listener : listeners)
-					listener.onScriptFinished(script);
-			}
-			
-			System.out.println("Script exited with code: "+state);
+			Thread.yield();
 		}
-		Thread.yield();
 	}
 }

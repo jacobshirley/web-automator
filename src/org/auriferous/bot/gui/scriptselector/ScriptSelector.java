@@ -103,9 +103,8 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
 		Script script;
 		try {
 			script = loader.loadScript(lastSelected.manifest);
-			ScriptExecutor executor = new ScriptExecutor(new Script[] {script});
-			
-			executor.processScripts();
+			ScriptExecutor executor = bot.getScriptExecutor();
+			executor.addScript(script);
 			
 			for (ScriptSelectorListener listener : scriptSelListeners) {
 				listener.onScriptSelected(script);

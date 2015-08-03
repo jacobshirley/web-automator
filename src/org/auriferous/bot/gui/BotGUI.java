@@ -1,6 +1,8 @@
 package org.auriferous.bot.gui;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -19,6 +21,7 @@ import org.auriferous.bot.gui.tabs.TabView;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.script.ScriptContext;
+import org.auriferous.bot.script.executor.ScriptExecutionListener;
 import org.auriferous.bot.script.executor.ScriptExecutor;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.scripts.OnAdTask;
@@ -26,8 +29,8 @@ import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabPaintListener;
 import org.auriferous.bot.tabs.Tabs;
 
-public class BotGUI extends JFrame implements ScriptSelectorListener{
-	private static final int ACTION_ADD_TASK = 0;
+public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExecutionListener{
+	private static final int ACTION_RUN_SCRIPT = 0;
 	private static final int ACTION_REMOVE_TASK = 1;
 	private static final int ACTION_ENABLE_DEBUG = 2;
 	
@@ -37,10 +40,19 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 	private Bot bot;
 	
 	private TabBar tabBar;
+	private Tabs userTabs;
 	
 	public BotGUI(Bot bot) {
 		super("Ad Clicker");
 		this.bot = bot;
+		
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
+				tabBar.removeAll();
+			}
+		});
 		
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setSize(1300, 1000);
@@ -51,7 +63,7 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 		JMenuBar menuBar = new JMenuBar();
 		JMenu scriptMenu = new JMenu("Scripts");
 		
-		JMenuItem addTasksItem = new JMenuItem(new MenuAction("Add", ACTION_ADD_TASK));
+		JMenuItem addTasksItem = new JMenuItem(new MenuAction("Add", ACTION_RUN_SCRIPT));
 		JMenuItem removeTasksItem = new JMenuItem(new MenuAction("Remove", ACTION_REMOVE_TASK));
 		
 		scriptMenu.add(addTasksItem);
@@ -61,33 +73,35 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 		
 		setJMenuBar(menuBar);
 		
-		final Tabs tabs = new Tabs();
+		userTabs = new Tabs();
 		
-		tabBar = new TabBar(tabs);
+		tabBar = new TabBar(userTabs);
 		add(tabBar);
 		
 		new Thread(new Runnable() {
 			public void run() {
 				while (true) {
-					synchronized (tabs) {
-						if (tabs.hasTabs()) {
-							int index = tabBar.getSelectedIndex();
-							if (index >= 0) {
-								TabView view = (TabView) tabBar.getSelectedComponent();
-								
-								if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
-									view.repaint(UPDATE_INTERVAL);
-								}
-								Utils.wait(UPDATE_INTERVAL);
+					//synchronized (tabBar) {
+						int index = tabBar.getSelectedIndex();
+						if (index >= 0) {
+							TabView view = (TabView) tabBar.getSelectedComponent();
+							
+							if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
+								view.repaint(UPDATE_INTERVAL);
 							}
+							Utils.wait(UPDATE_INTERVAL);
 						}
-					}
+					//}
 					Thread.yield();
 				}
 			}
 		}).start();
 		
-		tabs.openTab("www.google.co.uk");
+		userTabs.openTab("www.google.co.uk");
+		userTabs.openTab("www.bbc.co.uk");
+		userTabs.openTab("www.runescape.com");
+		
+		bot.getScriptExecutor().addScriptExecutionListener(this);
 	}
 	
 	private ScriptSelector createScriptSelector() {
@@ -106,7 +120,7 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			switch (this.actionID) {
-			case ACTION_ADD_TASK:
+			case ACTION_RUN_SCRIPT:
 				createScriptSelector().addScriptSelectorListener(BotGUI.this);
 			}
 		}
@@ -115,5 +129,22 @@ public class BotGUI extends JFrame implements ScriptSelectorListener{
 	@Override
 	public void onScriptSelected(Script script) {
 		tabBar.addTabs(script.getTabs());
+	}
+
+	@Override
+	public void onRunScript(Script script) {
+	}
+
+	@Override
+	public void onScriptFinished(Script script) {
+	}
+
+	@Override
+	public void onTerminateScript(Script script) {
+		tabBar.removeTabs(script.getTabs());
+	}
+
+	@Override
+	public void onPauseScript(Script script) {
 	}
 }

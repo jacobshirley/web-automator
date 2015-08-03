@@ -11,7 +11,7 @@ import java.util.Set;
 import org.auriferous.bot.script.Script;
 
 public class Tabs {
-	private Map<Tab, Script> tabScriptMap = new HashMap<Tab, Script>();
+	private static final List<Tabs> TABS_INSTANCES = new ArrayList<Tabs>();
 	
 	private List<Tab> tabsList = new ArrayList<Tab>();
 
@@ -21,17 +21,6 @@ public class Tabs {
 	public Tabs() {
 	}
 	
-	public Tab openTab(String url, Script script) {
-		Tab newTab = this.openTab(url);
-		
-		tabScriptMap.put(newTab, script);
-		
-		return newTab;
-	}
-	
-	public Tab openTab(Script script) {
-		return openTab("about:blank", script);
-	}
 	
 	public Tab openTab(String url) {
 		Tab tab = new Tab(url);
@@ -51,8 +40,13 @@ public class Tabs {
 	public Tab openTab() {
 		return openTab("about:blank");
 	}
+	
 	public Tab getCurrentTab() {
 		return tabsList.get(currentTabIndex);
+	}
+	
+	public boolean containsTab(Tab tab) {
+		return this.tabsList.contains(tab);
 	}
 	
 	public boolean hasTabs() {
@@ -84,37 +78,28 @@ public class Tabs {
 		return tabsList;
 	}
 	
-	public List<Tab> getTabsByScript(Script script) {
-		List<Tab> scriptTabs = new ArrayList<Tab>();
-
-		for (Entry<Tab, Script> set : tabScriptMap.entrySet()) {
-			if (set.getValue().equals(script))
-				scriptTabs.add(set.getKey());
-		}
-		
-		return scriptTabs;
-	}
-	
 	public void closeTab(int id) {
 		Tab tab = tabsList.get(id);
-		
-		if (tabScriptMap.containsKey(tab))
-			tabScriptMap.remove(tab);
 		
 		closeTab(tab);
 	}
 	
 	public void closeTab(Tab tab) {
+		tab.getBrowserWindow().dispose();
 		tabsList.remove(tab);
 		for (TabControlListener listener : tabListeners) {
 			listener.onTabClosed(tab);
 		}
 	}
 	
-	public void closeTabsByScript(Script script) {
-		for (Tab tab : getTabsByScript(script)) {
-			closeTab(tab);
+	public void closeAll() {
+		for (Tab tab : tabsList) {
+			tab.getBrowserWindow().dispose();
+			for (TabControlListener listener : tabListeners) {
+				listener.onTabClosed(tab);
+			}
 		}
+		tabsList.clear();
 	}
 	
 	public void addTabControlListener(TabControlListener tcL) {
@@ -123,5 +108,14 @@ public class Tabs {
 	
 	public void removeTabControlListener(TabControlListener tcL) {
 		this.tabListeners.remove(tcL);
+	}
+	
+	static {
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+		    public void run() {
+		    	for (Tabs tabs : TABS_INSTANCES)
+		    		tabs.closeAll();
+		    }
+		}));
 	}
 }

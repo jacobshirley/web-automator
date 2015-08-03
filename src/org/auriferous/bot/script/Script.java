@@ -30,6 +30,6 @@ public abstract class Script {
 	public abstract void onTerminate();
 	
 	public final Tab openTab(String url) {
-		return tabs.openTab(url, this);
+		return tabs.openTab(url);
 	}
 }

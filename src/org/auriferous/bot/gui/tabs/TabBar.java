@@ -40,6 +40,13 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 	
 	public void removeTabs(Tabs tabs) {
 		this.scriptTabs.remove(tabs);
+		
+		for (Tab tab : tabs.getTabList()) {
+			
+			tab.removeTabListener(this);
+			remove(getBarIndexByTab(tab));
+		}
+		
 		tabs.removeTabControlListener(this);
 	}
 
@@ -86,10 +93,11 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 	
 	@Override
 	public void remove(int index) {
+		Tab tab = getTabByBarIndex(index);
 		for (Tabs tabs : scriptTabs) {
-			Tab tab = getTabByBarIndex(index);
-			if (tab != null)
+			if (tabs.containsTab(tab)) {
 				tabs.closeTab(tab);
+			}
 		}
 		
 		super.remove(index);
@@ -120,6 +128,15 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 		}
 		return null;
 	}
+	
+	@Override
+	public void removeAll() {
+		super.removeAll();
+		
+		for (Tabs tabs : scriptTabs) {
+			tabs.closeAll();
+		}
+	}
 
 	@Override
 	public void stateChanged(ChangeEvent event) {
@@ -128,11 +145,8 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 		if (index >= 0) {
 			Tab tab = getTabByBarIndex(index);
 			for (Tabs tabs : scriptTabs) {
-				for (Tab tab2 : tabs.getTabList()) {
-					if (tab2.equals(tab)) {
-						tabs.setCurrentTab(tab);
-					}
-				}
+				if (tabs.containsTab(tab)) 
+					tabs.setCurrentTab(tab);
 			}
 			
 		} else {

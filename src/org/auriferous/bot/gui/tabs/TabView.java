@@ -2,6 +2,7 @@ package org.auriferous.bot.gui.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
+import java.awt.event.ComponentListener;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,12 +17,13 @@ import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 
 public class TabView extends BrowserView {
 	private List<TabPaintListener> paintListeners = new LinkedList<TabPaintListener>();
-	private int c;
-	private BrowserView browserView;
 	private long lastPainted = 0;
+	
+	private Browser browser;
 	
 	public TabView(Browser browser) {
 		super(browser);
+		this.browser = browser;
 	}
 	
 	@Override

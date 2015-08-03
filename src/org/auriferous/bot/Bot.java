@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import org.auriferous.bot.gui.BotGUI;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
+import org.auriferous.bot.script.executor.ScriptExecutionListener;
+import org.auriferous.bot.script.executor.ScriptExecutor;
 import org.auriferous.bot.script.library.ScriptLibrary;
 import org.auriferous.bot.script.library.xml.XMLScriptLibrary;
 import org.auriferous.bot.script.library.xml.XMLScriptManifest;
@@ -24,6 +26,7 @@ public class Bot {
 	private JFrame botGUI;
 	private ScriptLibrary scriptLibrary;
 	private ScriptLoader scriptLoader;
+	private ScriptExecutor scriptExecutor;
 	
 	public Bot(boolean createGUI) {
 		LoggerProvider.setLevel(Level.OFF);
@@ -44,6 +47,9 @@ public class Bot {
 		scriptLoader = new ScriptLoaderImpl(new ScriptContext(this));
 		scriptLoader.addLibrary(scriptLibrary);
 		
+		scriptExecutor = new ScriptExecutor(new Script[] {});
+		scriptExecutor.processScripts();
+		
 		if (createGUI)
 			botGUI = new BotGUI(this);
 	}
@@ -54,6 +60,10 @@ public class Bot {
 	
 	public ScriptLoader getScriptLoader() {
 		return scriptLoader;
+	}
+	
+	public ScriptExecutor getScriptExecutor() {
+		return scriptExecutor;
 	}
 	
 	public Frame getBotGUI() {
