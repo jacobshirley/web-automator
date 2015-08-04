@@ -173,9 +173,9 @@ public class XMLScriptLibrary implements ScriptLibrary {
 				manifests.add(new XMLScriptManifest(src));
 			}
 		}
-		ScriptManifest[] r = new ScriptManifest[manifests.size()];
-		manifests.toArray(r);
-		return r;
+		ScriptManifest[] results = new ScriptManifest[manifests.size()];
+		manifests.toArray(results);
+		return results;
 	}
 
 	@Override

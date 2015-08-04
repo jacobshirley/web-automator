@@ -1,118 +1,143 @@
-function getVisibleElements(jquerySelector) {
-	var results = [];
+function Offset() {
+	this.left = 0;
+	this.top = 0;
+}
+
+jQuery.fn.offset2 = function() {
+    var offset2 = this.offset();
+
+	offset2.left += this.iframeOff.left;
+	offset2.top += this.iframeOff.top;
 	
+    return offset2;
+};
+
+jQuery.fn.iframeOff = new Offset();
+
+function _findElementsInIFrames(parent, sel, offset) {
+	var el = parent.find(sel);
+
+	if (el.length > 0) {
+		el.each(function (i) {
+			var $this = $(this);
+			
+			$this.iframeOff.left = offset.left;
+			$this.iframeOff.top = offset.top;
+		});
+	} else {
+    	parent.find("iframe").each(function(i) {
+    		var contents = null;
+    		var off = null;
+    		try {	
+    			var $this = $(this);
+    			contents = $this.contents();
+    			
+		    	off = $this.offset();
+		    	off.left += offset.left;
+		    	off.top += offset.top;
+    		} catch (e) {
+    			
+    			contents = null;
+    		}
+    		
+    		if (contents != null) {
+	    		var temp = _findElementsInIFrames(contents, sel, off);
+		    	
+	    		if (temp.length > 0) {
+	    			document.title = "checking iframes NOW 2";
+	    			
+	    			el = el.add(temp);
+		    	}
+	    	}
+    	});
+	}
+	
+	return el;
+}
+
+function findElementsInIFrames(sel) {
+	var offset = new Offset();
+	var els = _findElementsInIFrames($(document), sel, offset);
+	
+	
+	
+	return els;
+}
+
+function getVisibleElements(jquerySelector) {
 	var pageOffX = window.pageXOffset;
 	var pageOffY = window.pageYOffset;
-	
-	//document.write($("input"));
-	
-	$(jquerySelector).each(function(index) {
+
+	return findElementsInIFrames(jquerySelector).filter(function(index) {
 		var $this = $(this);
 		var offset = $this.offset();
+		
+		var offset2 = $this.offset2();
+		
 		var width = getElementWidth($this);
 		var height = getElementHeight($this);
 		
-		var x = offset.left + (width/2);
-		var y = offset.top + (height/2);
+		var x = offset2.left + (width/2) - pageOffX;
+		var y = offset2.top + (height/2) - pageOffY;
 		
-		if (document.elementFromPoint(x-pageOffX, y-pageOffY) == this) {
-			results.push($this);
+		var el = elementFromPointIFrames(x, y, offset.left, offset.top);
+		
+		if (el == this) {
+			return true;
 		} else {
-			var elems = document.elementsFromPoint(x-pageOffX, y-pageOffY);
+			var elems = elementsFromPointIFrames(x, y, offset.left, offset.top);
 			
 			for (var i = 0; i < elems.length; i++) {
 				if (elems[i] == this) {
-					results.push($this);
-					break;
+					return true;
 				}
 			}
 		}
 	});
-	return results;
 }
 
-function getRandomElement(elems) {
-	var random = Math.round(Math.random()*(elems.length-1));
-	return elems[random];
+function elementFromPointIFrames(x, y, relativeX, relativeY) {
+	var el = document.elementFromPoint(x, y);
+	
+	if (el instanceof HTMLIFrameElement) {
+		var win = el.contentWindow;
+		var doc = win.document;
+    	el = doc.elementFromPoint(relativeX-win.pageXOffset, relativeY-win.pageYOffset);
+    }
+    return el;
 }
 
-function getRandomTextField() {
-	var elems = getVisibleElements("input[type='text']");
-	return getRandomElement(elems);
-}
-
-function getRandomLink() {
-	var links = getVisibleElements("a, button, input[type='button'], input[type='submit']");
-	return getRandomElement(links);
+function elementsFromPointIFrames(x, y, relativeX, relativeY) {
+	var results = [];
+	var elems = document.elementsFromPoint(x, y);
+	for (var i = 0; i < elems.length; i++) {
+		var el = elems[i];
+		if (el instanceof HTMLIFrameElement) {
+			var win = el.contentWindow;
+			var doc = win.document;
+			$.merge(results, doc.elementsFromPoint(relativeX-win.pageXOffset, relativeY-win.pageYOffset));
+		} else results.push(el);
+    }
+    return results;
 }
 
 function getElementWidth(elem) {
 	var width = elem.outerWidth();
-	elem.children().each(function (i) {
+	/*elem.children().each(function (i) {
 		width = Math.max(width, getElementWidth($(this)));
-	});
+	});*/
 	return width;
 }
 
 function getElementHeight(elem) {
 	var height = elem.outerHeight();
-	elem.children().each(function (i) {
+	/*elem.children().each(function (i) {
 		height = Math.max(height, getElementHeight($(this)));
-	});
+	});*/
 	return height;
 }
 
-function Offset() {
-	this.x = 0;
-	this.y = 0;
+
+function getElements(jquerySelector) {
+	return findElementsInIFrames(jquerySelector);//getVisibleElements(jquerySelector);
 }
-
-var c = 0;
-
-function _getElementOffIframes(parent, sel, offset) {
-	var el = parent.find(sel);
-	
-	var off = el.first().offset();
-
-	if (el != undefined && el != null && off != undefined) {
-    	offset.x += off.left;
-    	offset.y += off.top;
-    		
-    	return el;
-	} else {
-    	parent.find("iframe").each(function(i) {
-    		try {
-	    		var $this = $(this);
-	    		var off = $this.offset();
-	    		
-	    		offset.x += off.left;
-	    		offset.y += off.top;
-	    		
-	    		c++;
-	    		el = _getElementOffIframes($this.contents(), sel, offset);
-				
-	    		if (el != null)
-	    			return false;
-    		} catch (e) {
-    			document.title = "error";
-    		}
-    	});
-	}
-	
-	if (el != null)
-		return el;
-	
-	return null;
-}
-
-function getElementOffIframes(sel) {
-	var offset = new Offset();
-	_getElementOffIframes($(document), sel, offset);
-	
-	document.title = "got shit done 2 "+offset.x;
-	
-	return offset;
-}
-
-
-

@@ -30,11 +30,11 @@ public class Bot {
 	
 	public Bot(boolean createGUI) {
 		LoggerProvider.setLevel(Level.OFF);
-		BrowserPreferences.setUserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+		//BrowserPreferences.setUserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
 		
 		scriptLibrary = new XMLScriptLibrary("library.xml");//new XMLScriptLibrary("Local Script Library", "1.0", "Local script library that contains the scripts on the local machine.");
 		
-		XMLScriptManifest manifest = new XMLScriptManifest("C:/Users/Jacob/workspace/Ad Clicker/bin", "org.auriferous.bot.scripts.Googler", "3", "Googler", "1.0", "RAARR", "dsfsdf");
+		XMLScriptManifest manifest = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.Googler", "3", "Googler", "1.0", "RAARR", "dsfsdf");
 		scriptLibrary.addScript(manifest, true);
 		
 		/*XMLScriptManifest manifest2 = new XMLScriptManifest("C:/Users/Jacob/workspace/Ad Clicker/bin", "org.auriferous.bot.scripts.ClickAdTask", "2", "ClickAdTask", "1.0", "RAARR", "dsfsdf");

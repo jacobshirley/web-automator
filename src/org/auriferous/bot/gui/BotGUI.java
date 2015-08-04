@@ -97,10 +97,6 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 			}
 		}).start();
 		
-		userTabs.openTab("www.google.co.uk");
-		userTabs.openTab("www.bbc.co.uk");
-		userTabs.openTab("www.runescape.com");
-		
 		bot.getScriptExecutor().addScriptExecutionListener(this);
 	}
 	

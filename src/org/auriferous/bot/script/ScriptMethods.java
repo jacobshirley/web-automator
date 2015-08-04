@@ -3,6 +3,8 @@ package org.auriferous.bot.script;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.input.Keyboard;
@@ -10,6 +12,8 @@ import org.auriferous.bot.script.input.Mouse;
 import org.auriferous.bot.tabs.Tab;
 
 import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.BrowserFunction;
+import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
@@ -58,30 +62,70 @@ public class ScriptMethods {
 			e.printStackTrace();
 		}
 	}
+	
+	public ElementRect[] getElements(String sel) {
+		String mainHref = browser.executeJavaScriptAndReturnValue("window.location.href;").getString();
+		for (Long frame : browser.getFramesIds()) {
+			injectJQuery(frame);
+			injectCode(frame);
+			
+			ElementRect[] elems = getElements(frame, sel);
 
-	public ElementRect getElementRect(long frameID, String elementCode) {
-		browser.executeJavaScript(frameID,
-				"var clicker_element = " + elementCode + "; var clicker_offset = clicker_element.offset();");
+			if (elems.length > 0) {
+				String href = browser.executeJavaScriptAndReturnValue(frame, "window.location.href;").getString();
+				
+				System.out.println("href is "+href);
+				
+				if (href.equals(mainHref)) {
+					return elems;
+				} else {
+					for (Long frame2 : browser.getFramesIds()) {
+						injectJQuery(frame2);
+						injectCode(frame2);
+						
+						ElementRect[] iframes = getElements(frame2, "iframe[src='"+href+"']");
+						
+						if (iframes.length > 0) {
+							System.out.println("Found suitable iframe");
+							
+							ElementRect iframe = iframes[0];
+							for (ElementRect rect : elems) {
+								rect.x += iframe.x;
+								rect.y += iframe.y;
+							}
+							
+							return elems;
+						}
+					}
+				}
+			}
+		}
 		
-		JSValue val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_element == null");
-		boolean b = val.getBoolean();
+		return null;
+	}
+	
+	public ElementRect[] getElements(long frameID, String elementSelector) {
+		final List<ElementRect> rects = new ArrayList<ElementRect>();
 		
-		if (!b) {
-			val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_offset.left;");
-			double x = val.getNumber();
-	
-			val = browser.executeJavaScriptAndReturnValue(frameID, "clicker_offset.top;");
-			double y = val.getNumber();
-	
-			val = browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(clicker_element);");
-			double width = val.getNumber();
-	
-			val = browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(clicker_element);");
-			double height = val.getNumber();
-	
-			return new ElementRect((int) x, (int) y, (int) width, (int) height);
-		} else
-			return null;
+		browser.executeJavaScript(frameID, "elems = getElements(\""+elementSelector+"\");");
+		
+		int len = (int) browser.executeJavaScriptAndReturnValue(frameID, "elems.length;").getNumber();
+		
+		for (int i = 0; i < len; i++) {
+			browser.executeJavaScript(frameID, "el = elems.eq("+i+"); off = el.offset2();");
+			
+			int x = (int) browser.executeJavaScriptAndReturnValue(frameID, "off.left;").getNumber();
+			int y = (int) browser.executeJavaScriptAndReturnValue(frameID, "off.top;").getNumber();
+			
+			int width = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(el);").getNumber();
+			int height = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(el);").getNumber();
+			
+			rects.add(new ElementRect(x, y, width, height));
+		}
+
+		ElementRect[] results = new ElementRect[rects.size()];
+		rects.toArray(results);
+		return results;
 	}
 	
 	public double getPageXOffset() {
@@ -100,12 +144,17 @@ public class ScriptMethods {
 		return browser.executeJavaScriptAndReturnValue("$(window).height()").getNumber();
 	}
 	
+	public ElementRect getRandomElement(long frameID, String selector) {
+		ElementRect[] elems = getElements(frameID, selector);
+		return elems[(int) Math.floor(Math.random()*elems.length)];
+	}
+	
 	public ElementRect getRandomTextField(long frameID) {
-		return getElementRect(frameID, "getRandomTextField()");
+		return getRandomElement(frameID, "input[type='text']");
 	}
 
 	public ElementRect getRandomLink(long frameID) {
-		return getElementRect(frameID, "getRandomLink()");
+		return getRandomElement(frameID, "a, button, input[type='button'], input[type='submit']");
 	}
 
 	public void clickElement(ElementRect element) {

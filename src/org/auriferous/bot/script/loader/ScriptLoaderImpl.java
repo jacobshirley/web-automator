@@ -38,7 +38,7 @@ public class ScriptLoaderImpl extends ScriptLoader{
 	@Override
 	public Script loadScript(ScriptManifest manifest) throws ClassNotFoundException {
 		String manPath = manifest.getManifestPath();
-		System.out.println(manPath);
+	
 		File folder;
 		if (!manPath.endsWith("/")) {
 			folder = new File(manPath);

@@ -27,9 +27,7 @@ public class Tabs {
 		tabsList.add(tab);
 
 		tab.setID(tabsList.indexOf(tab));
-		
-		System.out.println(tabListeners.size());
-		
+
 		for (TabControlListener listener : tabListeners) {
 			listener.onTabAdded(tab);
 		}
