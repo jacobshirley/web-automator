@@ -3,7 +3,7 @@ function Offset() {
 	this.top = 0;
 }
 
-jQuery.fn.offset2 = function() {
+$.fn.offset2 = function() {
     var offset2 = this.offset();
 
 	offset2.left += this.iframeOff.left;
@@ -12,11 +12,21 @@ jQuery.fn.offset2 = function() {
     return offset2;
 };
 
-jQuery.fn.iframeOff = new Offset();
+$.fn.iframeOff = new Offset();
+
+var oldFind = $.fn.find;
+
+$.fn.find = function(sel) {
+	return findElementsInIFrames(this, sel);
+}
+
+$.fn.findVisibles = function(sel) {
+	return findVisibleElements(this, sel);
+}
 
 function _findElementsInIFrames(parent, sel, offset) {
-	var el = parent.find(sel);
-
+	var el = oldFind.call(parent, sel);
+    
 	if (el.length > 0) {
 		el.each(function (i) {
 			var $this = $(this);
@@ -25,7 +35,7 @@ function _findElementsInIFrames(parent, sel, offset) {
 			$this.iframeOff.top = offset.top;
 		});
 	} else {
-    	parent.find("iframe").each(function(i) {
+    	oldFind.call(parent, "iframe").each(function(i) {
     		var contents = null;
     		var off = null;
     		try {	
@@ -36,7 +46,6 @@ function _findElementsInIFrames(parent, sel, offset) {
 		    	off.left += offset.left;
 		    	off.top += offset.top;
     		} catch (e) {
-    			
     			contents = null;
     		}
     		
@@ -55,20 +64,23 @@ function _findElementsInIFrames(parent, sel, offset) {
 	return el;
 }
 
-function findElementsInIFrames(sel) {
+function findElementsInIFrames(parent, sel) {
 	var offset = new Offset();
-	var els = _findElementsInIFrames($(document), sel, offset);
 	
-	
+	var els = _findElementsInIFrames(parent, sel, offset);
 	
 	return els;
 }
 
-function getVisibleElements(jquerySelector) {
+function getElements(parent, jquerySelector) {
+	return findElementsInIFrames(parent, jquerySelector);//getVisibleElements(jquerySelector);
+}
+
+function findVisibleElements(parent, jquerySelector) {
 	var pageOffX = window.pageXOffset;
 	var pageOffY = window.pageYOffset;
 
-	return findElementsInIFrames(jquerySelector).filter(function(index) {
+	return findElementsInIFrames(parent, jquerySelector).filter(function(index) {
 		var $this = $(this);
 		var offset = $this.offset();
 		
@@ -135,9 +147,4 @@ function getElementHeight(elem) {
 		height = Math.max(height, getElementHeight($(this)));
 	});*/
 	return height;
-}
-
-
-function getElements(jquerySelector) {
-	return findElementsInIFrames(jquerySelector);//getVisibleElements(jquerySelector);
 }

@@ -45,7 +45,8 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 		//this.browser.loadURL("http://www.holidayautos.co.uk/?_$ja=cid:1510255|cgid:119904326|tsid:70217|crid:63895368&clientID=581725");
 		//this.browser.loadURL("https://www.google.com/intx/en_uk/work/apps/business/products/gmail/index.html?utm_source=gdn&utm_medium=display&utm_campaign=emea-gb-en-gmail-rmkt-all-trial-120077397&utm_content=puppyscrubber");
 		
-		currentTab = openTab("naht.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		//openTab("naht.tk/random");//
+		currentTab = openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		currentTab.getTabView().addTabPaintListener(this);
 		
 		getTabs().addTabControlListener(new TabControlAdapter() {
@@ -90,14 +91,12 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 			methods.injectCode(event.getFrameId());
 
 			//title:contains('SafeFrame Container')
-			ElementRect[] rects = methods.getElements("#google_ads_frame1");
-			
-			
-			if (rects.length > 0) {
-				System.out.println("SEDFSDF");
-				Point p = rects[0].getRandomPointInRect();
+			ElementRect rects = methods.getRandomElement(event.getFrameId(), "$(document).findVisibles('a');");
+
+			if (rects != null) {
+				Point p = rects.getRandomPointInRect();
 				
-				r = rects[0];
+				r = rects;
 				
 				methods.mouse(p);
 			}

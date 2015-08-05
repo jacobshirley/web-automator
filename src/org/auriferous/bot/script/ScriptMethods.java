@@ -104,10 +104,10 @@ public class ScriptMethods {
 		return null;
 	}
 	
-	public ElementRect[] getElements(long frameID, String elementSelector) {
+	public ElementRect[] getElements(long frameID, String jqueryString) {
 		final List<ElementRect> rects = new ArrayList<ElementRect>();
 		
-		browser.executeJavaScript(frameID, "elems = getElements(\""+elementSelector+"\");");
+		browser.executeJavaScript(frameID, "elems = "+ jqueryString + (jqueryString.endsWith(";") ? "" : ";"));
 		
 		int len = (int) browser.executeJavaScriptAndReturnValue(frameID, "elems.length;").getNumber();
 		
