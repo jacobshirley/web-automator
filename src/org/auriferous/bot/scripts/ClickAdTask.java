@@ -157,8 +157,6 @@ public class ClickAdTask extends Script implements LoadListener{
 		} 
 		if (taskStage == STAGE_URL) {
 	        if (event.isMainFrame()) {
-	        	methods.injectJQuery(frameID);
-	
 	        	adElement = null;//methods.getElementRect(frameID, "$('.adsbygoogle').first()");
 	        	
 	        	Point p = adElement.getRandomPointInRect();

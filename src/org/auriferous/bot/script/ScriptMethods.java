@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.auriferous.bot.ResourceLoader;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.input.Keyboard;
 import org.auriferous.bot.script.input.Mouse;
@@ -15,6 +16,7 @@ import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserFunction;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
+import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
 public class ScriptMethods {
@@ -30,7 +32,7 @@ public class ScriptMethods {
 	private int mouseSpeed = DEFAULT_MOUSE_SPEED;
 	
 	public enum ClickType {
-		LCLICK, RCLICK, NOCLICK
+		LCLICK, RCLICK, NO_CLICK
 	}
 
 	public ScriptMethods(Tab target) {
@@ -40,73 +42,84 @@ public class ScriptMethods {
 		this.mouse = new Mouse(this.target.getTabView());
 		this.keyboard = new Keyboard(this.target.getTabView());
 		
-		this.target.getTabView().addTabPaintListener(this.mouse);
+		this.target.addTabPaintListener(this.mouse);
+		
+		for (Long frame : this.browser.getFramesIds()) {
+			injectJQuery(frame);
+	    	injectCode(frame);
+		}
+		
+		this.browser.addLoadListener(new LoadAdapter() {
+			@Override
+			public void onFinishLoadingFrame(FinishLoadingEvent event) {
+				super.onFinishLoadingFrame(event);
+				
+				long frame = event.getFrameId();
+				
+				injectJQuery(frame);
+		    	injectCode(frame);
+			}
+		});
 	}
 	
 	public Tab getTarget() {
 		return target;
 	}
 
-	public void injectJQuery(long frameID) {
+	private void injectJQuery(long frameID) {
 		try {
-			browser.executeJavaScript(frameID, Utils.loadResource("resources/js/jquery.min.js"));
+			browser.executeJavaScript(frameID, ResourceLoader.loadResourceAsString("resources/js/jquery.min.js", true));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void injectCode(long frameID) {
+	private void injectCode(long frameID) {
 		try {
-			browser.executeJavaScript(frameID, Utils.loadResource("resources/js/inject.js"));
+			browser.executeJavaScript(frameID,  ResourceLoader.loadResourceAsString("resources/js/inject.js", true));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public ElementRect[] getElements(String sel) {
+	/*public ElementRect[] getElements(String... jqueryString) {
+		
+	}*/
+	
+	public ElementRect[] getElements(String jqueryString) {
 		String mainHref = browser.executeJavaScriptAndReturnValue("window.location.href;").getString();
+		
 		for (Long frame : browser.getFramesIds()) {
-			injectJQuery(frame);
-			injectCode(frame);
-			
-			ElementRect[] elems = getElements(frame, sel);
+			ElementRect[] elems = getElements(frame, jqueryString);
 
 			if (elems.length > 0) {
 				String href = browser.executeJavaScriptAndReturnValue(frame, "window.location.href;").getString();
 				
-				System.out.println("href is "+href);
-				
 				if (href.equals(mainHref)) {
 					return elems;
 				} else {
-					for (Long frame2 : browser.getFramesIds()) {
-						injectJQuery(frame2);
-						injectCode(frame2);
+					ElementRect[] iframes = getElements("$(\"iframe[src='"+href+"']\");");
+					
+					if (iframes.length > 0) {
+						ElementRect iframe = iframes[0];
 						
-						ElementRect[] iframes = getElements(frame2, "iframe[src='"+href+"']");
-						
-						if (iframes.length > 0) {
-							System.out.println("Found suitable iframe");
-							
-							ElementRect iframe = iframes[0];
-							for (ElementRect rect : elems) {
-								rect.x += iframe.x;
-								rect.y += iframe.y;
-							}
-							
-							return elems;
+						for (ElementRect rect : elems) {
+							rect.x += iframe.x;
+							rect.y += iframe.y;
 						}
+						
+						return elems;
 					}
 				}
 			}
 		}
-		
+
 		return null;
 	}
 	
 	public ElementRect[] getElements(long frameID, String jqueryString) {
 		final List<ElementRect> rects = new ArrayList<ElementRect>();
-		
+
 		browser.executeJavaScript(frameID, "elems = "+ jqueryString + (jqueryString.endsWith(";") ? "" : ";"));
 		
 		int len = (int) browser.executeJavaScriptAndReturnValue(frameID, "elems.length;").getNumber();
@@ -144,17 +157,26 @@ public class ScriptMethods {
 		return browser.executeJavaScriptAndReturnValue("$(window).height()").getNumber();
 	}
 	
+	public ElementRect getRandomElement(String selector) {
+		ElementRect[] elems = getElements(selector);
+
+		if (elems == null)
+			return null;
+
+		return elems[(int) Math.floor(Math.random()*elems.length)];
+	}
+	
 	public ElementRect getRandomElement(long frameID, String selector) {
 		ElementRect[] elems = getElements(frameID, selector);
 		return elems[(int) Math.floor(Math.random()*elems.length)];
 	}
 	
 	public ElementRect getRandomTextField(long frameID) {
-		return getRandomElement(frameID, "input[type='text']");
+		return getRandomElement(frameID, "$(\"input[type='text']\")");
 	}
 
 	public ElementRect getRandomLink(long frameID) {
-		return getRandomElement(frameID, "a, button, input[type='button'], input[type='submit']");
+		return getRandomElement(frameID, "$(\"a, button, input[type='button'], input[type='submit']\")");
 	}
 
 	public void clickElement(ElementRect element) {
@@ -198,16 +220,20 @@ public class ScriptMethods {
 		}
 	}
 	
+	public void mouse(Point p, ClickType clickType) {
+		mouse(p.x, p.y, clickType);
+	}
+	
 	public void mouse(int x, int y) {
 		mouse(x, y, ClickType.LCLICK);
 	}
 	
 	public void moveMouse(int x, int y) {
-		mouse(x, y, ClickType.NOCLICK);
+		mouse(x, y, ClickType.NO_CLICK);
 	}
 	
 	public void mouse(Point p) {
-		mouse(p.x, p.y);
+		mouse(p, ClickType.LCLICK);
 	}
 	
 	public void moveMouse(Point p) {

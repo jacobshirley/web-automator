@@ -11,8 +11,6 @@ import java.util.Set;
 import org.auriferous.bot.script.Script;
 
 public class Tabs {
-	private static final List<Tabs> TABS_INSTANCES = new ArrayList<Tabs>();
-	
 	private List<Tab> tabsList = new ArrayList<Tab>();
 
 	private List<TabControlListener> tabListeners = new ArrayList<TabControlListener>();
@@ -106,14 +104,5 @@ public class Tabs {
 	
 	public void removeTabControlListener(TabControlListener tcL) {
 		this.tabListeners.remove(tcL);
-	}
-	
-	static {
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-		    public void run() {
-		    	for (Tabs tabs : TABS_INSTANCES)
-		    		tabs.closeAll();
-		    }
-		}));
 	}
 }

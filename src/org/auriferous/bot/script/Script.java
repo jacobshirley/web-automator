@@ -29,6 +29,10 @@ public abstract class Script {
 	public abstract void onPause();
 	public abstract void onTerminate();
 	
+	public final Tab openTab() {
+		return tabs.openTab();
+	}
+	
 	public final Tab openTab(String url) {
 		return tabs.openTab(url);
 	}

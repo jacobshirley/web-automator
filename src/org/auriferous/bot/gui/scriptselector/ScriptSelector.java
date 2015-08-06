@@ -97,7 +97,6 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
 	public void actionPerformed(ActionEvent arg0) {
 		this.dispose();
 		
-		ScriptContext context = new ScriptContext(bot);
 		ScriptLoader loader = bot.getScriptLoader();
 		
 		Script script;

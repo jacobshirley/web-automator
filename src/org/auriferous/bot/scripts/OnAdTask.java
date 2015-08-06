@@ -12,6 +12,7 @@ import org.auriferous.bot.script.ElementRect;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
+import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlAdapter;
 import org.auriferous.bot.tabs.TabControlListener;
@@ -46,7 +47,9 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 		//this.browser.loadURL("https://www.google.com/intx/en_uk/work/apps/business/products/gmail/index.html?utm_source=gdn&utm_medium=display&utm_campaign=emea-gb-en-gmail-rmkt-all-trial-120077397&utm_content=puppyscrubber");
 		
 		//openTab("naht.tk/random");//
-		currentTab = openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		System.out.println("Starting");
+		
+		currentTab = openTab("naht.tk/random");//openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		currentTab.getTabView().addTabPaintListener(this);
 		
 		getTabs().addTabControlListener(new TabControlAdapter() {
@@ -80,26 +83,46 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 		
 	}
 	
+	private ElementRect iframe;
+	
 	@Override
 	public void onFinishLoadingFrame(FinishLoadingEvent event) {
 		//super.onFinishLoadingFrame(event);
 		
-		if (event.isMainFrame()) {
-			System.out.println("loaded");
+		long frame = event.getFrameId();
 		
-			methods.injectJQuery(event.getFrameId());
-			methods.injectCode(event.getFrameId());
-
-			//title:contains('SafeFrame Container')
-			ElementRect rects = methods.getRandomElement(event.getFrameId(), "$(document).findVisibles('a');");
+		//methods.injectJQuery(frame);
+		//methods.injectCode(frame);
+		
+		if (event.isMainFrame()) {
+			System.out.println("Finished loading main frame");
+			
+			System.out.println("finding rh-title");
+			ElementRect rects = methods.getRandomElement("$('.rh-title').find('a');");
+			if (rects == null) {
+				System.out.println("Not found. Trying image_div");
+				
+				rects = methods.getRandomElement("$('#google_image_div').find('img');");
+			}
 
 			if (rects != null) {
-				Point p = rects.getRandomPointInRect();
+				rects.width -= 10;
 				
-				r = rects;
+				System.out.println("Found");
+				Point p = rects.getRandomPointInRect();//methods.getRandomLink(event.getFrameId()).getRandomPointInRect();
 				
-				methods.mouse(p);
+				r = rects;//iframe;
+				
+			
+				
+				//break;
+				methods.mouse(p, ClickType.NO_CLICK);
 			}
+			/*r = methods.getElements("$('iframe');")[1];
+			
+			Point p = r.getRandomPointInRect();
+			
+			methods.mouse(p, ClickType.NO_CLICK);*/
 		}
 	}
 

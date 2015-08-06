@@ -2,6 +2,8 @@ package org.auriferous.bot.script;
 
 import java.awt.Frame;
 
+import javax.swing.JFrame;
+
 import org.auriferous.bot.Bot;
 import org.auriferous.bot.script.input.Keyboard;
 import org.auriferous.bot.script.input.Mouse;
@@ -18,7 +20,7 @@ public class ScriptContext {
 		
 	}
 
-	public Frame getBotGUI() {
+	public JFrame getBotGUI() {
 		return bot.getBotGUI();
 	}
 }

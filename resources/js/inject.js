@@ -53,8 +53,6 @@ function _findElementsInIFrames(parent, sel, offset) {
 	    		var temp = _findElementsInIFrames(contents, sel, off);
 		    	
 	    		if (temp.length > 0) {
-	    			document.title = "checking iframes NOW 2";
-	    			
 	    			el = el.add(temp);
 		    	}
 	    	}

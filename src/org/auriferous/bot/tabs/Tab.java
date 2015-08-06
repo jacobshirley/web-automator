@@ -1,5 +1,6 @@
 package org.auriferous.bot.tabs;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import com.teamdev.jxbrowser.chromium.events.TitleEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleListener;
 
 public class Tab {
+	private static final List<Browser> BROWSER_INSTANCES = new ArrayList<Browser>();
+	
 	private int id;
 	private String originalURL;
 	
@@ -22,6 +25,9 @@ public class Tab {
 		this.id = id;
 		
 		this.browser = new Browser();
+		BROWSER_INSTANCES.add(browser);
+		
+		
 		this.tabView = new TabView(browser);
 
 		browser.addTitleListener(new TitleListener() {
@@ -85,5 +91,23 @@ public class Tab {
 	
 	public void removeTabListener(TabListener tabListener) {
 		this.tabListeners.remove(tabListener);
+	}
+	
+	public void addTabPaintListener(TabPaintListener tabPaintListener) {
+		this.tabView.addTabPaintListener(tabPaintListener);
+	}
+	
+	public void removeTabPaintListener(TabPaintListener tabPaintListener) {
+		this.tabView.removeTabPaintListener(tabPaintListener);
+	}
+	
+	static {
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+		    public void run() {
+		    	for (Browser browser : BROWSER_INSTANCES) {
+		    		browser.dispose();
+		    	}
+		    }
+		}));
 	}
 }

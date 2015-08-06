@@ -3,6 +3,7 @@ package org.auriferous.bot.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -39,20 +40,14 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 	
 	private Bot bot;
 	
-	private TabBar tabBar;
+	public TabBar tabBar;
 	private Tabs userTabs;
 	
-	public BotGUI(Bot bot) {
-		super("Ad Clicker");
-		this.bot = bot;
+	
+	public BotGUI(final Bot bot) {
+		super("Web Automator");
 		
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				super.windowClosing(e);
-				tabBar.removeAll();
-			}
-		});
+		this.bot = bot;
 		
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setSize(1300, 1000);
@@ -124,6 +119,7 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 
 	@Override
 	public void onScriptSelected(Script script) {
+		System.out.println("adding tabs");
 		tabBar.addTabs(script.getTabs());
 	}
 

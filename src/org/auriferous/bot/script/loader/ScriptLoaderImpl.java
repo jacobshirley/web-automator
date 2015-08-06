@@ -54,6 +54,8 @@ public class ScriptLoaderImpl extends ScriptLoader{
 			Constructor constr = cls.getConstructor(ScriptContext.class);
 			constr.setAccessible(true);
 			
+			System.out.println(constr);
+			
 			return (Script)constr.newInstance(context);
 		} catch (Exception e) {
 			e.printStackTrace();

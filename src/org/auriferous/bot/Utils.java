@@ -42,19 +42,6 @@ public class Utils {
 	public static boolean inRange(double x, double min, double max) {
 		return x >= min && x <= max;
 	}
-	
-	public static String loadResource(String path) throws IOException {
-		
-		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		InputStream in = classloader.getResourceAsStream(path);
-
-		DataInputStream dis = new DataInputStream(in);
-		byte[] bytes = new byte[dis.available()];
-		
-		dis.readFully(bytes, 0, bytes.length);
-		
-		return new String(bytes);
-	}
 
 	public static int random(double n) {
 		return (int)(n*Math.random());
