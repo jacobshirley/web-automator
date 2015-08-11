@@ -17,7 +17,7 @@ import org.auriferous.bot.script.library.xml.XMLScriptLibrary;
 import org.auriferous.bot.script.library.xml.XMLScriptManifest;
 import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.script.loader.ScriptLoaderImpl;
-import org.auriferous.bot.scripts.OnAdTask;
+import org.auriferous.bot.scripts.TestAdClicking;
 import org.auriferous.bot.tabs.Tabs;
 
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;

@@ -26,7 +26,7 @@ public class Googler extends Script{
 			@Override
 			public void onFinishLoadingFrame(FinishLoadingEvent event) {
 				methods = new ScriptMethods(googleTab);
-				methods.type("What the fuck?");
+				methods.type("I like to Google stuff.");
 				status = STATE_EXIT_SUCCESS;
 			}
 		});

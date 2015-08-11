@@ -35,14 +35,14 @@ import com.teamdev.jxbrowser.chromium.events.StartLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.StatusEvent;
 import com.teamdev.jxbrowser.chromium.events.StatusListener;
 
-public class OnAdTask extends Script implements TabPaintListener, LoadListener{
+public class TestAdClicking extends Script implements TabPaintListener, LoadListener{
 	private ScriptMethods methods;
 	private Browser browser;
 	private int successCode = -1;
 	private Tab currentTab;
 	private int status = STATE_RUNNING;
 	
-	public OnAdTask(ScriptManifest manifest, ScriptContext context) {
+	public TestAdClicking(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
 		//this.browser.loadURL("naht.tk");
 		//this.browser.loadURL("http://ceehu.tk/random");

@@ -30,7 +30,7 @@ import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.executor.ScriptExecutionListener;
 import org.auriferous.bot.script.executor.ScriptExecutor;
 import org.auriferous.bot.script.library.ScriptManifest;
-import org.auriferous.bot.scripts.OnAdTask;
+import org.auriferous.bot.scripts.TestAdClicking;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabPaintListener;
 import org.auriferous.bot.tabs.Tabs;

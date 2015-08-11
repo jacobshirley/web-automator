@@ -30,7 +30,7 @@ import org.auriferous.bot.script.executor.ScriptExecutor;
 import org.auriferous.bot.script.library.ScriptLibrary;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.script.loader.ScriptLoader;
-import org.auriferous.bot.scripts.OnAdTask;
+import org.auriferous.bot.scripts.TestAdClicking;
 import org.auriferous.bot.tabs.TabPaintListener;
 
 public class ScriptSelector extends JFrame implements ActionListener, TreeSelectionListener{
