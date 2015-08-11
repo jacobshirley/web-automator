@@ -102,6 +102,7 @@ public class AdClicker extends Script implements TabPaintListener{
 	}
 	
 	private String saveURL = "";
+	private String urlTitle = "";
 	
 	private long timer = 0;
 	
@@ -138,6 +139,8 @@ public class AdClicker extends Script implements TabPaintListener{
 			        		methods.moveMouse(p);
 				        	Utils.wait(500);
 				        	if (true) {
+				        		searchAdTries = 0;
+				        		
 				        		System.out.println("Clicking at "+p.x+", "+p.y);
 				        		methods.mouse(p.x, p.y);
 				        		taskStage++;
@@ -165,6 +168,7 @@ public class AdClicker extends Script implements TabPaintListener{
 				if (taskStage == STAGE_SUB_CLICKS) {
 					if (curSubClick < currentTask.subClicks) {
 						System.out.println("Clicking link in ad");
+						urlTitle = botTab.getTitle();
 						
 						ElementBounds randomLink = methods.getRandomLink();
 						
@@ -179,14 +183,24 @@ public class AdClicker extends Script implements TabPaintListener{
 				        	System.out.println("Waiting 30 seconds");
 				        	Utils.wait(30000);
 				        	
+				        	System.out.println("Going back to ad");
 				        	botTab.loadURL(saveURL);
+						} else if (searchAdTries < 5){
+							searchAdTries++;
+			        		System.out.println("Couldn't find link. Returning to ad.");
+			        		
+			        		botTab.loadURL(saveURL);
 						}
 			        	curSubClick++;
-					} else taskStage++;
+					}
+					if (curSubClick == currentTask.subClicks)
+						taskStage++;
 				}
 				if (taskStage == STAGE_DONE) {
 					reset();
 	
+					System.out.println("clicked "+urlTitle+" base "+saveURL+" from UK, same rules, ayysthetic.tk");
+					
 					currentTask = tasks.poll();
 					
 					if (currentTask == null)
@@ -195,10 +209,9 @@ public class AdClicker extends Script implements TabPaintListener{
 						startExec = true;
 				} else startExec = false;
 			} else {
-				timer = System.currentTimeMillis();
-				if (System.currentTimeMillis() < timer+10000) {
+				/*if (System.currentTimeMillis() < timer) {
 					botTab.reload();
-				}
+				}*/
 			}
 		}
 		
