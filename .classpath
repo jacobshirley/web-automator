@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="src/|lib/jxbrowser-5/3/|lib/jxbrowser-5.3/" kind="src" path=""/>
+	<classpathentry excluding="src/|lib/jxbrowser-5/3/|lib/jxbrowser-5.3/|lib/jxbrowser-5.3/" kind="src" path=""/>
+	<classpathentry kind="src" path="lib/jxbrowser-5.3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/jxbrowser-win-5.3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Jacob/Desktop/chromium/lib/jxbrowser-5.3">
