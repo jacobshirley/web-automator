@@ -18,6 +18,8 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
+import com.teamdev.jxbrowser.chromium.events.StatusEvent;
+import com.teamdev.jxbrowser.chromium.events.StatusListener;
 
 public class ScriptMethods {
 	protected Browser browser;
@@ -34,6 +36,8 @@ public class ScriptMethods {
 	public enum ClickType {
 		LCLICK, RCLICK, NO_CLICK
 	}
+	
+	private String status;
 
 	public ScriptMethods(Tab target) {
 		this.target = target;
@@ -58,6 +62,14 @@ public class ScriptMethods {
 				
 				injectJQuery(frame);
 		    	injectCode(frame);
+			}
+		});
+		
+		this.browser.addStatusListener(new StatusListener() {
+			
+			@Override
+			public void onStatusChange(StatusEvent event) {
+				status = event.getText();
 			}
 		});
 	}
@@ -86,29 +98,61 @@ public class ScriptMethods {
 		
 	}*/
 	
-	public ElementRect[] getElements(String jqueryString) {
+	public String getStatus() {
+		return status;
+	}
+	
+	public ElementBounds[] getElements(String jqueryString) {
 		String mainHref = browser.executeJavaScriptAndReturnValue("window.location.href;").getString();
+		String href = "";
+		
+		ElementBounds testEl = null;
+		ElementBounds[] foundEls = null;
 		
 		for (Long frame : browser.getFramesIds()) {
-			ElementRect[] elems = getElements(frame, jqueryString);
-
+			ElementBounds[] elems = getElements(frame, jqueryString);
 			if (elems.length > 0) {
-				String href = browser.executeJavaScriptAndReturnValue(frame, "window.location.href;").getString();
-				
-				if (href.equals(mainHref)) {
-					return elems;
+				//System.out.println("Testing "+jqueryString);
+				//System.out.println(browser.getHTML(frame));
+				if (testEl == null) {
+					href = browser.executeJavaScriptAndReturnValue(frame, "window.location.href;").getString();
+
+					foundEls = elems;
+					testEl = elems[0];
 				} else {
-					ElementRect[] iframes = getElements("$(\"iframe[src='"+href+"']\");");
+					if (elems[0].x > testEl.x && elems[0].y > testEl.y) {
+						//System.out.println("Getting highest offset");
+						href = browser.executeJavaScriptAndReturnValue(frame, "window.location.href;").getString();
+						
+						foundEls = elems;
+						testEl = elems[0];
+					}
+				}
+			}
+		}
+		
+		if (foundEls != null) {
+			if (href.equals(mainHref)) {
+				return foundEls;
+			} else {
+				//System.out.println("Searching iframes");
+				for (Long frame : browser.getFramesIds()) {
+					ElementBounds[] iframes = getElements(frame, "$(\"iframe[src='"+href+"']\").css('position', 'absolute').css('z-index', 3000);");
 					
 					if (iframes.length > 0) {
-						ElementRect iframe = iframes[0];
+						ElementBounds iframe = iframes[0];
 						
-						for (ElementRect rect : elems) {
+						//System.out.println("Found iframe "+iframes.length + " with src "+href);
+						
+						for (ElementBounds rect : foundEls) {
+							rect.setIframe(iframe);
 							rect.x += iframe.x;
 							rect.y += iframe.y;
 						}
 						
-						return elems;
+						return foundEls;
+					} else {
+						//System.out.println("not found");
 					}
 				}
 			}
@@ -117,8 +161,8 @@ public class ScriptMethods {
 		return null;
 	}
 	
-	public ElementRect[] getElements(long frameID, String jqueryString) {
-		final List<ElementRect> rects = new ArrayList<ElementRect>();
+	public ElementBounds[] getElements(long frameID, String jqueryString) {
+		final List<ElementBounds> rects = new ArrayList<ElementBounds>();
 
 		browser.executeJavaScript(frameID, "elems = "+ jqueryString + (jqueryString.endsWith(";") ? "" : ";"));
 		
@@ -133,10 +177,10 @@ public class ScriptMethods {
 			int width = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(el);").getNumber();
 			int height = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(el);").getNumber();
 			
-			rects.add(new ElementRect(x, y, width, height));
+			rects.add(new ElementBounds(x, y, width, height));
 		}
 
-		ElementRect[] results = new ElementRect[rects.size()];
+		ElementBounds[] results = new ElementBounds[rects.size()];
 		rects.toArray(results);
 		return results;
 	}
@@ -157,8 +201,8 @@ public class ScriptMethods {
 		return browser.executeJavaScriptAndReturnValue("$(window).height()").getNumber();
 	}
 	
-	public ElementRect getRandomElement(String selector) {
-		ElementRect[] elems = getElements(selector);
+	public ElementBounds getRandomElement(String selector) {
+		ElementBounds[] elems = getElements(selector);
 
 		if (elems == null)
 			return null;
@@ -166,21 +210,25 @@ public class ScriptMethods {
 		return elems[(int) Math.floor(Math.random()*elems.length)];
 	}
 	
-	public ElementRect getRandomElement(long frameID, String selector) {
-		ElementRect[] elems = getElements(frameID, selector);
+	public ElementBounds getRandomElement(long frameID, String selector) {
+		ElementBounds[] elems = getElements(frameID, selector);
 		return elems[(int) Math.floor(Math.random()*elems.length)];
 	}
 	
-	public ElementRect getRandomTextField(long frameID) {
+	public ElementBounds getRandomTextField(long frameID) {
 		return getRandomElement(frameID, "$(\"input[type='text']\")");
 	}
-
-	public ElementRect getRandomLink(long frameID) {
-		return getRandomElement(frameID, "$(\"a, button, input[type='button'], input[type='submit']\")");
+	
+	public ElementBounds getRandomLink() {
+		return getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
 	}
 
-	public void clickElement(ElementRect element) {
-		Point p = element.getRandomPointInRect();
+	public ElementBounds getRandomLink(long frameID) {
+		return getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
+	}
+
+	public void clickElement(ElementBounds element) {
+		Point p = element.getRandomPoint();
 		
 		p.x -= getPageXOffset();
 		p.y -= getPageYOffset();
@@ -188,8 +236,8 @@ public class ScriptMethods {
 		mouse(p);
 	}
 
-	public void hoverElement(ElementRect element) {
-		Point p = element.getRandomPointInRect();
+	public void hoverElement(ElementBounds element) {
+		Point p = element.getRandomPoint();
 		
 		p.x -= getPageXOffset();
 		p.y -= getPageYOffset();

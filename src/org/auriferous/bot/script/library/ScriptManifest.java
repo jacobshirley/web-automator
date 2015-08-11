@@ -1,15 +1,26 @@
 package org.auriferous.bot.script.library;
 
-public interface ScriptManifest {
-	public String getManifestPath();
+public abstract class ScriptManifest {
+	protected String src = "";
 	
-	public String getID();
-	public String getName();
-	public String getVersion();
-	public String getDescription();
-	public String getFilesPath();
+	public ScriptManifest() {
+	}
+
+	public ScriptManifest(String src) {
+		this.src = src;
+	}
+	 
+	public String getManifestSrc() {
+		return src;
+	}
 	
-	public String getMainClass();
+	public abstract String getID();
+	public abstract String getName();
+	public abstract String getVersion();
+	public abstract String getDescription();
+	public abstract String getFilesPath();
 	
-	public String getIconPath();
+	public abstract String getMainClass();
+	
+	public abstract String getIconPath();
 }

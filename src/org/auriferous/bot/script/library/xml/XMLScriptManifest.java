@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
-public class XMLScriptManifest implements ScriptManifest {
+public class XMLScriptManifest extends ScriptManifest {
 	private String manifestPath;
 	
 	private String id;
@@ -25,6 +25,8 @@ public class XMLScriptManifest implements ScriptManifest {
 	private String mainClass;
 	
 	public XMLScriptManifest(String src) {
+		super(src);
+		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -39,6 +41,7 @@ public class XMLScriptManifest implements ScriptManifest {
 	}
 	
 	public XMLScriptManifest(String src, InputSource source) {
+		super(src);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -53,8 +56,6 @@ public class XMLScriptManifest implements ScriptManifest {
 	}
 	
 	private void init(Element element) {
-		this.manifestPath = element.getAttribute("src");
-		
 		this.mainClass = XMLUtils.getElementAttr(element, "mainClass");
 		this.id = XMLUtils.getElementAttr(element, "id");
 		this.name = XMLUtils.getElementAttr(element, "name");
@@ -64,11 +65,12 @@ public class XMLScriptManifest implements ScriptManifest {
 	}
 	
 	public XMLScriptManifest(Element scriptElement) {
+		super(XMLUtils.getElementAttr(scriptElement, "src"));
 		init(scriptElement);
 	}
 	
 	public XMLScriptManifest(String src, String mainClass, String id, String name, String version, String desc, String path) {
-		this.manifestPath = src;
+		super(src);
 		
 		this.mainClass = mainClass;
 		this.id = id;
@@ -111,10 +113,5 @@ public class XMLScriptManifest implements ScriptManifest {
 	@Override
 	public String getIconPath() {
 		return null;
-	}
-
-	@Override
-	public String getManifestPath() {
-		return manifestPath;
 	}
 }

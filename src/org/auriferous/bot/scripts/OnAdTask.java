@@ -7,12 +7,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
 
+import javax.swing.JMenu;
+
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.script.ElementRect;
+import org.auriferous.bot.script.ElementBounds;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.ScriptMethods.ClickType;
+import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlAdapter;
 import org.auriferous.bot.tabs.TabControlListener;
@@ -29,6 +32,8 @@ import com.teamdev.jxbrowser.chromium.events.LoadEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadListener;
 import com.teamdev.jxbrowser.chromium.events.ProvisionalLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.StartLoadingEvent;
+import com.teamdev.jxbrowser.chromium.events.StatusEvent;
+import com.teamdev.jxbrowser.chromium.events.StatusListener;
 
 public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 	private ScriptMethods methods;
@@ -37,8 +42,8 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 	private Tab currentTab;
 	private int status = STATE_RUNNING;
 	
-	public OnAdTask(ScriptContext context) {
-		super(context);
+	public OnAdTask(ScriptManifest manifest, ScriptContext context) {
+		super(manifest, context);
 		//this.browser.loadURL("naht.tk");
 		//this.browser.loadURL("http://ceehu.tk/random");
 		//this.browser.loadURL("https://business.twitter.com/help/how-twitter-ads-work");
@@ -48,10 +53,10 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 		
 		//openTab("naht.tk/random");//
 		System.out.println("Starting");
+		//openTab("naht.tk/random");//
+		currentTab = openTab("http://www.eastpak.com/uk-en?gclid=CIyvjcvunscCFWPnwgodWkwHDg");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
-		currentTab = openTab("naht.tk/random");//openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		currentTab.getTabView().addTabPaintListener(this);
-		
 		getTabs().addTabControlListener(new TabControlAdapter() {
 			@Override
 			public void onTabClosed(Tab tab) {
@@ -77,13 +82,24 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 	public void onDocumentLoadedInMainFrame(LoadEvent event) {
 	}
 	
-	ElementRect r2 = null;
+	ElementBounds r2 = null;
 	@Override
 	public void onDocumentLoadedInFrame(FrameLoadEvent event) {
 		
 	}
 	
-	private ElementRect iframe;
+	private ElementBounds iframe;
+	
+	private ElementBounds findAds(String... jqueryStrings) {
+		ElementBounds[] results = null;
+		for (String s : jqueryStrings) {
+			System.out.println("Trying "+s);
+			results = methods.getElements(s);
+			if (results != null)
+				break;
+		}
+		return results[0];
+	}
 	
 	@Override
 	public void onFinishLoadingFrame(FinishLoadingEvent event) {
@@ -91,29 +107,16 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 		
 		long frame = event.getFrameId();
 		
-		//methods.injectJQuery(frame);
-		//methods.injectCode(frame);
-		
 		if (event.isMainFrame()) {
 			System.out.println("Finished loading main frame");
 			
-			System.out.println("finding rh-title");
-			ElementRect rects = methods.getRandomElement("$('.rh-title').find('a');");
-			if (rects == null) {
-				System.out.println("Not found. Trying image_div");
-				
-				rects = methods.getRandomElement("$('#google_image_div').find('img');");
-			}
+			ElementBounds rects = methods.getRandomLink();
 
 			if (rects != null) {
-				rects.width -= 10;
-				
 				System.out.println("Found");
-				Point p = rects.getRandomPointInRect();//methods.getRandomLink(event.getFrameId()).getRandomPointInRect();
+				Point p = rects.getRandomPoint();//methods.getRandomLink(event.getFrameId()).getRandomPointInRect();
 				
 				r = rects;//iframe;
-				
-			
 				
 				//break;
 				methods.mouse(p, ClickType.NO_CLICK);
@@ -126,7 +129,7 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 		}
 	}
 
-	private ElementRect r = null;
+	private ElementBounds r = null;
 	
 	@Override
 	public void onPaint(Graphics g) {
@@ -159,5 +162,11 @@ public class OnAdTask extends Script implements TabPaintListener, LoadListener{
 
 	@Override
 	public void onStartLoadingFrame(StartLoadingEvent event) {
+	}
+
+	@Override
+	public void onGUICreated(JMenu menu) {
+		// TODO Auto-generated method stub
+		
 	}
 }

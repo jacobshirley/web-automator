@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class XMLScriptLibrary implements ScriptLibrary {
+public class XMLScriptLibrary extends ScriptLibrary {
 	private Document document;
 	
 	private Element libraryElement;
@@ -111,7 +111,7 @@ public class XMLScriptLibrary implements ScriptLibrary {
 	public void addScript(ScriptManifest manifest, boolean merge) {
 		Element scriptElement = document.createElement("script");
 		
-		scriptElement.setAttribute("src", manifest.getManifestPath());
+		scriptElement.setAttribute("src", manifest.getManifestSrc());
 		
 		if (merge) {
 			XMLUtils.appendAttrNode(document, scriptElement, "mainClass", manifest.getMainClass());
@@ -218,7 +218,7 @@ public class XMLScriptLibrary implements ScriptLibrary {
 			
 			for (ScriptManifest manifest : library.getScripts()) {
 				Element scriptElement = document.createElement("script");
-				scriptElement.setAttribute("src", manifest.getManifestPath());
+				scriptElement.setAttribute("src", manifest.getManifestSrc());
 				
 				XMLUtils.appendAttrNode(document, scriptElement, "mainClass", manifest.getMainClass());
 				XMLUtils.appendAttrNode(document, scriptElement, "id", manifest.getID());

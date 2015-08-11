@@ -37,26 +37,30 @@ public class ScriptLoaderImpl extends ScriptLoader{
 
 	@Override
 	public Script loadScript(ScriptManifest manifest) throws ClassNotFoundException {
-		String manPath = manifest.getManifestPath();
-	
+		String manPath = manifest.getManifestSrc();
+		
 		File folder;
-		if (!manPath.endsWith("/")) {
-			folder = new File(manPath);
-			if (!folder.isDirectory())
-				folder = folder.getParentFile();
-		} else
-			folder = new File(manPath);
+		if (manPath != null && !manPath.equals("")) {
+			if (!manPath.endsWith("/")) {
+				folder = new File(manPath);
+				if (!folder.isDirectory())
+					folder = folder.getParentFile();
+			} else
+				folder = new File(manPath);
+			
+			folder = new File(folder, manifest.getFilesPath());
+		} else {
+			folder = new File(manifest.getFilesPath());
+		}
 		
 		try {
 			URLClassLoader classLoader = new URLClassLoader(new URL[] {folder.toURI().toURL()});
-			Class cls = classLoader.loadClass(manifest.getMainClass());
+			Class<?> cls = classLoader.loadClass(manifest.getMainClass());
 			
-			Constructor constr = cls.getConstructor(ScriptContext.class);
+			Constructor<?> constr = cls.getConstructor(ScriptManifest.class, ScriptContext.class);
 			constr.setAccessible(true);
 			
-			System.out.println(constr);
-			
-			return (Script)constr.newInstance(context);
+			return (Script)constr.newInstance(manifest, context);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

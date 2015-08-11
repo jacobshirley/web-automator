@@ -28,6 +28,12 @@ function _findElementsInIFrames(parent, sel, offset) {
 	var el = oldFind.call(parent, sel);
     
 	if (el.length > 0) {
+		/*try {
+    		el.first().contents();
+    	} catch (e) {
+    		document.title = "error: "+e.message;
+    	}*/
+	
 		el.each(function (i) {
 			var $this = $(this);
 			
@@ -36,6 +42,9 @@ function _findElementsInIFrames(parent, sel, offset) {
 		});
 	} else {
     	oldFind.call(parent, "iframe").each(function(i) {
+    		if (this.id == "ad_iframe") {
+    			document.title = "found: "+this.id;
+    		}
     		var contents = null;
     		var off = null;
     		try {	

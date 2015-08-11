@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Queue;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -77,7 +78,7 @@ public class TaskManager extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			switch (actionID) {
-				case 0: tasks.add(new Task("http://", -1, -1, -1, -1));
+				case 0: tasks.add(new Task("http://naht.tk", 1, 0, 0, 2));
 						break;
 				case 1: tasks.remove(taskTable.getSelectedRow());
 						break;

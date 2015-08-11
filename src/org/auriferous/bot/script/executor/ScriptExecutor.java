@@ -1,7 +1,10 @@
 package org.auriferous.bot.script.executor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -10,21 +13,21 @@ import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.tabs.Tab;
 
-public class ScriptExecutor implements Runnable{
-	private Queue<ScriptExecutorTask> tasks = new ConcurrentLinkedQueue<ScriptExecutorTask>();
-	
-	private Queue<Script> scripts = new ConcurrentLinkedQueue<Script>();
-	private boolean started;
-	
+public class ScriptExecutor {
+	private Map<Script, ScriptExecution> scripts = new HashMap<Script, ScriptExecution>();
+
 	private List<ScriptExecutionListener> listeners = new ArrayList<ScriptExecutionListener>();
-
-	private boolean terminateScript;
-
-	private boolean pauseScript;
+	
+	public ScriptExecutor() {
+	}
 	
 	public ScriptExecutor(Script[] scriptsArray) {
 		for (Script s : scriptsArray)
-			addScript(s);
+			runScript(s);
+	}
+	
+	public int getNumberOfScripts() {
+		return scripts.size();
 	}
 	
 	public void addScriptExecutionListener(ScriptExecutionListener listener) {
@@ -35,86 +38,92 @@ public class ScriptExecutor implements Runnable{
 		this.listeners.remove(listener);
 	}
 	
-	public void addScript(Script script) {
-		synchronized (scripts) {
-			scripts.add(script);
-		}
+	public void runScript(Script script) {
+		ScriptExecution execution = new ScriptExecution(script);
+		scripts.put(script, execution);
+		
+		execution.start();
 	}
 	
-	public void removeScript(Script script) {
-		synchronized (scripts) {
-			scripts.remove(script);
-		}
+	public void terminateScript(Script script) {
+		scripts.get(script).stop();
 	}
+	
+	class ScriptExecution implements Runnable {
+		private Script script;
 
-	public void resumeCurrentScript() {
-		this.pauseScript = false;
-	}
-	
-	public void pauseCurrentScript() {
-		this.pauseScript = true;
-	}
-	
-	public void terminateCurrentScript() {
-		this.terminateScript = true;
-	}
-	
-	public void stop() {
-		this.started = false;
-	}
-	
-	public void processScripts() {
-		if (!this.started) {
-			this.started = true;
-			new Thread(this).start();
+		private boolean paused = false;
+		private boolean running = false;
+		
+		public ScriptExecution(Script script) {
+			this.script = script;
 		}
-	}
-	
-	
-
-	@Override
-	public void run() {
-		while (this.started) {
-			Script script = null;
-			while (((script = scripts.poll()) != null)) {
-				int state = 0;
-				
-				script.onStart();
-				
-				for (ScriptExecutionListener listener : listeners)
-					listener.onRunScript(script);
-				
-				boolean terminated = false;
-				while ((state = script.tick()) == Script.STATE_RUNNING) {
-					if (this.pauseScript) {
-						script.onPause();
-						for (ScriptExecutionListener listener : listeners)
-							listener.onPauseScript(script);
-						
-						while (this.pauseScript) {
-							Thread.yield();
-						}
-					}
-					if (this.terminateScript || !this.started) {
-						terminated = true;
-						this.terminateScript = false;
-						script.onTerminate();
-						for (ScriptExecutionListener listener : listeners)
-							listener.onScriptFinished(script);
-						
-						break;
-					}
-					Thread.yield();
-				}
-				
-				if (!terminated) {
-					for (ScriptExecutionListener listener : listeners)
-						listener.onScriptFinished(script);
-				}
-				
-				System.out.println("Script exited with code: "+state);
+		
+		public void start() {
+			if (!this.running) {
+				this.running = true;
+				Thread t = new Thread(this);
+				t.setName(script.getManifest().getName());
+				t.start();
 			}
-			Thread.yield();
+		}
+		
+		public void stop() {
+			this.running = false;
+		}
+		
+		public void pause() {
+			this.paused = true;
+		}
+		
+		public void terminate() {
+			script.onTerminate();
+			for (ScriptExecutionListener listener : listeners)
+				listener.onScriptFinished(script);
+		}
+		
+		@Override
+		public void run() {
+			int state = 0;
+			
+			script.onStart();
+			
+			for (ScriptExecutionListener listener : listeners)
+				listener.onRunScript(script);
+			
+			while ((state = script.tick()) == Script.STATE_RUNNING) {
+				if (this.paused) {
+					script.onPause();
+					for (ScriptExecutionListener listener : listeners)
+						listener.onPauseScript(script);
+					
+					while (this.paused) {
+						if (!this.running) {
+							break;
+						}
+						Thread.yield();
+					}
+				}
+				
+				if (!this.running) {
+					terminate();
+					break;
+				}
+				
+				Thread.yield();
+			}
+
+			if (this.running) {
+				for (ScriptExecutionListener listener : listeners)
+					listener.onScriptFinished(script);
+			}
+			
+			scripts.remove(script);
+			
+			this.running = false;
+			
+			System.out.println("Script exited with code: "+state);
 		}
 	}
+	
 }

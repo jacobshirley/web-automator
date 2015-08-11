@@ -11,6 +11,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -33,20 +34,20 @@ import org.auriferous.bot.scripts.OnAdTask;
 import org.auriferous.bot.tabs.TabPaintListener;
 
 public class ScriptSelector extends JFrame implements ActionListener, TreeSelectionListener{
-	private static final long serialVersionUID = 1L;
-	
 	private JTree tree;
 	private LinkedList<ScriptSelectorListener> scriptSelListeners = new LinkedList<ScriptSelectorListener>();
 
 	private Bot bot;
 	
 	private ScriptLibrary library;
+	private JMenu scriptsMenu;
 	
-	public ScriptSelector(Frame parent, Bot bot) {
-		super("Script Selector");
+	public ScriptSelector(Frame parent, JMenu scriptsMenu, Bot bot) {
+		super("Scripts");
 		
 		this.bot = bot;
 		this.library = bot.getScriptLibrary();
+		this.scriptsMenu = scriptsMenu;
 		
 		JPanel content = new JPanel();
 		content.setLayout(new BorderLayout());
@@ -55,8 +56,7 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode(this.library.getName());
 		
 		DefaultTreeModel model = new DefaultTreeModel(top);
-		
-        //Create the list and put it in a scroll pane.
+
 		tree = new JTree(model);
         tree.setMinimumSize(new Dimension(400, 500));
         
@@ -69,8 +69,6 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
         }
         
         tree.addTreeSelectionListener(this);
-        //list.addListSelectionListener(this);
-        //list.setVisibleRowCount(5);
 
 		JScrollPane listScrollPane = new JScrollPane(tree);
 		
@@ -79,18 +77,22 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
 		JPanel buttonPanel = new JPanel();
 		
 		JButton runScript = new JButton("Run");
+		JButton importScript = new JButton("Import");
 		
 		runScript.addActionListener(this);
 		
 		buttonPanel.add(runScript);
+		buttonPanel.add(importScript);
+		
 		content.add(buttonPanel, BorderLayout.SOUTH);
 		
 		setContentPane(content);
 		
-		setSize(500, 500);
+		setMinimumSize(new Dimension(300, 100));
+		setResizable(false);
 		setLocationRelativeTo(parent);
 		setVisible(true);
-		//pack();
+		pack();
 	}
 	
 	@Override
@@ -98,12 +100,11 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
 		this.dispose();
 		
 		ScriptLoader loader = bot.getScriptLoader();
-		
-		Script script;
+
 		try {
-			script = loader.loadScript(lastSelected.manifest);
+			Script script = loader.loadScript(lastSelected.manifest);
 			ScriptExecutor executor = bot.getScriptExecutor();
-			executor.addScript(script);
+			executor.runScript(script);
 			
 			for (ScriptSelectorListener listener : scriptSelListeners) {
 				listener.onScriptSelected(script);
@@ -111,7 +112,6 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void addScriptSelectorListener(ScriptSelectorListener listener) {

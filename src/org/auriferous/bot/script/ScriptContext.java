@@ -11,16 +11,6 @@ import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.Tabs;
 
 public class ScriptContext {
-	private Bot bot;
-	
-	private Tabs tabs;
-	
 	public ScriptContext(Bot bot) {
-		this.bot = bot;
-		
-	}
-
-	public JFrame getBotGUI() {
-		return bot.getBotGUI();
 	}
 }

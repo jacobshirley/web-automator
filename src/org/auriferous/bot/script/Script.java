@@ -1,5 +1,8 @@
 package org.auriferous.bot.script;
 
+import javax.swing.JMenu;
+
+import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.Tabs;
 
@@ -11,10 +14,16 @@ public abstract class Script {
 	protected int status = STATE_RUNNING;
 	
 	private Tabs tabs;
+	private ScriptManifest manifest;
 	
-	public Script(ScriptContext context) {
+	public Script(ScriptManifest manifest, ScriptContext context) {
 		this.context = context;
+		this.manifest = manifest;
 		this.tabs = new Tabs();
+	}
+	
+	public ScriptManifest getManifest() {
+		return manifest;
 	}
 	
 	public Tabs getTabs() {
@@ -28,6 +37,8 @@ public abstract class Script {
 	public abstract void onStart();
 	public abstract void onPause();
 	public abstract void onTerminate();
+	
+	public abstract void onGUICreated(JMenu menu);
 	
 	public final Tab openTab() {
 		return tabs.openTab();

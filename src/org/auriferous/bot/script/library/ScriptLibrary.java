@@ -2,36 +2,49 @@ package org.auriferous.bot.script.library;
 
 import java.io.File;
 
-public interface ScriptLibrary {
+public abstract class ScriptLibrary {
+	
+	public ScriptLibrary() {
+		
+	}
+	
+	public String getLibraryPath() {
+		return null;
+	}
+	
+	public String getName() {
+		return null;
+	}
+	
+	public String getVersion() {
+		return null;
+	}
+	
+	public String getDescription() {
+		return null;
+	}
+	
 	//Script functions
 
-	public void addScript(ScriptManifest manifest, boolean merge);
+	public abstract void addScript(ScriptManifest manifest, boolean merge);
 	
-	public ScriptManifest getScriptManifest(String selector);
+	public abstract ScriptManifest getScriptManifest(String selector);
 	
-	public ScriptManifest getScriptManifestAt(int index);
+	public abstract ScriptManifest getScriptManifestAt(int index);
 	
-	public boolean hasScript(String selector);
+	public abstract boolean hasScript(String selector);
 	
-	public void removeScript(String selector);
+	public abstract void removeScript(String selector);
 	
-	public ScriptManifest[] getScripts();
-	
+	public abstract ScriptManifest[] getScripts();
+
 	//Library functions
 	
-	public String getLibraryPath();
+	public abstract void addLibrary(ScriptLibrary library, boolean merge);
 	
-	public String getName();
+	public  abstract void removeLibrary(ScriptLibrary library);
 	
-	public String getVersion();
+	public  abstract ScriptLibrary[] getLibraries();
 	
-	public String getDescription();
-
-	public void addLibrary(ScriptLibrary library, boolean merge);
-	
-	public void removeLibrary(ScriptLibrary library);
-	
-	public ScriptLibrary[] getLibraries();
-	
-	public boolean save(File file);
+	public  abstract boolean save(File file);
 }
