@@ -29,7 +29,7 @@ public class ScriptMethods {
 	
 	private Tab target;
 	
-	public static final int DEFAULT_MOUSE_SPEED = 20;
+	public static final int DEFAULT_MOUSE_SPEED = 30;
 	
 	private int mouseSpeed = DEFAULT_MOUSE_SPEED;
 	

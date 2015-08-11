@@ -7,6 +7,7 @@ import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -174,7 +175,7 @@ public class AdClicker extends Script implements TabPaintListener{
 						
 						if (randomLink != null) {
 							debugElement = randomLink;
-							Point p = randomLink.getRandomPoint();
+							Point p = randomLink.getRandomPointFromCentre(0.5, 0.5);
 				        	
 				        	System.out.println("Clicking at "+p.x+", "+p.y);
 				        	
@@ -198,8 +199,17 @@ public class AdClicker extends Script implements TabPaintListener{
 				}
 				if (taskStage == STAGE_DONE) {
 					reset();
-	
-					System.out.println("clicked "+urlTitle+" base "+saveURL+" from UK, same rules, ayysthetic.tk");
+					try {
+						URL url = new URL(saveURL);
+						String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
+						String base = url.getProtocol() + "://" + url.getHost() + path;
+						
+						String title = base.split("\\.")[1];
+						
+						System.out.println("clicked "+title+" base "+base+" from UK, same rules, ayysthetic.tk");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					
 					currentTask = tasks.poll();
 					
