@@ -10,11 +10,11 @@ import java.util.HashMap;
 import javax.swing.JMenu;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.script.ElementBounds;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.ScriptMethods.ClickType;
+import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlAdapter;
@@ -54,7 +54,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		//openTab("naht.tk/random");//
 		System.out.println("Starting");
 		//openTab("naht.tk/random");//
-		currentTab = openTab("http://areege.tk/");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		currentTab = openTab("rxquiehm.cf/random");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
 		currentTab.getTabView().addTabPaintListener(this);
 		getTabs().addTabControlListener(new TabControlAdapter() {
@@ -127,11 +127,13 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		if (event.isMainFrame()) {
 			System.out.println("Finished loading main frame");
 			
+			//methods.getRandomLink(false);//
 			ElementBounds rects = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
-
+			
+			methods.moveMouse(300, 300);
 			if (rects != null) {
 				System.out.println("Found");
-				Point p = rects.getRandomPoint();//methods.getRandomLink(event.getFrameId()).getRandomPointInRect();
+				Point p = rects.getRandomPointFromCentre(0.5, 0.5);
 				
 				r = rects;//iframe;
 				

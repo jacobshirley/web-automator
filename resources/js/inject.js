@@ -142,16 +142,16 @@ function elementsFromPointIFrames(x, y, relativeX, relativeY) {
 
 function getElementWidth(elem) {
 	var width = elem.outerWidth();
-	/*elem.children().each(function (i) {
+	elem.children().each(function (i) {
 		width = Math.max(width, getElementWidth($(this)));
-	});*/
+	});
 	return width;
 }
 
 function getElementHeight(elem) {
 	var height = elem.outerHeight();
-	/*elem.children().each(function (i) {
+	elem.children().each(function (i) {
 		height = Math.max(height, getElementHeight($(this)));
-	});*/
+	});
 	return height;
 }

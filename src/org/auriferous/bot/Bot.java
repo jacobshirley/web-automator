@@ -57,10 +57,10 @@ public class Bot {
 		if (createGUI)
 			botGUI = new BotGUI(this);
 		
-		/*Script c = new TestAdClicking(manifest2, new ScriptContext(this));
+		Script c = new TestAdClicking(manifest2, new ScriptContext(this));
 		scriptExecutor.runScript(c);
 		
-		botGUI.tabBar.addTabs(c.getTabs());*/
+		//botGUI.tabBar.addTabs(c.getTabs());
 	}
 	
 	public ScriptLibrary getScriptLibrary() {

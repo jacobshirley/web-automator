@@ -1,4 +1,4 @@
-package org.auriferous.bot.script;
+package org.auriferous.bot.script.dom;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -19,7 +19,7 @@ public class ElementBounds extends Rectangle{
 	public Point getRandomPointFromCentre(double percX, double percY) {
 		double w = width/2;
 		double h = height/2;
-		
+
 		int xx = (int) (getCenterX()+(w*Utils.randomRange(-percX, percX)));
 		int yy = (int) (getCenterY()+(h*Utils.randomRange(-percY, percY)));
 		

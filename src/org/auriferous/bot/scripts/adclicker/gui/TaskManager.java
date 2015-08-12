@@ -90,7 +90,7 @@ public class TaskManager extends JFrame{
 	
 	class MyTableModel extends AbstractTableModel {
 		private List<Task> tasks;
-		private String[] columns = new String[] {"URL", "Shuffles", "Shuffle Time Interval", "Time On Ad", "Clicks In Ad"};
+		private String[] columns = new String[] {"URL", "Shuffles", "Shuffle Time Interval (seconds)", "Time On Ad (seconds)", "Clicks In Ad"};
 
 		public MyTableModel(List<Task> tasks) {
 			this.tasks = tasks;

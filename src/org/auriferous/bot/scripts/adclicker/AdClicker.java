@@ -20,10 +20,10 @@ import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.gui.BotGUI;
-import org.auriferous.bot.script.ElementBounds;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
+import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.scripts.adclicker.gui.TaskManager;
 import org.auriferous.bot.tabs.Tab;
@@ -85,14 +85,6 @@ public class AdClicker extends Script implements TabPaintListener{
 		timer = System.currentTimeMillis();
 	}
 	
-	private void reset() {
-		taskStage = STAGE_SHUFFLES;
-		
-		curShuffles = 0;
-		curSubClick = 0;
-		searchAdTries = 0;
-	}
-	
 	private ElementBounds findAds(String... jqueryStrings) {
 		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle')");
 		
@@ -125,8 +117,19 @@ public class AdClicker extends Script implements TabPaintListener{
 	}
 	
 	private String saveURL = "";
+	private String blogURL = null;
 
 	private long timer = 0;
+	
+	private void reset() {
+		taskStage = STAGE_SHUFFLES;
+		blogURL = null;
+		saveURL = "";
+		
+		curShuffles = 0;
+		curSubClick = 0;
+		searchAdTries = 0;
+	}
 	
 	@Override
 	public int tick() {
@@ -149,39 +152,39 @@ public class AdClicker extends Script implements TabPaintListener{
 	        	System.out.println("Started ad clicking");
 	        	Utils.wait(2000);
 	        	
-	        	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
-        		boolean done = false;
-	        	if (adElement != null) {
-	        		adElement.width -= 35;
-	        		
-	        		debugElement = adElement;
-		        	
-		        	for (int j = 0; j < 10; j++) {
+	        	if (blogURL != null && !botTab.getBrowserWindow().getURL().equals(blogURL)) {
+	        		System.out.println("Clicked ad successfully.");
+	        		taskStage++;
+	        	} else {
+		        	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
+	
+		        	if (adElement != null) {
+		        		blogURL = botTab.getBrowserWindow().getURL();
+		        		
+		        		adElement.width -= 35;
+		        		
+		        		debugElement = adElement;
+			        	
 		        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
 		        		
 		        		methods.moveMouse(p);
 			        	Utils.wait(500);
-			        	if (true) {
-			        		searchAdTries = 0;
-			        		
-			        		System.out.println("Clicking at "+p.x+", "+p.y);
-			        		methods.mouse(p.x, p.y);
-			        		taskStage++;
-			        		done = true;
-			        		break;
-			        	}
+		        		searchAdTries = 0;
+		        		
+		        		System.out.println("Clicking at "+p.x+", "+p.y);
+		        		methods.mouse(p.x, p.y);
+		        	} else if (searchAdTries < 10) {
+		        		searchAdTries++;
+		        		System.out.println("Couldn't find ad on try "+searchAdTries+". Reloading page.");
+		        		
+		        		botTab.reload();
+		        	} else if (searchAdTries == 10){
+		        		System.out.println("Couldn't find ad. Terminating.");
+		        		return STATE_EXIT_FAILURE;
 		        	}
 	        	}
-	        	if (!done && searchAdTries < 10) {
-	        		searchAdTries++;
-	        		System.out.println("Couldn't find ad on try "+searchAdTries+". Reloading page.");
-	        		
-	        		botTab.reload();
-	        	} else if (searchAdTries == 10){
-	        		System.out.println("Couldn't find ad. Terminating.");
-	        		return STATE_EXIT_FAILURE;
-	        	}
-			} else if (taskStage == STAGE_WAIT_ON_AD) {
+			} 
+			if (taskStage == STAGE_WAIT_ON_AD) {
 				saveURL = botTab.getBrowserWindow().getURL();
 				
 				System.out.println("Saving URL "+saveURL);
@@ -195,7 +198,7 @@ public class AdClicker extends Script implements TabPaintListener{
 				if (curSubClick < currentTask.subClicks) {
 					System.out.println("Clicking link in ad");
 
-					ElementBounds randomLink = methods.getRandomLink();
+					ElementBounds randomLink = methods.getRandomLink(false);
 					
 					if (randomLink != null) {
 						debugElement = randomLink;
@@ -222,7 +225,6 @@ public class AdClicker extends Script implements TabPaintListener{
 					taskStage++;
 			}
 			if (taskStage == STAGE_DONE) {
-				reset();
 				try {
 					URL url = new URL(saveURL);
 					String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
@@ -234,6 +236,7 @@ public class AdClicker extends Script implements TabPaintListener{
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				reset();
 				taskStage = STAGE_SHUFFLES;
 				
 				currentTask = tasks.poll();

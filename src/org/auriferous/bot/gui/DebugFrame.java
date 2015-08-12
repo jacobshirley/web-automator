@@ -12,7 +12,7 @@ import org.auriferous.bot.tabs.TabControlListener;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 
-public class DebugFrame extends JFrame implements TabControlListener{
+public class DebugFrame extends JFrame {
 	private Browser debugger;
 	private BrowserView view;
 	
@@ -39,30 +39,5 @@ public class DebugFrame extends JFrame implements TabControlListener{
 	
 	public void cleanup() {
 		debugger.dispose();
-	}
-
-	@Override
-	public void onTabAdded(Tab tab) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onTabClosed(Tab tab) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onTabUpdate(Tab tab) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onTabChange(Tab tab) {
-		debug(tab.getBrowserWindow());
-		
-		System.out.println("SDFSDF");
 	}
 }

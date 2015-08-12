@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.auriferous.bot.ResourceLoader;
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.input.Keyboard;
 import org.auriferous.bot.script.input.Mouse;
 import org.auriferous.bot.tabs.Tab;
@@ -18,6 +19,8 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
+import com.teamdev.jxbrowser.chromium.events.ProvisionalLoadingEvent;
+import com.teamdev.jxbrowser.chromium.events.StartLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.StatusEvent;
 import com.teamdev.jxbrowser.chromium.events.StatusListener;
 
@@ -48,25 +51,7 @@ public class ScriptMethods {
 		
 		this.target.addTabPaintListener(this.mouse);
 		
-		for (Long frame : this.browser.getFramesIds()) {
-			injectJQuery(frame);
-	    	injectCode(frame);
-		}
-		
-		this.browser.addLoadListener(new LoadAdapter() {
-			@Override
-			public void onFinishLoadingFrame(FinishLoadingEvent event) {
-				super.onFinishLoadingFrame(event);
-				
-				long frame = event.getFrameId();
-				
-				injectJQuery(frame);
-		    	injectCode(frame);
-			}
-		});
-		
 		this.browser.addStatusListener(new StatusListener() {
-			
 			@Override
 			public void onStatusChange(StatusEvent event) {
 				status = event.getText();
@@ -81,16 +66,16 @@ public class ScriptMethods {
 	private void injectJQuery(long frameID) {
 		try {
 			browser.executeJavaScript(frameID, ResourceLoader.loadResourceAsString("resources/js/jquery.min.js", true));
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			//e.printStackTrace();
 		}
 	}
 	
 	private void injectCode(long frameID) {
 		try {
 			browser.executeJavaScript(frameID,  ResourceLoader.loadResourceAsString("resources/js/inject.js", true));
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			//e.printStackTrace();
 		}
 	}
 	
@@ -185,22 +170,30 @@ public class ScriptMethods {
 	
 	public ElementBounds[] getElements(long frameID, String jqueryString) {
 		final List<ElementBounds> rects = new ArrayList<ElementBounds>();
+		
+		injectJQuery(frameID);
+    	injectCode(frameID);
 
-		browser.executeJavaScript(frameID, "elems = "+ jqueryString + (jqueryString.endsWith(";") ? "" : ";"));
-		
-		int len = (int) browser.executeJavaScriptAndReturnValue(frameID, "elems.length;").getNumber();
-		
-		for (int i = 0; i < len; i++) {
-			browser.executeJavaScript(frameID, "el = elems.eq("+i+"); off = el.offset2();");
+    	try {
+			browser.executeJavaScript(frameID, "elems = "+ jqueryString + (jqueryString.endsWith(";") ? "" : ";"));
 			
-			int x = (int) browser.executeJavaScriptAndReturnValue(frameID, "off.left;").getNumber();
-			int y = (int) browser.executeJavaScriptAndReturnValue(frameID, "off.top;").getNumber();
+			int len = (int) browser.executeJavaScriptAndReturnValue(frameID, "elems.length;").getNumber();
 			
-			int width = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(el);").getNumber();
-			int height = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(el);").getNumber();
-			
-			rects.add(new ElementBounds(x, y, width, height));
-		}
+			for (int i = 0; i < len; i++) {
+				browser.executeJavaScript(frameID, "el = elems.eq("+i+"); off = el.offset2();");
+				
+				int x = (int) browser.executeJavaScriptAndReturnValue(
+						frameID, "off.left;").getNumber();
+				int y = (int) browser.executeJavaScriptAndReturnValue(frameID, "off.top;").getNumber();
+				
+				int width = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(el);").getNumber();
+				int height = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(el);").getNumber();
+				
+				rects.add(new ElementBounds(x, y, width, height));
+			}
+    	} catch (Exception e) {
+    		//e.printStackTrace();
+    	}
 
 		ElementBounds[] results = new ElementBounds[rects.size()];
 		rects.toArray(results);
@@ -241,12 +234,18 @@ public class ScriptMethods {
 		return getRandomElement(frameID, "$(\"input[type='text']\")");
 	}
 	
-	public ElementBounds getRandomLink() {
-		return getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
+	public ElementBounds getRandomLink(boolean includeButtons) {
+		if (includeButtons)
+			return getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
+		else
+			return getRandomElement("$(document).findVisibles('a[href^=\"http\"]');");
 	}
 
-	public ElementBounds getRandomLink(long frameID) {
-		return getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
+	public ElementBounds getRandomLink(long frameID, boolean includeButtons) {
+		if (includeButtons)
+			return getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
+		else
+			return getRandomElement(frameID, "$(document).findVisibles('a');");
 	}
 
 	public void clickElement(ElementBounds element) {
