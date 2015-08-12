@@ -72,12 +72,6 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 		super("Web Automator");
 		
 		this.bot = bot;
-	
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setSize(1300, 1000);
-		
-		setLocationRelativeTo(null);
-		setVisible(true);
 		
 		JMenuBar menuBar = new JMenuBar();
 		
@@ -123,6 +117,12 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 				debugger.cleanup();
 			}
 		});
+		
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setSize(1300, 1000);
+		
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 	
 	private JMenu createFileMenu() {

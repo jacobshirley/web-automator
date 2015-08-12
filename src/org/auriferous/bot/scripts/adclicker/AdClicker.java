@@ -27,6 +27,8 @@ import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.scripts.adclicker.gui.TaskManager;
 import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.tabs.TabControlAdapter;
+import org.auriferous.bot.tabs.TabListener;
 import org.auriferous.bot.tabs.TabPaintListener;
 
 import com.teamdev.jxbrowser.chromium.events.FailLoadingEvent;
@@ -45,6 +47,9 @@ public class AdClicker extends Script implements TabPaintListener{
 	private static final int STAGE_SUB_CLICKS = 3;
 	private static final int STAGE_DONE = 4;
 	
+	private Tab botTab;
+	private ScriptMethods methods;
+	
 	private int curShuffles = 0;
 	private int curSubClick = 0;
 	private int searchAdTries = 0;
@@ -55,12 +60,11 @@ public class AdClicker extends Script implements TabPaintListener{
 	private Task currentTask = null;
 	private LinkedList<Task> tasks = new LinkedList<Task>();
 	
+	private ElementBounds debugElement = null;
+	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
 	}
-	
-	private Tab botTab;
-	private ScriptMethods methods;
 	
 	private void executeTasks() {
 		System.out.println("opening tab");
@@ -76,6 +80,17 @@ public class AdClicker extends Script implements TabPaintListener{
 		});
 		
 		botTab.addTabPaintListener(this);
+		
+		getTabs().addTabControlListener(new TabControlAdapter() {
+			@Override
+			public void onTabClosed(Tab tab) {
+				super.onTabClosed(tab);
+				
+				if (tab.equals(botTab)) {
+					status = STATE_EXIT_FAILURE;
+				}
+			}
+		});
 		
 		methods = new ScriptMethods(botTab);
 		
@@ -99,6 +114,7 @@ public class AdClicker extends Script implements TabPaintListener{
 				ElementBounds[] result = null;
 				for (String s : jqueryStrings) {
 					System.out.println("Trying "+s);
+					
 					result = methods.getElements(s);
 					if (result != null) {
 						System.out.println("Found "+s);
@@ -276,6 +292,14 @@ public class AdClicker extends Script implements TabPaintListener{
 	}
 	
 	@Override
+	public void onPaint(Graphics g) {
+		if (debugElement != null) {
+			g.setColor(Color.green);
+			g.drawRect(debugElement.x, debugElement.y, debugElement.width, debugElement.height);
+		}
+	}
+	
+	@Override
 	public void onGUICreated(JMenu menu) {
 		JMenuItem manageTasks = new JMenuItem(new MenuAction("Manage Tasks", 0));
 		JMenuItem executeTasks = new JMenuItem(new MenuAction("Execute Tasks", 1));
@@ -301,16 +325,6 @@ public class AdClicker extends Script implements TabPaintListener{
 				case 1:	executeTasks();
 						break;
 			}
-		}
-	}
-
-	private ElementBounds debugElement = null;
-	
-	@Override
-	public void onPaint(Graphics g) {
-		if (debugElement != null) {
-			g.setColor(Color.green);
-			g.drawRect(debugElement.x, debugElement.y, debugElement.width, debugElement.height);
 		}
 	}
 }

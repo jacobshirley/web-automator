@@ -1,6 +1,8 @@
 package org.auriferous.bot.script;
 
 import java.awt.Point;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +37,9 @@ public class ScriptMethods {
 	public static final int DEFAULT_MOUSE_SPEED = 25;
 	
 	private int mouseSpeed = DEFAULT_MOUSE_SPEED;
+	
+	public static final String SHIFT_KEYS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ¬!\"£$%^&*()_+{}:@~<>?|€";
+	public static final int DEFAULT_KEY_TIME = 100;
 	
 	public enum ClickType {
 		LCLICK, RCLICK, NO_CLICK
@@ -245,7 +250,7 @@ public class ScriptMethods {
 		if (includeButtons)
 			return getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
 		else
-			return getRandomElement(frameID, "$(document).findVisibles('a');");
+			return getRandomElement(frameID, "$(document).findVisibles('a[href^=\"http\"]');");
 	}
 
 	public void clickElement(ElementBounds element) {
@@ -410,13 +415,22 @@ public class ScriptMethods {
 			mouse.moveMouse((int) Math.round(xe), (int) Math.round(ye));
 	}
 	
-	
-	public void type(String text) {
-		keyboard.type(text);
+	public final void type(String message) {
+		for (char c : message.toCharArray())
+			type(c);
 	}
 	
-	public void type(int id) {
-		keyboard.type(id);
+	public void type(int c, int time) {
+		keyboard.type(c, time, 0);
+	}
+	
+	public final void type(int c) {
+		int mods = 0;
+		if (SHIFT_KEYS.contains(""+(char)c)) {
+			keyboard.type(KeyEvent.VK_SHIFT, DEFAULT_KEY_TIME, InputEvent.SHIFT_DOWN_MASK);
+			mods |= InputEvent.SHIFT_DOWN_MASK;
+		}
+		keyboard.type(c, DEFAULT_KEY_TIME, mods);
 	}
 
 	public Browser getBrowser() {
