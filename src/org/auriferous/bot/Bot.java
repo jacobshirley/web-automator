@@ -57,10 +57,9 @@ public class Bot {
 		if (createGUI)
 			botGUI = new BotGUI(this);
 		
-		Script c = new TestAdClicking(manifest2, new ScriptContext(this));
-		scriptExecutor.runScript(c);
-		
-		//botGUI.tabBar.addTabs(c.getTabs());
+		//Script c = new TestAdClicking(manifest2, new ScriptContext(this));
+		//scriptExecutor.runScript(c);
+
 	}
 	
 	public ScriptLibrary getScriptLibrary() {

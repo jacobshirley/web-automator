@@ -237,7 +237,6 @@ public class AdClicker extends Script implements TabPaintListener{
 					e.printStackTrace();
 				}
 				reset();
-				taskStage = STAGE_SHUFFLES;
 				
 				currentTask = tasks.poll();
 				
