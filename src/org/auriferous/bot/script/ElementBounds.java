@@ -26,7 +26,7 @@ public class ElementBounds extends Rectangle{
 		return new Point(xx, yy);
 	}
 	
-	public void appendParent(ElementBounds parent) {
+	public void add(ElementBounds parent) {
 		this.x += parent.x;
 		this.y += parent.y;
 	}

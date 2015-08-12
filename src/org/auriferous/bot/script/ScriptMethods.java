@@ -29,7 +29,7 @@ public class ScriptMethods {
 	
 	private Tab target;
 	
-	public static final int DEFAULT_MOUSE_SPEED = 30;
+	public static final int DEFAULT_MOUSE_SPEED = 25;
 	
 	private int mouseSpeed = DEFAULT_MOUSE_SPEED;
 	
@@ -103,6 +103,28 @@ public class ScriptMethods {
 	}
 	
 	public ElementBounds[] getElements(String jqueryString) {
+		ElementBounds testEl = null;
+		ElementBounds[] foundEls = null;
+		
+		for (Long frame : browser.getFramesIds()) {
+			ElementBounds[] elems = getElements(frame, jqueryString);
+			if (elems.length > 0) {
+				if (testEl == null) {
+					foundEls = elems;
+					testEl = elems[0];
+				} else {
+					if (elems[0].x > testEl.x && elems[0].y > testEl.y) {
+						foundEls = elems;
+						testEl = elems[0];
+					}
+				}
+			}
+		}
+		
+		return foundEls;
+	}
+	
+	public ElementBounds[] getElementsInIFrames(String jqueryString) {
 		String mainHref = browser.executeJavaScriptAndReturnValue("window.location.href;").getString();
 		String href = "";
 		
@@ -137,7 +159,7 @@ public class ScriptMethods {
 			} else {
 				//System.out.println("Searching iframes");
 				for (Long frame : browser.getFramesIds()) {
-					ElementBounds[] iframes = getElements(frame, "$(\"iframe[src='"+href+"']\").css('position', 'absolute').css('z-index', 3000);");
+					ElementBounds[] iframes = getElements(frame, "$(\"iframe[src='"+href+"']\");");
 					
 					if (iframes.length > 0) {
 						ElementBounds iframe = iframes[0];
@@ -202,7 +224,7 @@ public class ScriptMethods {
 	}
 	
 	public ElementBounds getRandomElement(String selector) {
-		ElementBounds[] elems = getElements(selector);
+		ElementBounds[] elems = getElementsInIFrames(selector);
 
 		if (elems == null)
 			return null;

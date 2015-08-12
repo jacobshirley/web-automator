@@ -54,7 +54,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		//openTab("naht.tk/random");//
 		System.out.println("Starting");
 		//openTab("naht.tk/random");//
-		currentTab = openTab("http://www.eastpak.com/uk-en?gclid=CIyvjcvunscCFWPnwgodWkwHDg");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		currentTab = openTab("http://areege.tk/");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
 		currentTab.getTabView().addTabPaintListener(this);
 		getTabs().addTabControlListener(new TabControlAdapter() {
@@ -88,17 +88,34 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		
 	}
 	
-	private ElementBounds iframe;
-	
 	private ElementBounds findAds(String... jqueryStrings) {
-		ElementBounds[] results = null;
-		for (String s : jqueryStrings) {
-			System.out.println("Trying "+s);
-			results = methods.getElements(s);
-			if (results != null)
-				break;
+		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle')");
+		
+		if (adsbygoogle != null) {
+			System.out.println("Found basic ad");
+			
+			ElementBounds bounds = adsbygoogle[0];
+			ElementBounds[] iframe1 = methods.getElements("$('#google_ads_frame1')");
+			if (iframe1 != null) {
+				bounds.add(iframe1[0]);
+				
+				ElementBounds[] result = null;
+				for (String s : jqueryStrings) {
+					System.out.println("Trying "+s);
+					result = methods.getElements(s);
+					if (result != null) {
+						System.out.println("Found "+s);
+						bounds.add(result[0]);
+						bounds.width = result[0].width;
+						bounds.height = result[0].height;
+						break;
+					}
+				}
+			}
+			return bounds;
 		}
-		return results[0];
+		
+		return null;
 	}
 	
 	@Override
@@ -110,7 +127,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		if (event.isMainFrame()) {
 			System.out.println("Finished loading main frame");
 			
-			ElementBounds rects = methods.getRandomLink();
+			ElementBounds rects = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
 
 			if (rects != null) {
 				System.out.println("Found");

@@ -19,15 +19,17 @@ public class Tabs {
 	public Tabs() {
 	}
 	
-	
 	public Tab openTab(String url) {
 		Tab tab = new Tab(url);
 		tabsList.add(tab);
 
 		tab.setID(tabsList.indexOf(tab));
+		
+		setCurrentTab(tab);
 
 		for (TabControlListener listener : tabListeners) {
 			listener.onTabAdded(tab);
+			listener.onTabChange(tab);
 		}
 		
 		return tab;
@@ -50,17 +52,15 @@ public class Tabs {
 	}
 	
 	public void setCurrentTab(Tab tab) {
-		if (tab != null) {
-			currentTabIndex = tabsList.indexOf(tab);
-		}
+		setCurrentTab(tabsList.indexOf(tab));
 	}
 	
 	public void setCurrentTab(int id) {
-		if (currentTabIndex != id) {
+		if (id >= 0 && currentTabIndex != id) {
 			currentTabIndex = id;
 			if (currentTabIndex >= 0) {
 				for (TabControlListener listener : tabListeners) {
-					listener.onChangeTab(tabsList.get(currentTabIndex));
+					listener.onTabChange(tabsList.get(currentTabIndex));
 				}
 			}
 		}

@@ -77,7 +77,7 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 	public void onTabUpdate(Tab tab) {}
 
 	@Override
-	public void onChangeTab(Tab tab) {
+	public void onTabChange(Tab tab) {
 		setSelectedIndex(getBarIndexByTab(tab));
 	}
 	
@@ -109,7 +109,7 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 		return s;
 	}
 	
-	private int getBarIndexByTab(Tab tab) {
+	public int getBarIndexByTab(Tab tab) {
 		for (int i = 0; i < getTabCount(); i++) {
 			if (tab.getTabView().equals(getComponentAt(i))) {
 				return i;
@@ -118,7 +118,7 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 		return -1;
 	}
 	
-	private Tab getTabByBarIndex(int index) {
+	public Tab getTabByBarIndex(int index) {
 		for (Tabs tabs : scriptTabs) {
 			for (Tab tab : tabs.getTabList()) {
 				if (tab.getTabView().equals(getComponentAt(index))) {
@@ -145,8 +145,9 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 		if (index >= 0) {
 			Tab tab = getTabByBarIndex(index);
 			for (Tabs tabs : scriptTabs) {
-				if (tabs.containsTab(tab)) 
+				if (tabs.containsTab(tab)) {
 					tabs.setCurrentTab(tab);
+				}
 			}
 			
 		} else {

@@ -9,6 +9,8 @@ import org.auriferous.bot.tabs.Tabs;
 public abstract class Script {
 	public static final int STATE_RUNNING = 0;
 	public static final int STATE_EXIT_SUCCESS = 1;
+	public static final int STATE_EXIT_FAILURE = 2;
+	
 	protected ScriptContext context;
 	
 	protected int status = STATE_RUNNING;

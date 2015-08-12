@@ -17,7 +17,7 @@ public class ScriptExecutor {
 	private Map<Script, ScriptExecution> scripts = new HashMap<Script, ScriptExecution>();
 
 	private List<ScriptExecutionListener> listeners = new ArrayList<ScriptExecutionListener>();
-	
+
 	public ScriptExecutor() {
 	}
 	
@@ -54,17 +54,20 @@ public class ScriptExecutor {
 
 		private boolean paused = false;
 		private boolean running = false;
+
+		private Thread thread;
 		
 		public ScriptExecution(Script script) {
 			this.script = script;
+			this.thread = new Thread(this);
 		}
 		
 		public void start() {
 			if (!this.running) {
 				this.running = true;
-				Thread t = new Thread(this);
-				t.setName(script.getManifest().getName());
-				t.start();
+				
+				thread.setName(script.getManifest().getName());
+				thread.start();
 			}
 		}
 		

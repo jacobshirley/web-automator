@@ -81,6 +81,8 @@ public class AdClicker extends Script implements TabPaintListener{
 		
 		currentTask = tasks.poll();
 		startExec = true;
+		
+		timer = System.currentTimeMillis();
 	}
 	
 	private void reset() {
@@ -92,136 +94,164 @@ public class AdClicker extends Script implements TabPaintListener{
 	}
 	
 	private ElementBounds findAds(String... jqueryStrings) {
-		ElementBounds result = null;
-		for (String s : jqueryStrings) {
-			System.out.println("Trying "+s);
-			result = methods.getRandomElement(s);
-			if (result != null)
-				break;
+		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle')");
+		
+		if (adsbygoogle != null) {
+			System.out.println("Found basic ad");
+			
+			ElementBounds bounds = adsbygoogle[0];
+			ElementBounds[] iframe1 = methods.getElements("$('#google_ads_frame1')");
+			if (iframe1 != null) {
+				bounds.add(iframe1[0]);
+				
+				ElementBounds[] result = null;
+				for (String s : jqueryStrings) {
+					System.out.println("Trying "+s);
+					result = methods.getElements(s);
+					if (result != null) {
+						System.out.println("Found "+s);
+						
+						bounds.add(result[0]);
+						bounds.width = result[0].width;
+						bounds.height = result[0].height;
+						break;
+					}
+				}
+			}
+			return bounds;
 		}
-		return result;
+		
+		return null;
 	}
 	
 	private String saveURL = "";
-	private String urlTitle = "";
-	
+
 	private long timer = 0;
 	
 	@Override
 	public int tick() {
-		ElementBounds adElement = null;
-		if (currentTask != null) {
-			if (startExec) {
-				if (taskStage == STAGE_SHUFFLES) {
-					if (curShuffles < currentTask.shuffles) {
-						Utils.wait(currentTask.timeInterval*1000);
-						curShuffles++;
-						if (currentTask.url.endsWith("/"))
-							botTab.loadURL(currentTask.url+"random");
-						else
-							botTab.loadURL(currentTask.url+"/random");
-					} else
-						taskStage++;
-				}
-				if (taskStage == STAGE_URL) {
-		        	System.out.println("Started ad clicking");
-		        	Utils.wait(2000);
+		if (startExec) {
+			if (taskStage == STAGE_SHUFFLES) {
+				if (curShuffles < currentTask.shuffles) {
+					curShuffles++;
+					System.out.println("Doing shuffle "+curShuffles);
+					
+					Utils.wait(currentTask.timeInterval*1000);
+					
+					if (currentTask.url.endsWith("/"))
+						botTab.loadURL(currentTask.url+"random");
+					else
+						botTab.loadURL(currentTask.url+"/random");
+				} else
+					taskStage++;
+			}
+			if (taskStage == STAGE_URL) {
+	        	System.out.println("Started ad clicking");
+	        	Utils.wait(2000);
+	        	
+	        	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
+        		boolean done = false;
+	        	if (adElement != null) {
+	        		adElement.width -= 35;
+	        		
+	        		debugElement = adElement;
 		        	
-	        		adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
-	        		boolean done = false;
-		        	if (adElement != null) {
-		        		adElement.width -= 35;
+		        	for (int j = 0; j < 10; j++) {
+		        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
 		        		
-		        		debugElement = adElement;
-			        	
-			        	for (int j = 0; j < 10; j++) {
-			        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
+		        		methods.moveMouse(p);
+			        	Utils.wait(500);
+			        	if (true) {
+			        		searchAdTries = 0;
 			        		
-			        		methods.moveMouse(p);
-				        	Utils.wait(500);
-				        	if (true) {
-				        		searchAdTries = 0;
-				        		
-				        		System.out.println("Clicking at "+p.x+", "+p.y);
-				        		methods.mouse(p.x, p.y);
-				        		taskStage++;
-				        		done = true;
-				        		break;
-				        	}
+			        		System.out.println("Clicking at "+p.x+", "+p.y);
+			        		methods.mouse(p.x, p.y);
+			        		taskStage++;
+			        		done = true;
+			        		break;
 			        	}
 		        	}
-		        	if (!done && searchAdTries < 10) {
-		        		searchAdTries++;
-		        		System.out.println("Couldn't find ad. Reloading page.");
+	        	}
+	        	if (!done && searchAdTries < 10) {
+	        		searchAdTries++;
+	        		System.out.println("Couldn't find ad on try "+searchAdTries+". Reloading page.");
+	        		
+	        		botTab.reload();
+	        	} else if (searchAdTries == 10){
+	        		System.out.println("Couldn't find ad. Terminating.");
+	        		return STATE_EXIT_FAILURE;
+	        	}
+			} else if (taskStage == STAGE_WAIT_ON_AD) {
+				saveURL = botTab.getBrowserWindow().getURL();
+				
+				System.out.println("Saving URL "+saveURL);
+				
+				System.out.println("Now waiting on ad");
+				Utils.wait(currentTask.timeOnAd*1000);
+	
+				taskStage++;
+			}
+			if (taskStage == STAGE_SUB_CLICKS) {
+				if (curSubClick < currentTask.subClicks) {
+					System.out.println("Clicking link in ad");
+
+					ElementBounds randomLink = methods.getRandomLink();
+					
+					if (randomLink != null) {
+						debugElement = randomLink;
+						Point p = randomLink.getRandomPointFromCentre(0.5, 0.5);
+			        	
+			        	System.out.println("Clicking at "+p.x+", "+p.y);
+			        	
+			        	methods.mouse(p.x, p.y);
+			        	
+			        	System.out.println("Waiting 30 seconds");
+			        	Utils.wait(30000);
+			        	
+			        	System.out.println("Going back to ad");
+			        	botTab.loadURL(saveURL);
+					} else if (searchAdTries < 5){
+						searchAdTries++;
+		        		System.out.println("Couldn't find link. Returning to ad.");
 		        		
-		        		botTab.reload();
-		        	}
-				} else if (taskStage == STAGE_WAIT_ON_AD) {
-					saveURL = botTab.getBrowserWindow().getURL();
-					
-					System.out.println("Saving URL "+saveURL);
-					
-					System.out.println("Now waiting on ad");
-					Utils.wait(currentTask.timeOnAd*1000);
-		
+		        		botTab.loadURL(saveURL);
+					}
+		        	curSubClick++;
+				}
+				if (curSubClick == currentTask.subClicks)
 					taskStage++;
-				}
-				if (taskStage == STAGE_SUB_CLICKS) {
-					if (curSubClick < currentTask.subClicks) {
-						System.out.println("Clicking link in ad");
-						urlTitle = botTab.getTitle();
-						
-						ElementBounds randomLink = methods.getRandomLink();
-						
-						if (randomLink != null) {
-							debugElement = randomLink;
-							Point p = randomLink.getRandomPointFromCentre(0.5, 0.5);
-				        	
-				        	System.out.println("Clicking at "+p.x+", "+p.y);
-				        	
-				        	methods.mouse(p.x, p.y);
-				        	
-				        	System.out.println("Waiting 30 seconds");
-				        	Utils.wait(30000);
-				        	
-				        	System.out.println("Going back to ad");
-				        	botTab.loadURL(saveURL);
-						} else if (searchAdTries < 5){
-							searchAdTries++;
-			        		System.out.println("Couldn't find link. Returning to ad.");
-			        		
-			        		botTab.loadURL(saveURL);
-						}
-			        	curSubClick++;
-					}
-					if (curSubClick == currentTask.subClicks)
-						taskStage++;
-				}
-				if (taskStage == STAGE_DONE) {
-					reset();
-					try {
-						URL url = new URL(saveURL);
-						String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
-						String base = url.getProtocol() + "://" + url.getHost() + path;
-						
-						String title = base.split("\\.")[1];
-						
-						System.out.println("clicked "+title+" base "+base+" from UK, same rules, ayysthetic.tk");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+			}
+			if (taskStage == STAGE_DONE) {
+				reset();
+				try {
+					URL url = new URL(saveURL);
+					String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
+					String base = url.getProtocol() + "://" + url.getHost() + path;
 					
-					currentTask = tasks.poll();
+					String title = base.split("\\.")[1];
 					
-					if (currentTask == null)
-						status = STATE_EXIT_SUCCESS;
-					else
-						startExec = true;
-				} else startExec = false;
-			} else {
-				/*if (System.currentTimeMillis() < timer) {
-					botTab.reload();
-				}*/
+					System.out.println("clicked "+title+", base "+base+", from UK, same rules, ayysthetic.tk");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				taskStage = STAGE_SHUFFLES;
+				
+				currentTask = tasks.poll();
+				
+				if (currentTask == null) {
+					System.out.println("Finished!!");
+					status = STATE_EXIT_SUCCESS;
+				} else {
+					startExec = true;
+					return super.tick();
+				}
+			}
+			timer = System.currentTimeMillis();
+			startExec = false;
+		} else {
+			if (currentTask != null && System.currentTimeMillis()-timer >= 5000) {
+				System.out.println("It's been 5 seconds. Forcing execution.");
+				startExec = true;
 			}
 		}
 		

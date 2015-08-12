@@ -1,5 +1,6 @@
 package org.auriferous.bot.gui;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -17,6 +18,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.auriferous.bot.Bot;
 import org.auriferous.bot.Utils;
@@ -32,10 +35,11 @@ import org.auriferous.bot.script.executor.ScriptExecutor;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.scripts.TestAdClicking;
 import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.tabs.TabControlListener;
 import org.auriferous.bot.tabs.TabPaintListener;
 import org.auriferous.bot.tabs.Tabs;
 
-public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExecutionListener{
+public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExecutionListener, ChangeListener{
 	
 	static {
 		/*try {
@@ -57,6 +61,8 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 	
 	public TabBar tabBar;
 	private Tabs userTabs;
+	
+	private DebugFrame debugger;
 	
 	private JMenu scriptsMenu;
 	
@@ -87,33 +93,41 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 		userTabs = new Tabs();
 		
 		tabBar = new TabBar(userTabs);
+		tabBar.addChangeListener(this);
 		add(tabBar);
+		
+		bot.getScriptExecutor().addScriptExecutionListener(this);
+		
+		debugger = new DebugFrame(this);
+		debugger.setVisible(false);
 		
 		new Thread(new Runnable() {
 			public void run() {
 				while (true) {
-					//synchronized (tabBar) {
-						int index = tabBar.getSelectedIndex();
-						if (index >= 0) {
-							TabView view = (TabView) tabBar.getSelectedComponent();
-							
-							if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
-								view.repaint(UPDATE_INTERVAL);
-							}
-							Utils.wait(UPDATE_INTERVAL);
+					int index = tabBar.getSelectedIndex();
+					if (index >= 0) {
+						TabView view = (TabView) tabBar.getSelectedComponent();
+						
+						if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
+							view.repaint(UPDATE_INTERVAL);
 						}
-					//}
-					Thread.yield();
+						Utils.wait(UPDATE_INTERVAL);
+					}
 				}
 			}
 		}).start();
 		
-		bot.getScriptExecutor().addScriptExecutionListener(this);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				debugger.cleanup();
+			}
+		});
 	}
 	
 	private JMenu createFileMenu() {
 		JMenu fileMenu = new JMenu("File");
-		JMenuItem exitBotItem = new JMenuItem(new MenuAction("Exit", ACTION_EXIT_BOT));
+		JMenuItem exitBotItem = new JMenuItem(new MenuActionItem("Exit", ACTION_EXIT_BOT));
 		
 		fileMenu.add(exitBotItem);
 		
@@ -123,7 +137,7 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 	private JMenu createScriptsMenu() {
 		JMenu scriptsMenu = new JMenu("Scripts");
 		
-		JMenuItem runScriptItem = new JMenuItem(new MenuAction("Run", ACTION_RUN_SCRIPT));
+		JMenuItem runScriptItem = new JMenuItem(new MenuActionItem("Run", ACTION_RUN_SCRIPT));
 		
 		scriptsMenu.add(runScriptItem);
 		return scriptsMenu;
@@ -131,6 +145,9 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 	
 	private JMenu createDebugMenu() {
 		JMenu debugMenu = new JMenu("Debug");
+		
+		debugMenu.add(new MenuActionItem("Show", ACTION_ENABLE_DEBUG));
+		
 		return debugMenu;
 	}
 	
@@ -140,12 +157,13 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 
 	@Override
 	public void onScriptSelected(Script script) {
-		tabBar.addTabs(script.getTabs());
-		addScriptToMenu(script);
+		
 	}
 
 	@Override
 	public void onRunScript(Script script) {
+		tabBar.addTabs(script.getTabs());
+		addScriptToMenu(script);
 	}
 
 	@Override
@@ -173,7 +191,7 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 		script.onGUICreated(menu);
 		
 		menu.addSeparator();
-		menu.add(new MenuAction("Terminate", script, ACTION_TERMINATE_SCRIPT));
+		menu.add(new MenuActionItem("Terminate", script, ACTION_TERMINATE_SCRIPT));
 		
 		scriptMenuMap.put(script, menu);
 		scriptsMenu.add(menu);
@@ -183,22 +201,36 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 		scriptsMenu.remove(scriptMenuMap.get(script));
 		scriptMenuMap.remove(script);
 		
+		if (scriptMenuMap.isEmpty()) {
+			JMenuItem item = scriptsMenu.getItem(0);
+			
+			scriptsMenu.removeAll();
+			scriptsMenu.add(item);
+		}
+		
 		scriptsMenu.revalidate();
 	}
 	
-	class MenuAction extends AbstractAction {
+	@Override
+	public void stateChanged(ChangeEvent cE) {
+		Component comp = tabBar.getSelectedComponent();
+		if (comp != null)
+			debugger.debug(((TabView)comp).getBrowser());
+	}
+	
+	class MenuActionItem extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 		
 		private int actionID;
 
 		private Script script = null;
 		
-		public MenuAction(String text, int actionID) {
+		public MenuActionItem(String text, int actionID) {
 			super(text);
 			this.actionID = actionID;
 		}
 		
-		public MenuAction(String text, Script script, int actionID) {
+		public MenuActionItem(String text, Script script, int actionID) {
 			super(text);
 			this.script = script;
 			this.actionID = actionID;
@@ -209,6 +241,12 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 			switch (this.actionID) {
 			case ACTION_RUN_SCRIPT:
 				createScriptSelector(scriptsMenu).addScriptSelectorListener(BotGUI.this);
+				break;
+			case ACTION_ENABLE_DEBUG:
+				debugger.setVisible(true);
+				//Component comp = tabBar.getSelectedComponent();
+				//if (comp != null)
+					//debugger.debug(((TabView)comp).getBrowser());
 				break;
 			case ACTION_TERMINATE_SCRIPT:
 				bot.getScriptExecutor().terminateScript(script);

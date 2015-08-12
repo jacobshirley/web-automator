@@ -32,6 +32,7 @@ public class Bot {
 	public Bot(String args[], boolean createGUI) {
 		LoggerProvider.setLevel(Level.OFF);
 		BrowserPreferences.setUserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+		BrowserPreferences.setChromiumSwitches("--remote-debugging-port=9222");
 		
 		scriptLibrary = new XMLScriptLibrary("Local Script Library", "1.0", "Local script library that contains the scripts on the local machine.");
 		
@@ -48,28 +49,18 @@ public class Bot {
 		
 		scriptLibrary.save(new File("library.xml"));*/
 		
-		
-		
 		scriptLoader = new ScriptLoaderImpl(new ScriptContext(this));
 		scriptLoader.addLibrary(scriptLibrary);
 		
-		//Script c = new OnAdTask(manifest2, new ScriptContext(this));
-		
 		scriptExecutor = new ScriptExecutor();
-		//scriptExecutor.runScript(c);
 		
 		if (createGUI)
 			botGUI = new BotGUI(this);
 		
-		//botGUI.tabBar.addTabs(c.getTabs());
+		/*Script c = new TestAdClicking(manifest2, new ScriptContext(this));
+		scriptExecutor.runScript(c);
 		
-		/*try {
-			Script s = scriptLoader.loadScript(scriptLibrary.getScriptManifest("1"));
-			scriptExecutor.addScript(s);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		botGUI.tabBar.addTabs(c.getTabs());*/
 	}
 	
 	public ScriptLibrary getScriptLibrary() {

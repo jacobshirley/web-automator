@@ -17,6 +17,6 @@ public class TabControlAdapter implements TabControlListener {
 	}
 
 	@Override
-	public void onChangeTab(Tab tab) {
+	public void onTabChange(Tab tab) {
 	}
 }
