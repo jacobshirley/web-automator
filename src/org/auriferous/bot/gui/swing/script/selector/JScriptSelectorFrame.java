@@ -7,16 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
-import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -25,13 +20,10 @@ import javax.swing.tree.DefaultTreeModel;
 
 import org.auriferous.bot.Bot;
 import org.auriferous.bot.script.Script;
-import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.executor.ScriptExecutor;
 import org.auriferous.bot.script.library.ScriptLibrary;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.script.loader.ScriptLoader;
-import org.auriferous.bot.scripts.TestAdClicking;
-import org.auriferous.bot.tabs.view.TabPaintListener;
 
 public class JScriptSelectorFrame extends JFrame implements ActionListener, TreeSelectionListener{
 	private JTree tree;

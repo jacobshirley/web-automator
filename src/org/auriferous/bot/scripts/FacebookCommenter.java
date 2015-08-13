@@ -1,7 +1,5 @@
 package org.auriferous.bot.scripts;
 
-import javax.swing.JMenu;
-
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.library.ScriptManifest;

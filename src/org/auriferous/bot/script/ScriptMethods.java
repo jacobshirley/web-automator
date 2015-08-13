@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,13 +15,6 @@ import org.auriferous.bot.script.input.Mouse;
 import org.auriferous.bot.tabs.Tab;
 
 import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.BrowserFunction;
-import com.teamdev.jxbrowser.chromium.JSObject;
-import com.teamdev.jxbrowser.chromium.JSValue;
-import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
-import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
-import com.teamdev.jxbrowser.chromium.events.ProvisionalLoadingEvent;
-import com.teamdev.jxbrowser.chromium.events.StartLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.StatusEvent;
 import com.teamdev.jxbrowser.chromium.events.StatusListener;
 
@@ -402,12 +394,12 @@ public class ScriptMethods {
 			if ((lastX != Math.round(xs)) || (lastY != Math.round(ys)))
 				mouse.moveMouse((int) Math.round(xs), (int) Math.round(ys));
 
-			W = (int) (Utils.random((Math.round(100/MSP)))*6);
+			W = Utils.random((Math.round(100/MSP)))*6;
 			if (W < 5)
 				W = 5;
 			W = (int) Math.round(W * 0.9);
 
-			Utils.wait((int) W);
+			Utils.wait(W);
 			if (hypot(xs - xe, ys - ye) < 1)
 				break;
 		}

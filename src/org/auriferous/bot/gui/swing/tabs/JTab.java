@@ -2,8 +2,6 @@ package org.auriferous.bot.gui.swing.tabs;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.auriferous.bot.tabs.Tab;

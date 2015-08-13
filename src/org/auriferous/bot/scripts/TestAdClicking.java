@@ -3,13 +3,6 @@ package org.auriferous.bot.scripts;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.HashMap;
-
-import javax.swing.JMenu;
-
-import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
@@ -18,13 +11,9 @@ import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlAdapter;
-import org.auriferous.bot.tabs.TabControlListener;
-import org.auriferous.bot.tabs.TabListener;
 import org.auriferous.bot.tabs.view.TabPaintListener;
 
 import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.JSObject;
-import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.events.FailLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.FrameLoadEvent;
@@ -32,8 +21,6 @@ import com.teamdev.jxbrowser.chromium.events.LoadEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadListener;
 import com.teamdev.jxbrowser.chromium.events.ProvisionalLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.StartLoadingEvent;
-import com.teamdev.jxbrowser.chromium.events.StatusEvent;
-import com.teamdev.jxbrowser.chromium.events.StatusListener;
 
 public class TestAdClicking extends Script implements TabPaintListener, LoadListener{
 	private ScriptMethods methods;

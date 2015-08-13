@@ -95,7 +95,8 @@ public class Tab {
 	
 	static {
 		Thread t = new Thread(new Runnable() {
-		    public void run() {
+		    @Override
+			public void run() {
 		    	for (Browser browser : BROWSER_INSTANCES) {
 		    		browser.dispose();
 		    	}

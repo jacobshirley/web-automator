@@ -4,20 +4,15 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
-import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -26,20 +21,11 @@ import org.auriferous.bot.Bot;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.gui.swing.script.JGuiListener;
 import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorFrame;
-import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorListener;
 import org.auriferous.bot.gui.swing.tabs.JTab;
 import org.auriferous.bot.gui.swing.tabs.JTabBar;
 import org.auriferous.bot.script.Script;
-import org.auriferous.bot.script.loader.ScriptLoader;
-import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.executor.ScriptExecutionListener;
-import org.auriferous.bot.script.executor.ScriptExecutor;
-import org.auriferous.bot.script.library.ScriptManifest;
-import org.auriferous.bot.scripts.TestAdClicking;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.TabControlListener;
 import org.auriferous.bot.tabs.Tabs;
-import org.auriferous.bot.tabs.view.TabPaintListener;
 import org.auriferous.bot.tabs.view.TabView;
 
 public class JBotFrame extends JFrame implements ScriptExecutionListener, ChangeListener{
@@ -101,6 +87,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		debugger.setVisible(false);
 		
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				while (true) {
 					int index = tabBar.getSelectedIndex();

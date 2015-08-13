@@ -34,7 +34,8 @@ public class JTabComponent extends JPanel{
         setOpaque(false);
 
         JLabel label = new JLabel() {
-            public String getText() {
+            @Override
+			public String getText() {
                 int i = pane.indexOfTabComponent(JTabComponent.this);
                 if (i != -1) {
                     return pane.getTitleAt(i);
@@ -73,7 +74,8 @@ public class JTabComponent extends JPanel{
             addActionListener(this);
         }
  
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             int i = pane.indexOfTabComponent(JTabComponent.this);
             if (i != -1) {
                 pane.remove(i);
@@ -81,11 +83,13 @@ public class JTabComponent extends JPanel{
         }
  
         //we don't want to update UI for this button
-        public void updateUI() {
+        @Override
+		public void updateUI() {
         }
  
         //paint the cross
-        protected void paintComponent(Graphics g) {
+        @Override
+		protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g.create();
             //shift the image for pressed buttons
@@ -105,7 +109,8 @@ public class JTabComponent extends JPanel{
     }
  
     private final static MouseListener buttonMouseListener = new MouseAdapter() {
-        public void mouseEntered(MouseEvent e) {
+        @Override
+		public void mouseEntered(MouseEvent e) {
             Component component = e.getComponent();
             if (component instanceof AbstractButton) {
                 AbstractButton button = (AbstractButton) component;
@@ -113,7 +118,8 @@ public class JTabComponent extends JPanel{
             }
         }
  
-        public void mouseExited(MouseEvent e) {
+        @Override
+		public void mouseExited(MouseEvent e) {
             Component component = e.getComponent();
             if (component instanceof AbstractButton) {
                 AbstractButton button = (AbstractButton) component;

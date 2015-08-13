@@ -1,8 +1,5 @@
 package org.auriferous.bot.script;
 
-import javax.swing.JMenu;
-
-import org.auriferous.bot.gui.swing.script.JGuiListener;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.Tabs;

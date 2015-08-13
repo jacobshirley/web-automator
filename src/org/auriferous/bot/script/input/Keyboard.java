@@ -1,11 +1,7 @@
 package org.auriferous.bot.script.input;
 
 import java.awt.Component;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-
 import org.auriferous.bot.Utils;
 
 public class Keyboard extends Input {

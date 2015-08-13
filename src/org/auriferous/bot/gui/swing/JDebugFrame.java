@@ -1,13 +1,7 @@
 package org.auriferous.bot.gui.swing;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-
 import javax.swing.JFrame;
-
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.TabControlListener;
+import javax.swing.WindowConstants;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
@@ -20,7 +14,7 @@ public class JDebugFrame extends JFrame {
 		super("Page Debugger");
 		
 		setSize(900, 600);
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		setLocationRelativeTo(parent);
 		
 		debugger = new Browser();

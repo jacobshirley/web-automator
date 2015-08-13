@@ -3,18 +3,13 @@ package org.auriferous.bot.gui.swing.tabs;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.auriferous.bot.Utils;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlListener;
-import org.auriferous.bot.tabs.TabListener;
 import org.auriferous.bot.tabs.Tabs;
 
 public class JTabBar extends JTabbedPane implements TabControlListener, ChangeListener {
@@ -78,7 +73,7 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 		int index = this.getTabCount();
 
 		super.addTab(title, tab);
-		setTabComponentAt(index, ((JTab)tab).getTabComponent());
+		setTabComponentAt(index, tab.getTabComponent());
 		setSelectedIndex(index);
 	}
 	

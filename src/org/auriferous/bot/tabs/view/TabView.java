@@ -1,14 +1,8 @@
 package org.auriferous.bot.tabs.view;
 
-import java.awt.BorderLayout;
 import java.awt.Graphics;
-import java.awt.event.ComponentListener;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
 
 import org.auriferous.bot.tabs.Tab;
 

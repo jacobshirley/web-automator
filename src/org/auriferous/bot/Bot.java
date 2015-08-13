@@ -1,26 +1,17 @@
 package org.auriferous.bot;
 
-import java.awt.Frame;
-import java.io.File;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.logging.Level;
 
 import javax.swing.JFrame;
 
 import org.auriferous.bot.gui.swing.JBotFrame;
-import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
-import org.auriferous.bot.script.executor.ScriptExecutionListener;
 import org.auriferous.bot.script.executor.ScriptExecutor;
 import org.auriferous.bot.script.library.ScriptLibrary;
 import org.auriferous.bot.script.library.xml.XMLScriptLibrary;
 import org.auriferous.bot.script.library.xml.XMLScriptManifest;
 import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.script.loader.ScriptLoaderImpl;
-import org.auriferous.bot.scripts.TestAdClicking;
-import org.auriferous.bot.tabs.Tabs;
-
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.LoggerProvider;
 

@@ -2,24 +2,15 @@ package org.auriferous.bot.scripts.adclicker;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.gui.swing.JBotFrame;
 import org.auriferous.bot.gui.swing.script.JGuiListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
@@ -29,18 +20,11 @@ import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.scripts.adclicker.gui.TaskManager;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlAdapter;
-import org.auriferous.bot.tabs.TabListener;
 import org.auriferous.bot.tabs.view.TabPaintListener;
 import org.auriferous.bot.tabs.view.TabView;
 
-import com.teamdev.jxbrowser.chromium.events.FailLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
-import com.teamdev.jxbrowser.chromium.events.FrameLoadEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
-import com.teamdev.jxbrowser.chromium.events.LoadEvent;
-import com.teamdev.jxbrowser.chromium.events.LoadListener;
-import com.teamdev.jxbrowser.chromium.events.ProvisionalLoadingEvent;
-import com.teamdev.jxbrowser.chromium.events.StartLoadingEvent;
 
 public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 	private static final int STAGE_SHUFFLES = 0;
