@@ -32,6 +32,7 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 	private static final int STAGE_WAIT_ON_AD = 2;
 	private static final int STAGE_SUB_CLICKS = 3;
 	private static final int STAGE_DONE = 4;
+	private static final int STAGE_NEXT_TASK = 5;
 	
 	private Tab botTab;
 	private ScriptMethods methods;
@@ -84,6 +85,8 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 		startExec = true;
 		
 		timer = System.currentTimeMillis();
+		
+		reset();
 	}
 	
 	private ElementBounds findAds(String... jqueryStrings) {
@@ -182,7 +185,8 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 		        		botTab.reload();
 		        	} else if (searchAdTries == 10){
 		        		System.out.println("Couldn't find ad. Terminating.");
-		        		return STATE_EXIT_FAILURE;
+		        		
+		        		taskStage = STAGE_NEXT_TASK;
 		        	}
 	        	}
 			} 
@@ -227,6 +231,7 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 					taskStage++;
 			}
 			if (taskStage == STAGE_DONE) {
+				System.out.println("Finished currentTask");
 				try {
 					URL url = new URL(saveURL);
 					String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
@@ -238,18 +243,21 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+			if (taskStage == STAGE_NEXT_TASK) {
 				reset();
 				
 				currentTask = tasks.poll();
 				
 				if (currentTask == null) {
-					System.out.println("Finished!!");
 					status = STATE_EXIT_SUCCESS;
 				} else {
+					timer = System.currentTimeMillis();
 					startExec = true;
 					return super.tick();
 				}
 			}
+			
 			timer = System.currentTimeMillis();
 			startExec = false;
 		} else {
