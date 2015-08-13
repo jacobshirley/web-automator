@@ -1,4 +1,4 @@
-package org.auriferous.bot.gui;
+package org.auriferous.bot.gui.swing;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -23,9 +23,11 @@ import javax.swing.event.ChangeListener;
 
 import org.auriferous.bot.Bot;
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.gui.scriptselector.ScriptSelector;
-import org.auriferous.bot.gui.scriptselector.ScriptSelectorListener;
-import org.auriferous.bot.gui.tabs.TabBar;
+import org.auriferous.bot.gui.swing.script.JGuiListener;
+import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorFrame;
+import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorListener;
+import org.auriferous.bot.gui.swing.tabs.JTabBar;
+import org.auriferous.bot.gui.tabs.TabPaintListener;
 import org.auriferous.bot.gui.tabs.TabView;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.loader.ScriptLoader;
@@ -36,10 +38,9 @@ import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.scripts.TestAdClicking;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlListener;
-import org.auriferous.bot.tabs.TabPaintListener;
 import org.auriferous.bot.tabs.Tabs;
 
-public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExecutionListener, ChangeListener{
+public class JBotFrame extends JFrame implements ScriptExecutionListener, ChangeListener{
 	
 	static {
 		/*try {
@@ -59,16 +60,16 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 	
 	private Bot bot;
 	
-	public TabBar tabBar;
+	public JTabBar tabBar;
 	private Tabs userTabs;
 	
-	private DebugFrame debugger;
+	private JDebugFrame debugger;
 	
 	private JMenu scriptsMenu;
 	
 	private Map<Script, JMenu> scriptMenuMap = new HashMap<Script, JMenu>();
 	
-	public BotGUI(final Bot bot) {
+	public JBotFrame(final Bot bot) {
 		super("Web Automator");
 		
 		this.bot = bot;
@@ -86,13 +87,13 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 		
 		userTabs = new Tabs();
 		
-		tabBar = new TabBar(userTabs);
+		tabBar = new JTabBar(userTabs);
 		tabBar.addChangeListener(this);
 		add(tabBar);
 		
 		bot.getScriptExecutor().addScriptExecutionListener(this);
 		
-		debugger = new DebugFrame(this);
+		debugger = new JDebugFrame(this);
 		debugger.setVisible(false);
 		
 		new Thread(new Runnable() {
@@ -151,13 +152,8 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 		return debugMenu;
 	}
 	
-	private ScriptSelector createScriptSelector(JMenu scriptsMenu) {
-		return new ScriptSelector(this, scriptsMenu, bot);
-	}
-
-	@Override
-	public void onScriptSelected(Script script) {
-		
+	private JScriptSelectorFrame createScriptSelector(JMenu scriptsMenu) {
+		return new JScriptSelectorFrame(this, bot);
 	}
 
 	@Override
@@ -188,7 +184,8 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 		}
 		
 		JMenu menu = new JMenu(script.getManifest().getName());
-		script.onGUICreated(menu);
+		if (script instanceof JGuiListener)
+			((JGuiListener)script).onJMenuCreated(menu);
 		
 		menu.addSeparator();
 		menu.add(new MenuActionItem("Terminate", script, ACTION_TERMINATE_SCRIPT));
@@ -240,13 +237,10 @@ public class BotGUI extends JFrame implements ScriptSelectorListener, ScriptExec
 		public void actionPerformed(ActionEvent e) {
 			switch (this.actionID) {
 			case ACTION_RUN_SCRIPT:
-				createScriptSelector(scriptsMenu).addScriptSelectorListener(BotGUI.this);
+				createScriptSelector(scriptsMenu);
 				break;
 			case ACTION_ENABLE_DEBUG:
 				debugger.setVisible(true);
-				//Component comp = tabBar.getSelectedComponent();
-				//if (comp != null)
-					//debugger.debug(((TabView)comp).getBrowser());
 				break;
 			case ACTION_TERMINATE_SCRIPT:
 				bot.getScriptExecutor().terminateScript(script);

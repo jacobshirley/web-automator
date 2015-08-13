@@ -24,18 +24,6 @@ public class ScriptLoaderImpl extends ScriptLoader{
 	}
 
 	@Override
-	public Script loadScript(String selector) throws ClassNotFoundException {
-		for (ScriptLibrary library : libraries) {
-			ScriptManifest manifest = library.getScriptManifest(selector);
-			if (manifest != null) {
-				return loadScript(manifest);
-			}
-		}
-		
-		return null;
-	}
-
-	@Override
 	public Script loadScript(ScriptManifest manifest) throws ClassNotFoundException {
 		String manPath = manifest.getManifestSrc();
 		

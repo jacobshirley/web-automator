@@ -19,7 +19,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.gui.BotGUI;
+import org.auriferous.bot.gui.swing.JBotFrame;
+import org.auriferous.bot.gui.swing.script.JGuiListener;
+import org.auriferous.bot.gui.tabs.TabPaintListener;
+import org.auriferous.bot.gui.tabs.TabView;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
@@ -29,7 +32,6 @@ import org.auriferous.bot.scripts.adclicker.gui.TaskManager;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlAdapter;
 import org.auriferous.bot.tabs.TabListener;
-import org.auriferous.bot.tabs.TabPaintListener;
 
 import com.teamdev.jxbrowser.chromium.events.FailLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
@@ -40,7 +42,7 @@ import com.teamdev.jxbrowser.chromium.events.LoadListener;
 import com.teamdev.jxbrowser.chromium.events.ProvisionalLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.StartLoadingEvent;
 
-public class AdClicker extends Script implements TabPaintListener{
+public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 	private static final int STAGE_SHUFFLES = 0;
 	private static final int STAGE_URL = 1;
 	private static final int STAGE_WAIT_ON_AD = 2;
@@ -300,12 +302,18 @@ public class AdClicker extends Script implements TabPaintListener{
 	}
 	
 	@Override
-	public void onGUICreated(JMenu menu) {
+	public void onJMenuCreated(JMenu menu) {
 		JMenuItem manageTasks = new JMenuItem(new MenuAction("Manage Tasks", 0));
 		JMenuItem executeTasks = new JMenuItem(new MenuAction("Execute Tasks", 1));
 		
 		menu.add(manageTasks);
 		menu.add(executeTasks);
+	}
+
+	@Override
+	public void onTabViewCreated(Tab tab, TabView tabView) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	class MenuAction extends AbstractAction {

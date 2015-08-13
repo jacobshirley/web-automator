@@ -1,4 +1,4 @@
-package org.auriferous.bot.gui.tabs;
+package org.auriferous.bot.gui.swing.tabs;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -21,10 +21,10 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-public class TabComponent extends JPanel{
+public class JTabComponent extends JPanel{
 	private final JTabbedPane pane;
 	 
-    public TabComponent(final JTabbedPane pane) {
+    public JTabComponent(final JTabbedPane pane) {
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         
         if (pane == null) {
@@ -35,7 +35,7 @@ public class TabComponent extends JPanel{
 
         JLabel label = new JLabel() {
             public String getText() {
-                int i = pane.indexOfTabComponent(TabComponent.this);
+                int i = pane.indexOfTabComponent(JTabComponent.this);
                 if (i != -1) {
                     return pane.getTitleAt(i);
                 }
@@ -74,7 +74,7 @@ public class TabComponent extends JPanel{
         }
  
         public void actionPerformed(ActionEvent e) {
-            int i = pane.indexOfTabComponent(TabComponent.this);
+            int i = pane.indexOfTabComponent(JTabComponent.this);
             if (i != -1) {
                 pane.remove(i);
             }

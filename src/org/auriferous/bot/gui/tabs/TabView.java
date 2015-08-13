@@ -10,7 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
-import org.auriferous.bot.tabs.TabPaintListener;
+import org.auriferous.bot.tabs.Tab;
+
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
@@ -19,11 +20,12 @@ public class TabView extends BrowserView {
 	private List<TabPaintListener> paintListeners = new LinkedList<TabPaintListener>();
 	private long lastPainted = 0;
 	
-	private Browser browser;
+	public TabView(Tab tab) {
+		this(tab.getBrowserWindow());
+	}
 	
 	public TabView(Browser browser) {
 		super(browser);
-		this.browser = browser;
 	}
 	
 	@Override

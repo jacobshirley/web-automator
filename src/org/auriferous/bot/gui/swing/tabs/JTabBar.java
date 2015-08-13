@@ -1,9 +1,11 @@
-package org.auriferous.bot.gui.tabs;
+package org.auriferous.bot.gui.swing.tabs;
 
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -15,11 +17,15 @@ import org.auriferous.bot.tabs.TabControlListener;
 import org.auriferous.bot.tabs.TabListener;
 import org.auriferous.bot.tabs.Tabs;
 
-public class TabBar extends JTabbedPane implements TabListener, TabControlListener, ChangeListener {
+public class JTabBar extends JTabbedPane implements TabControlListener, ChangeListener {
 	private static final long serialVersionUID = 1L;
 	private List<Tabs> scriptTabs;
-	public TabBar(Tabs... scriptTabs) {
+	
+	private List<JTab> tabList;
+	
+	public JTabBar(Tabs... scriptTabs) {
 		this.scriptTabs = new ArrayList(Arrays.asList(scriptTabs));
+		this.tabList = new ArrayList<JTab>();
 		
 		for (Tabs tabs : scriptTabs)
 			tabs.addTabControlListener(this);
@@ -31,8 +37,7 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 		this.scriptTabs.add(tabs);
 		
 		for (Tab tab : tabs.getTabList()) {
-			tab.addTabListener(this);
-			addTab(tab.getTitle(), tab.getTabView());
+			addTab(new JTab(this, tab));
 		}
 		
 		tabs.addTabControlListener(this);
@@ -42,32 +47,26 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 		this.scriptTabs.remove(tabs);
 		
 		for (Tab tab : tabs.getTabList()) {
-			
-			tab.removeTabListener(this);
 			remove(getBarIndexByTab(tab));
 		}
 		
 		tabs.removeTabControlListener(this);
 	}
-
-	@Override
-	public void onTitleChange(Tab tab, String newTitle) {
-		int id = this.indexOfComponent(tab.getTabView());
+	
+	public void addTab(String title, JTab tab) {
+		tabList.add(tab);
+		setTabComponentAt(tabList.size()-1, tab.getTabComponent());
 		
-		setTitleAt(id, newTitle);
-		getTabComponentAt(id).revalidate();
+		addTab(title, tab.getTabView());
+	}
+	
+	public void addTab(JTab tab) {
+		addTab(tab.getTab().getTitle(), tab);
 	}
 
 	@Override
-	public void onTabUpdating(Tab tab) {}
-
-	@Override
-	public void onTabReloaded(Tab tab) {}
-
-	@Override
 	public void onTabAdded(Tab tab) {
-		tab.addTabListener(this);
-		addTab("New Tab", tab.getTabView());
+		addTab("New Tab", new JTab(this, tab));
 	}
 
 	@Override
@@ -86,7 +85,6 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 		super.addTab(arg0, arg1);
 		
 		int index = this.getTabCount()-1;
-		setTabComponentAt(index, new TabComponent(this));
 		
 		setSelectedIndex(index);
 	}
@@ -110,21 +108,20 @@ public class TabBar extends JTabbedPane implements TabListener, TabControlListen
 	}
 	
 	public int getBarIndexByTab(Tab tab) {
-		for (int i = 0; i < getTabCount(); i++) {
-			if (tab.getTabView().equals(getComponentAt(i))) {
+		int i = 0;
+		for (JTab jTab : tabList) {
+			if (jTab.getTab().equals(tab)) {
 				return i;
 			}
+			i++;
 		}
 		return -1;
 	}
 	
 	public Tab getTabByBarIndex(int index) {
-		for (Tabs tabs : scriptTabs) {
-			for (Tab tab : tabs.getTabList()) {
-				if (tab.getTabView().equals(getComponentAt(index))) {
-					return tab;
-				}
-			}
+		JTab tab = tabList.get(index);
+		if (tab != null) {
+			return tab.getTab();
 		}
 		return null;
 	}

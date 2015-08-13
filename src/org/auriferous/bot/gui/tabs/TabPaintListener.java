@@ -1,4 +1,4 @@
-package org.auriferous.bot.tabs;
+package org.auriferous.bot.gui.tabs;
 
 import java.awt.Graphics;
 

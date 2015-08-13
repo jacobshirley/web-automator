@@ -2,6 +2,7 @@ package org.auriferous.bot.script;
 
 import javax.swing.JMenu;
 
+import org.auriferous.bot.gui.swing.script.JGuiListener;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.Tabs;
@@ -39,8 +40,6 @@ public abstract class Script {
 	public abstract void onStart();
 	public abstract void onPause();
 	public abstract void onTerminate();
-	
-	public abstract void onGUICreated(JMenu menu);
 	
 	public final Tab openTab() {
 		return tabs.openTab();

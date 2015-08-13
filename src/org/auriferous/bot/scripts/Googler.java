@@ -2,6 +2,8 @@ package org.auriferous.bot.scripts;
 
 import javax.swing.JMenu;
 
+import org.auriferous.bot.gui.swing.script.JGuiListener;
+import org.auriferous.bot.gui.tabs.TabView;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
@@ -11,7 +13,7 @@ import org.auriferous.bot.tabs.Tab;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
-public class Googler extends Script{
+public class Googler extends Script implements JGuiListener{
 	private ScriptMethods methods;
 
 	public Googler(ScriptManifest manifest, ScriptContext context) {
@@ -41,7 +43,11 @@ public class Googler extends Script{
 	}
 
 	@Override
-	public void onGUICreated(JMenu menu) {
+	public void onJMenuCreated(JMenu menu) {
+	}
+
+	@Override
+	public void onTabViewCreated(Tab tab, TabView tabView) {
 		// TODO Auto-generated method stub
 		
 	}

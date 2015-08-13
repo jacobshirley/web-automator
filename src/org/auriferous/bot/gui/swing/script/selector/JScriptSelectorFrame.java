@@ -1,4 +1,4 @@
-package org.auriferous.bot.gui.scriptselector;
+package org.auriferous.bot.gui.swing.script.selector;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -24,6 +24,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.auriferous.bot.Bot;
+import org.auriferous.bot.gui.tabs.TabPaintListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.executor.ScriptExecutor;
@@ -31,23 +32,20 @@ import org.auriferous.bot.script.library.ScriptLibrary;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.scripts.TestAdClicking;
-import org.auriferous.bot.tabs.TabPaintListener;
 
-public class ScriptSelector extends JFrame implements ActionListener, TreeSelectionListener{
+public class JScriptSelectorFrame extends JFrame implements ActionListener, TreeSelectionListener{
 	private JTree tree;
-	private LinkedList<ScriptSelectorListener> scriptSelListeners = new LinkedList<ScriptSelectorListener>();
+	private LinkedList<JScriptSelectorListener> scriptSelListeners = new LinkedList<JScriptSelectorListener>();
 
 	private Bot bot;
 	
 	private ScriptLibrary library;
-	private JMenu scriptsMenu;
 	
-	public ScriptSelector(Frame parent, JMenu scriptsMenu, Bot bot) {
+	public JScriptSelectorFrame(Frame parent, Bot bot) {
 		super("Scripts");
 		
 		this.bot = bot;
 		this.library = bot.getScriptLibrary();
-		this.scriptsMenu = scriptsMenu;
 		
 		JPanel content = new JPanel();
 		content.setLayout(new BorderLayout());
@@ -106,7 +104,7 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
 			ScriptExecutor executor = bot.getScriptExecutor();
 			executor.runScript(script);
 			
-			for (ScriptSelectorListener listener : scriptSelListeners) {
+			for (JScriptSelectorListener listener : scriptSelListeners) {
 				listener.onScriptSelected(script);
 			}
 		} catch (ClassNotFoundException e) {
@@ -114,11 +112,11 @@ public class ScriptSelector extends JFrame implements ActionListener, TreeSelect
 		}
 	}
 	
-	public void addScriptSelectorListener(ScriptSelectorListener listener) {
+	public void addScriptSelectorListener(JScriptSelectorListener listener) {
 		this.scriptSelListeners.add(listener);
 	}
 	
-	public void removeScriptSelectorListener(ScriptSelectorListener listener) {
+	public void removeScriptSelectorListener(JScriptSelectorListener listener) {
 		this.scriptSelListeners.remove(listener);
 	}
 	

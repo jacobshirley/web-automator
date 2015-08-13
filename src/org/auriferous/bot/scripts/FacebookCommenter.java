@@ -30,11 +30,4 @@ public class FacebookCommenter extends Script{
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void onGUICreated(JMenu menu) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
