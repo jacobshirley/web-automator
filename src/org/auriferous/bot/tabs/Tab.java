@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.auriferous.bot.gui.tabs.TabView;
+import org.auriferous.bot.tabs.view.TabView;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.events.TitleEvent;
@@ -20,10 +20,14 @@ public class Tab {
 	
 	private List<TabListener> tabListeners = new LinkedList<TabListener>();
 
+	private TabView tabView;
+
 	public Tab(int id, String url) {
 		this.id = id;
 		
 		this.browser = new Browser();
+		this.tabView = new TabView(this.browser);
+		
 		BROWSER_INSTANCES.add(browser);
 		
 		browser.addTitleListener(new TitleListener() {
@@ -77,6 +81,10 @@ public class Tab {
 		return browser;
 	}
 	
+	public TabView getTabView() {
+		return tabView;
+	}
+	
 	public void addTabListener(TabListener tabListener) {
 		this.tabListeners.add(tabListener);
 	}
@@ -86,12 +94,15 @@ public class Tab {
 	}
 	
 	static {
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+		Thread t = new Thread(new Runnable() {
 		    public void run() {
 		    	for (Browser browser : BROWSER_INSTANCES) {
 		    		browser.dispose();
 		    	}
 		    }
-		}));
+		});
+		t.setDaemon(true);
+		
+		Runtime.getRuntime().addShutdownHook(t);
 	}
 }

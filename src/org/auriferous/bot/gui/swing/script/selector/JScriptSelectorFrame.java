@@ -24,7 +24,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.auriferous.bot.Bot;
-import org.auriferous.bot.gui.tabs.TabPaintListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.executor.ScriptExecutor;
@@ -32,6 +31,7 @@ import org.auriferous.bot.script.library.ScriptLibrary;
 import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.scripts.TestAdClicking;
+import org.auriferous.bot.tabs.view.TabPaintListener;
 
 public class JScriptSelectorFrame extends JFrame implements ActionListener, TreeSelectionListener{
 	private JTree tree;

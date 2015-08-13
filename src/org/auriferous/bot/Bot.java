@@ -49,8 +49,8 @@ public class Bot {
 		
 		scriptExecutor = new ScriptExecutor();
 		
-		//if (createGUI)
-			//botGUI = new JBotFrame(this);
+		if (createGUI)
+			botGUI = new JBotFrame(this);
 		
 		//Script c = new TestAdClicking(manifest2, new ScriptContext(this));
 		//scriptExecutor.runScript(c);

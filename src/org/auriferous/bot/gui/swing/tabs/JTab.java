@@ -1,26 +1,30 @@
 package org.auriferous.bot.gui.swing.tabs;
 
+import java.awt.BorderLayout;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.auriferous.bot.gui.tabs.TabView;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabListener;
+import org.auriferous.bot.tabs.view.TabView;
 
 public class JTab extends JPanel implements TabListener {
-	private TabView tabView;
 	private JTabComponent tabComponent;
 	private Tab tab;
 	private JTabBar tabBar;
 	
 	public JTab(JTabBar tabBar, Tab tab) {
+		super(new BorderLayout());
+		
 		this.tabBar = tabBar;
 		this.tabComponent = new JTabComponent(tabBar);
-		this.tabView = new TabView(tab);
 		
 		this.tab = tab;
 		this.tab.addTabListener(this);
 		
-		this.add(tabView);
+		this.add(tab.getTabView());
 	}
 	
 	public JTabComponent getTabComponent() {
@@ -32,7 +36,7 @@ public class JTab extends JPanel implements TabListener {
 	}
 	
 	public TabView getTabView() {
-		return tabView;
+		return tab.getTabView();
 	}
 
 	@Override

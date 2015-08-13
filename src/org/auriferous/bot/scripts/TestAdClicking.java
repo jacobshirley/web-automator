@@ -10,7 +10,6 @@ import java.util.HashMap;
 import javax.swing.JMenu;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.gui.tabs.TabPaintListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
@@ -21,6 +20,7 @@ import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlAdapter;
 import org.auriferous.bot.tabs.TabControlListener;
 import org.auriferous.bot.tabs.TabListener;
+import org.auriferous.bot.tabs.view.TabPaintListener;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.JSObject;

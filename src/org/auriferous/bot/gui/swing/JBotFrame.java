@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -26,9 +27,8 @@ import org.auriferous.bot.Utils;
 import org.auriferous.bot.gui.swing.script.JGuiListener;
 import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorFrame;
 import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorListener;
+import org.auriferous.bot.gui.swing.tabs.JTab;
 import org.auriferous.bot.gui.swing.tabs.JTabBar;
-import org.auriferous.bot.gui.tabs.TabPaintListener;
-import org.auriferous.bot.gui.tabs.TabView;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.script.ScriptContext;
@@ -39,6 +39,8 @@ import org.auriferous.bot.scripts.TestAdClicking;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlListener;
 import org.auriferous.bot.tabs.Tabs;
+import org.auriferous.bot.tabs.view.TabPaintListener;
+import org.auriferous.bot.tabs.view.TabView;
 
 public class JBotFrame extends JFrame implements ScriptExecutionListener, ChangeListener{
 	
@@ -54,6 +56,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private static final int ACTION_ENABLE_DEBUG = 1;
 	private static final int ACTION_EXIT_BOT = 2;
 	private static final int ACTION_TERMINATE_SCRIPT = 3;
+	private static final int ACTION_CREATE_TAB = 4;
 	
 	private static final int REFRESH_RATE = 50;
 	private static final int UPDATE_INTERVAL = 1000/REFRESH_RATE;
@@ -81,6 +84,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		scriptsMenu = createScriptsMenu();
 		
 		menuBar.add(scriptsMenu);
+		menuBar.add(createTabsMenu());
 		menuBar.add(createDebugMenu());
 		
 		setJMenuBar(menuBar);
@@ -142,6 +146,14 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		
 		scriptsMenu.add(runScriptItem);
 		return scriptsMenu;
+	}
+	
+	private JMenu createTabsMenu() {
+		JMenu tabsMenu = new JMenu("Tabs");
+		
+		tabsMenu.add(new MenuActionItem("Create", ACTION_CREATE_TAB));
+		
+		return tabsMenu;
 	}
 	
 	private JMenu createDebugMenu() {
@@ -212,7 +224,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	public void stateChanged(ChangeEvent cE) {
 		Component comp = tabBar.getSelectedComponent();
 		if (comp != null)
-			debugger.debug(((TabView)comp).getBrowser());
+			debugger.debug(((JTab)comp).getTab().getBrowserWindow());
 	}
 	
 	class MenuActionItem extends AbstractAction {
@@ -244,6 +256,21 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 				break;
 			case ACTION_TERMINATE_SCRIPT:
 				bot.getScriptExecutor().terminateScript(script);
+				break;
+			case ACTION_CREATE_TAB:
+				
+				String s = (String)JOptionPane.showInputDialog(
+	                    JBotFrame.this,
+	                    "Tab URL: ",
+	                    "Enter a URL",
+	                    JOptionPane.PLAIN_MESSAGE,
+	                    null,
+	                    null,
+	                    "http://www.google.com/");
+				
+				if ((s != null) && (s.length() > 0)) {
+					userTabs.openTab(s);
+				}
 				break;
 			case ACTION_EXIT_BOT:
 				System.exit(1);

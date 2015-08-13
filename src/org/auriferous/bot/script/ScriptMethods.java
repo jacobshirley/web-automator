@@ -51,10 +51,11 @@ public class ScriptMethods {
 		this.target = target;
 		
 		this.browser = this.target.getBrowserWindow();
+		
 		this.mouse = new Mouse(this.target.getTabView());
 		this.keyboard = new Keyboard(this.target.getTabView());
 		
-		this.target.addTabPaintListener(this.mouse);
+		this.target.getTabView().addTabPaintListener(this.mouse);
 		
 		this.browser.addStatusListener(new StatusListener() {
 			@Override

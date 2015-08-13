@@ -1,4 +1,4 @@
-package org.auriferous.bot.gui.tabs;
+package org.auriferous.bot.tabs.view;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
@@ -11,7 +11,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import org.auriferous.bot.tabs.Tab;
-
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
