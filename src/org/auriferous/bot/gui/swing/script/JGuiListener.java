@@ -7,6 +7,4 @@ import org.auriferous.bot.tabs.view.TabView;
 
 public interface JGuiListener {
 	public void onJMenuCreated(JMenu menu);
-	
-	public void onTabViewCreated(Tab tab, TabView tabView);
 }
