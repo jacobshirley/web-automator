@@ -1,7 +1,5 @@
 package org.auriferous.bot.scripts;
 
-import javax.swing.JMenu;
-
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.library.ScriptManifest;
@@ -30,11 +28,4 @@ public class FacebookCommenter extends Script{
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void onGUICreated(JMenu menu) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

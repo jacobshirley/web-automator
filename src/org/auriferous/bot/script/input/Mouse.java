@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.tabs.TabPaintListener;
+import org.auriferous.bot.tabs.view.TabPaintListener;
 
 public class Mouse extends Input implements TabPaintListener {
 	private int mouseX;

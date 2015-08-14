@@ -13,7 +13,7 @@ public class ElementBounds extends Rectangle{
 	}
 	
 	public Point getRandomPoint() {
-		return new Point((int)(x+Utils.random(width)), (int)(y+Utils.random(height)));
+		return new Point(x+Utils.random(width), y+Utils.random(height));
 	}
 	
 	public Point getRandomPointFromCentre(double percX, double percY) {

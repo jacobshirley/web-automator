@@ -1,14 +1,7 @@
 package org.auriferous.bot.tabs;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.auriferous.bot.script.Script;
 
 public class Tabs {
 	private List<Tab> tabsList = new ArrayList<Tab>();

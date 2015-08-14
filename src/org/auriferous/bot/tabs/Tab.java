@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.auriferous.bot.gui.tabs.TabView;
+import org.auriferous.bot.tabs.view.TabView;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.events.TitleEvent;
@@ -17,24 +17,24 @@ public class Tab {
 	private String originalURL;
 	
 	private Browser browser;
-	private TabView tabView;
 	
 	private List<TabListener> tabListeners = new LinkedList<TabListener>();
+
+	private TabView tabView;
 
 	public Tab(int id, String url) {
 		this.id = id;
 		
 		this.browser = new Browser();
+		this.tabView = new TabView(this.browser);
+		
 		BROWSER_INSTANCES.add(browser);
 		
-		
-		this.tabView = new TabView(browser);
-
 		browser.addTitleListener(new TitleListener() {
             @Override
 			public void onTitleChange(TitleEvent event) {
             	for (TabListener listener : tabListeners) 
-					listener.onTitleChange(Tab.this, event.getTitle());
+					listener.onTitleChange(event.getTitle());
             }
         });
 		
@@ -51,14 +51,14 @@ public class Tab {
 		this.browser.loadURL(url);
 		
 		for (TabListener listener : tabListeners) 
-			listener.onTabUpdating(this);
+			listener.onTabUpdating();
 	}
 	
 	public void reload() {
 		this.browser.reload();
 		
 		for (TabListener listener : tabListeners) 
-			listener.onTabReloaded(this);
+			listener.onTabReloaded();
 	}
 	
 	public String getTitle() {
@@ -93,21 +93,17 @@ public class Tab {
 		this.tabListeners.remove(tabListener);
 	}
 	
-	public void addTabPaintListener(TabPaintListener tabPaintListener) {
-		this.tabView.addTabPaintListener(tabPaintListener);
-	}
-	
-	public void removeTabPaintListener(TabPaintListener tabPaintListener) {
-		this.tabView.removeTabPaintListener(tabPaintListener);
-	}
-	
 	static {
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-		    public void run() {
+		Thread t = new Thread(new Runnable() {
+		    @Override
+			public void run() {
 		    	for (Browser browser : BROWSER_INSTANCES) {
 		    		browser.dispose();
 		    	}
 		    }
-		}));
+		});
+		t.setDaemon(true);
+		
+		Runtime.getRuntime().addShutdownHook(t);
 	}
 }
