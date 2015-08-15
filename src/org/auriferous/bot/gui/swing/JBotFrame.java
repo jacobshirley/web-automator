@@ -92,7 +92,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 				while (true) {
 					int index = tabBar.getSelectedIndex();
 					if (index >= 0) {
-						TabView view = (TabView) tabBar.getSelectedComponent();
+						TabView view = (TabView) ((JTab)tabBar.getSelectedComponent()).getTabView();
 						
 						if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
 							view.repaint(UPDATE_INTERVAL);
