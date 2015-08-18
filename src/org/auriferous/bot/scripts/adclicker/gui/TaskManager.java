@@ -41,7 +41,6 @@ public class TaskManager extends JFrame{
         //Create the list and put it in a scroll pane.
 		taskTable = new JTable(model);
 		taskTable.setMinimumSize(new Dimension(400, 500));
-		taskTable.setRowHeight(100);
 		
 		JScrollPane listScrollPane = new JScrollPane(taskTable);
 		
