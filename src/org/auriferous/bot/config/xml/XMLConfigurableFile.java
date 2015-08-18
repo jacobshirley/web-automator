@@ -70,6 +70,23 @@ public class XMLConfigurableFile extends ConfigurableFile{
 		}
 	}
 	
+	private void writeEntry(Element parent, ConfigurableEntry entry) {
+		Element entryElem = XMLUtils.createOrGetElement(document, parent, entry.getKey(), entry.getValue());
+		
+		ConfigurableEntry[] entries = entry.getChildren();
+		if (entries != null) {
+			for (ConfigurableEntry entry2 : entries) {
+				Element elem = XMLUtils.createOrGetElement(document, entryElem, entry2.getKey(), entry2.getValue());
+
+				writeEntry(elem, entry2);
+				
+				entryElem.appendChild(elem);
+			}
+		}
+		
+		parent.appendChild(entryElem);
+	}
+	
 	private ConfigurableEntry[] getEntries(ConfigurableEntry parent, NodeList nodes) {
 		List<ConfigurableEntry> list = new ArrayList<ConfigurableEntry>();
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -102,23 +119,6 @@ public class XMLConfigurableFile extends ConfigurableFile{
 		} else {
 			return getEntries(null, list);
 		}
-	}
-	
-	private void writeEntry(Element parent, ConfigurableEntry entry) {
-		Element entryElem = XMLUtils.createOrGetElement(document, parent, entry.getKey(), entry.getValue());
-		
-		ConfigurableEntry[] entries = entry.getChildren();
-		if (entries != null) {
-			for (ConfigurableEntry entry2 : entries) {
-				Element elem = XMLUtils.createOrGetElement(document, entryElem, entry2.getKey(), entry2.getValue());
-
-				writeEntry(elem, entry2);
-				
-				entryElem.appendChild(elem);
-			}
-		}
-		
-		parent.appendChild(entryElem);
 	}
 	
 	@Override
