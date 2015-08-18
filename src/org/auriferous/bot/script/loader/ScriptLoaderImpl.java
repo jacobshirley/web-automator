@@ -47,10 +47,6 @@ public class ScriptLoaderImpl extends ScriptLoader{
 			
 			Script script = (Script)constr.newInstance(manifest, context);
 			
-			if (script instanceof Configurable) {
-				bot.getConfig().addConfigurable((Configurable)script);
-			}
-			
 			classLoader.close();
 			
 			return script;

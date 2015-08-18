@@ -20,19 +20,19 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.auriferous.bot.config.Configurable;
 import org.auriferous.bot.config.ConfigurableEntry;
+import org.auriferous.bot.config.ConfigurableFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class XMLConfigurableFile {
-	private Map<String, Configurable> configurables = new HashMap<String, Configurable>();
-	private File file;
+public class XMLConfigurableFile extends ConfigurableFile{
 	private Document document;
 	private Element configElement;
 	
 	public XMLConfigurableFile(File file) throws IOException {
-		this.file = file;
+		super(file);
+		
 		if (!file.exists()) {
 			init();
 		} else {
@@ -93,7 +93,7 @@ public class XMLConfigurableFile {
 		return null;
 	}
 	
-	private ConfigurableEntry[] getEntries(Configurable configurable) {
+	protected ConfigurableEntry[] getEntries(Configurable configurable) {
 		String className = configurable.getClass().getName();
 		NodeList list = configElement.getElementsByTagName(className);
 		if (list.getLength() == 0) {
@@ -101,16 +101,6 @@ public class XMLConfigurableFile {
 		} else {
 			return getEntries(null, list);
 		}
-	}
-
-	public void addConfigurable(Configurable configurable) {
-		this.configurables.put(configurable.getClass().getName(), configurable);
-		
-		ConfigurableEntry[] entries = getEntries(configurable);
-		if (entries != null) {
-			configurable.load(entries);
-		} else 
-			configurable.loadDefault();
 	}
 	
 	private void writeEntry(Element parent, ConfigurableEntry entry) {

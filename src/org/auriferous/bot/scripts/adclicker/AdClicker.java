@@ -23,7 +23,7 @@ import org.auriferous.bot.Utils;
 import org.auriferous.bot.config.Configurable;
 import org.auriferous.bot.config.ConfigurableEntry;
 import org.auriferous.bot.config.library.ScriptManifest;
-import org.auriferous.bot.gui.swing.script.JGuiListener;
+import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
@@ -37,7 +37,7 @@ import org.auriferous.bot.tabs.view.TabPaintListener;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
-public class AdClicker extends Script implements TabPaintListener, JGuiListener, Configurable{
+public class AdClicker extends Script implements TabPaintListener, JScriptGuiListener, Configurable{
 	private static final int STAGE_SHUFFLES = 0;
 	private static final int STAGE_URL = 1;
 	private static final int STAGE_WAIT_ON_AD = 2;
@@ -67,6 +67,8 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener,
 	private long timer = 0;
 	public String currentSignature = "";
 	
+	private SetSignatureFrame setSigFrame = new SetSignatureFrame(this);
+	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
 	}
@@ -83,7 +85,7 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener,
 	}
 	
 	private void setSignature() {
-		new SetSignatureFrame(this);
+		setSigFrame.setVisible(true);
 	}
 	
 	private void resetTab() {
@@ -225,7 +227,7 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener,
 			Utils.wait(2000);
 			System.out.println("Clicking link in ad");
 
-			ElementBounds randomLink = methods.getRandomLink(false);
+			ElementBounds randomLink = methods.getRandomClickable(false);
 			
 			if (randomLink != null) {
 				debugElement = randomLink;
@@ -414,6 +416,8 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener,
 	@Override
 	public void load(ConfigurableEntry[] configEntries) {
 		currentSignature = configEntries[0].getValue();
+
+		setSigFrame.setText(currentSignature);
 	}
 
 	@Override
