@@ -1,8 +1,11 @@
 package org.auriferous.bot.scripts.adclicker.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -10,15 +13,21 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+
 import org.auriferous.bot.scripts.adclicker.Task;
 
 public class TaskManager extends JFrame{
 	private JTable taskTable;
 	private List<Task> tasks;
 	
-	public TaskManager(JFrame parent, List<Task> tasks) {
+	public TaskManager(List<Task> tasks) {
 		super("Task Manager");
 		
 		this.tasks = tasks;
@@ -32,7 +41,8 @@ public class TaskManager extends JFrame{
         //Create the list and put it in a scroll pane.
 		taskTable = new JTable(model);
 		taskTable.setMinimumSize(new Dimension(400, 500));
-
+		taskTable.setRowHeight(100);
+		
 		JScrollPane listScrollPane = new JScrollPane(taskTable);
 		
 		content.add(listScrollPane, BorderLayout.CENTER);
@@ -40,17 +50,25 @@ public class TaskManager extends JFrame{
 		JPanel buttonPanel = new JPanel();
 		
 		JButton addTask = new JButton(new ButtonAction("Add", 0));
+		JButton copyTask = new JButton(new ButtonAction("Copy", 2));
 		JButton removeTask = new JButton(new ButtonAction("Remove", 1));
 		
 		buttonPanel.add(addTask);
+		buttonPanel.add(copyTask);
 		buttonPanel.add(removeTask);
 		content.add(buttonPanel, BorderLayout.SOUTH);
 		
 		setContentPane(content);
 		
 		setSize(1000, 500);
-		setLocationRelativeTo(parent);
+		setLocationRelativeTo(null);
 		setVisible(true);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
+			}
+		});
 		
 		//setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
@@ -69,6 +87,13 @@ public class TaskManager extends JFrame{
 				case 0: tasks.add(new Task("http://naht.tk", 1, 0, 0, 2));
 						break;
 				case 1: tasks.remove(taskTable.getSelectedRow());
+						break;
+				case 2: int selected = taskTable.getSelectedRow();
+						if (selected >= 0) {
+							System.out.println(selected);
+							Task task = tasks.get(selected).copy();
+							tasks.add(task);
+						}
 						break;
 			}
 			taskTable.revalidate();

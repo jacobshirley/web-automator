@@ -19,10 +19,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.auriferous.bot.Bot;
+import org.auriferous.bot.config.library.ScriptLibrary;
+import org.auriferous.bot.config.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.executor.ScriptExecutor;
-import org.auriferous.bot.script.library.ScriptLibrary;
-import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.script.loader.ScriptLoader;
 
 public class JScriptSelectorFrame extends JFrame implements ActionListener, TreeSelectionListener{

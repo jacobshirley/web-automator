@@ -1,6 +1,6 @@
 package org.auriferous.bot.script;
 
-import org.auriferous.bot.script.library.ScriptManifest;
+import org.auriferous.bot.config.library.ScriptManifest;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.Tabs;
 

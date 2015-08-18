@@ -232,14 +232,14 @@ public class ScriptMethods {
 		return getRandomElement(frameID, "$(\"input[type='text']\")");
 	}
 	
-	public ElementBounds getRandomLink(boolean includeButtons) {
+	public ElementBounds getRandomClickable(boolean includeButtons) {
 		if (includeButtons)
 			return getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
 		else
 			return getRandomElement("$(document).findVisibles('a[href^=\"http\"]');");
 	}
 
-	public ElementBounds getRandomLink(long frameID, boolean includeButtons) {
+	public ElementBounds getRandomClickable(long frameID, boolean includeButtons) {
 		if (includeButtons)
 			return getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
 		else

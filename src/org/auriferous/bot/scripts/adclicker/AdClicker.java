@@ -1,22 +1,34 @@
 package org.auriferous.bot.scripts.adclicker;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.LinkedList;
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.gui.swing.script.JGuiListener;
+import org.auriferous.bot.config.Configurable;
+import org.auriferous.bot.config.ConfigurableEntry;
+import org.auriferous.bot.config.library.ScriptManifest;
+import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.script.library.ScriptManifest;
+import org.auriferous.bot.scripts.adclicker.gui.SetSignatureFrame;
 import org.auriferous.bot.scripts.adclicker.gui.TaskManager;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlAdapter;
@@ -25,7 +37,7 @@ import org.auriferous.bot.tabs.view.TabPaintListener;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
-public class AdClicker extends Script implements TabPaintListener, JGuiListener{
+public class AdClicker extends Script implements TabPaintListener, JScriptGuiListener, Configurable{
 	private static final int STAGE_SHUFFLES = 0;
 	private static final int STAGE_URL = 1;
 	private static final int STAGE_WAIT_ON_AD = 2;
@@ -42,18 +54,42 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 
 	private int taskStage = STAGE_SHUFFLES;
 	private boolean startExec = false;
+	private boolean forceExec = false;
 	
 	private Task currentTask = null;
 	private LinkedList<Task> tasks = new LinkedList<Task>();
 	
 	private ElementBounds debugElement = null;
 	
+	private String saveURL = "";
+	private String blogURL = null;
+
+	private long timer = 0;
+	public String currentSignature = "";
+	
+	private SetSignatureFrame setSigFrame = new SetSignatureFrame(this);
+	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
 	}
 	
 	private void executeTasks() {
-		System.out.println("opening tab");
+		resetTab();
+		
+		currentTask = tasks.poll();
+		startExec = true;
+		
+		timer = System.currentTimeMillis();
+		
+		reset();
+	}
+	
+	private void setSignature() {
+		setSigFrame.setVisible(true);
+	}
+	
+	private void resetTab() {
+		System.out.println("Opening tab");
 		
 		botTab = openTab();
 		botTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
@@ -67,25 +103,7 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 		
 		botTab.getTabView().addTabPaintListener(this);
 		
-		getTabs().addTabControlListener(new TabControlAdapter() {
-			@Override
-			public void onTabClosed(Tab tab) {
-				super.onTabClosed(tab);
-				
-				if (tab.equals(botTab)) {
-					status = STATE_EXIT_FAILURE;
-				}
-			}
-		});
-		
 		methods = new ScriptMethods(botTab);
-		
-		currentTask = tasks.poll();
-		startExec = true;
-		
-		timer = System.currentTimeMillis();
-		
-		reset();
 	}
 	
 	private ElementBounds findAds(String... jqueryStrings) {
@@ -119,11 +137,6 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 		
 		return null;
 	}
-	
-	private String saveURL = "";
-	private String blogURL = null;
-
-	private long timer = 0;
 	
 	private void reset() {
 		taskStage = STAGE_SHUFFLES;
@@ -187,7 +200,7 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
         		
         		botTab.reload();
         	} else if (searchAdTries == 10){
-        		System.out.println("Couldn't find ad. Terminating.");
+        		System.out.println("Couldn't find ad. Next task...");
         		
         		taskStage = STAGE_NEXT_TASK;
         	}
@@ -214,7 +227,7 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 			Utils.wait(2000);
 			System.out.println("Clicking link in ad");
 
-			ElementBounds randomLink = methods.getRandomLink(false);
+			ElementBounds randomLink = methods.getRandomClickable(false);
 			
 			if (randomLink != null) {
 				debugElement = randomLink;
@@ -254,7 +267,11 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 			
 			String title = base.split("\\.")[1];
 			
-			System.out.println("clicked "+title+", base "+base+", from UK, same rules, ayysthetic.tk");
+			String signature = currentSignature;
+			signature.replace("$title", title);
+			signature.replace("$base", base);
+			
+			System.out.println(signature);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -281,44 +298,64 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 	
 	@Override
 	public int tick() {
-		if (startExec) {
-			startExec = false;
-			
-			switch (taskStage){
-			case STAGE_SHUFFLES:
-				if (tickShuffles())
-					break;
-			case STAGE_URL:
-				if (tickAdClicking())
-					break;
-			case STAGE_WAIT_ON_AD:
-				if (tickWaitOnAd())
-					break;
-			case STAGE_SUB_CLICKS:
-				if (tickSubClicks())
-					break;
-			case STAGE_DONE:
-				if (tickTaskDone())
-					break;
-			case STAGE_NEXT_TASK:
-				if (tickNextTask())
-					break;
+		if (botTab != null) {
+			boolean disposed = botTab.getBrowserWindow().isDisposed();
+			if (disposed) {
+				getTabs().closeTab(botTab);
+				System.out.println("Apparently disposed. Opening new tab.");
+				resetTab();
+				return super.tick();
 			}
-			
-			timer = System.currentTimeMillis();
-		} else {
-			if (currentTask != null && System.currentTimeMillis()-timer >= 5000) {
-				System.out.println("It's been 5 seconds. Forcing execution.");
-				startExec = true;
+			boolean loading = botTab.getBrowserWindow().isLoading();
+			if (!loading) {
+				if (startExec || forceExec) {
+					startExec = false;
+					forceExec = false;
+					
+					try {
+						switch (taskStage){
+						case STAGE_SHUFFLES:
+							if (tickShuffles())
+								break;
+						case STAGE_URL:
+							if (tickAdClicking())
+								break;
+						case STAGE_WAIT_ON_AD:
+							if (tickWaitOnAd())
+								break;
+						case STAGE_SUB_CLICKS:
+							if (tickSubClicks())
+								break;
+						case STAGE_DONE:
+							if (tickTaskDone())
+								break;
+						case STAGE_NEXT_TASK:
+							if (tickNextTask())
+								break;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("There was an error. Skipping task "+currentTask.url);
+						taskStage = STAGE_NEXT_TASK;
+						forceExec = true;
+					}
+					
+					timer = System.currentTimeMillis();
+				} else {
+					if (currentTask != null && System.currentTimeMillis()-timer >= 5000) {
+						System.out.println("It's been 5 seconds. Forcing execution.");
+						forceExec = true;
+					}
+				}
 			}
 		}
-		
 		return super.tick();
 	}
 
 	@Override
 	public void onStart() {
-		new TaskManager(null, tasks);
+		setSignature();
+		//new TaskManager(tasks);
 	}
 
 	@Override
@@ -341,9 +378,11 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 	
 	@Override
 	public void onJMenuCreated(JMenu menu) {
+		JMenuItem setSignature = new JMenuItem(new MenuAction("Signature", 2));
 		JMenuItem manageTasks = new JMenuItem(new MenuAction("Manage Tasks", 0));
 		JMenuItem executeTasks = new JMenuItem(new MenuAction("Execute Tasks", 1));
 		
+		menu.add(setSignature);
 		menu.add(manageTasks);
 		menu.add(executeTasks);
 	}
@@ -360,11 +399,29 @@ public class AdClicker extends Script implements TabPaintListener, JGuiListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			switch (actionID) {
-				case 0: new TaskManager(null, tasks);
+				case 0: new TaskManager(tasks);
 						break;
 				case 1:	executeTasks();
 						break;
+				case 2:	setSignature();
+						break;
 			}
 		}
+	}
+
+	@Override
+	public void loadDefault() {
+	}
+
+	@Override
+	public void load(ConfigurableEntry[] configEntries) {
+		currentSignature = configEntries[0].getValue();
+
+		setSigFrame.setText(currentSignature);
+	}
+
+	@Override
+	public ConfigurableEntry[] getConfigurableEntries() {
+		return new ConfigurableEntry[] {new ConfigurableEntry("signature", currentSignature)};
 	}
 }

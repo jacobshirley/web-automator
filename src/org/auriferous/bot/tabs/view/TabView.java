@@ -7,9 +7,11 @@ import java.util.List;
 import org.auriferous.bot.tabs.Tab;
 
 import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.events.DisposeEvent;
+import com.teamdev.jxbrowser.chromium.events.DisposeListener;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 
-public class TabView extends BrowserView {
+public class TabView extends BrowserView implements DisposeListener<Browser> {
 	private List<TabPaintListener> paintListeners = new LinkedList<TabPaintListener>();
 	private long lastPainted = 0;
 	
@@ -19,6 +21,8 @@ public class TabView extends BrowserView {
 	
 	public TabView(Browser browser) {
 		super(browser);
+		
+		browser.addDisposeListener(this);
 	}
 	
 	@Override
@@ -41,5 +45,10 @@ public class TabView extends BrowserView {
 	
 	public long getLastTimePainted() {
 		return lastPainted;
+	}
+
+	@Override
+	public void onDisposed(DisposeEvent<Browser> arg0) {
+		this.paintListeners.clear();
 	}
 }

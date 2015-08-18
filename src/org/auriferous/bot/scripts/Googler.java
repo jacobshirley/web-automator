@@ -2,18 +2,18 @@ package org.auriferous.bot.scripts;
 
 import javax.swing.JMenu;
 
-import org.auriferous.bot.gui.swing.script.JGuiListener;
+import org.auriferous.bot.config.library.ScriptManifest;
+import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
-import org.auriferous.bot.script.library.ScriptManifest;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.view.TabView;
 
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
-public class Googler extends Script implements JGuiListener{
+public class Googler extends Script implements JScriptGuiListener{
 	private ScriptMethods methods;
 
 	public Googler(ScriptManifest manifest, ScriptContext context) {

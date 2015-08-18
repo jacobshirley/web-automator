@@ -1,8 +1,8 @@
 package org.auriferous.bot.scripts;
 
+import org.auriferous.bot.config.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
-import org.auriferous.bot.script.library.ScriptManifest;
 
 public class FacebookCommenter extends Script{
 

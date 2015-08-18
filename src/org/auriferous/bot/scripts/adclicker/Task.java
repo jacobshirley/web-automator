@@ -14,4 +14,8 @@ public class Task {
 		this.timeOnAd = timeOnAd;
 		this.subClicks = subClicks;
 	}
+	
+	public Task copy() {
+		return new Task(url, shuffles, timeInterval, timeOnAd, subClicks);
+	}
 }

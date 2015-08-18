@@ -1,4 +1,4 @@
-package org.auriferous.bot.script.library.xml;
+package org.auriferous.bot.config.library.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -13,9 +13,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.auriferous.bot.script.library.ScriptLibrary;
-import org.auriferous.bot.script.library.ScriptManifest;
-
+import org.auriferous.bot.config.library.ScriptLibrary;
+import org.auriferous.bot.config.library.ScriptManifest;
+import org.auriferous.bot.config.xml.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -72,9 +72,9 @@ public class XMLScriptLibrary extends ScriptLibrary {
 			scriptsElement = (Element)document.getElementsByTagName("scripts").item(0);
 			librariesElement = (Element)document.getElementsByTagName("libraries").item(0);
 			
-			libraryElement.insertBefore(XMLUtils.createAttrNode(document, "name", this.name), scriptsElement);
-			libraryElement.insertBefore(XMLUtils.createAttrNode(document, "version", this.version), scriptsElement);
-			libraryElement.insertBefore(XMLUtils.createAttrNode(document, "desc", this.desc), scriptsElement);
+			libraryElement.insertBefore(XMLUtils.createElement(document, "name", this.name), scriptsElement);
+			libraryElement.insertBefore(XMLUtils.createElement(document, "version", this.version), scriptsElement);
+			libraryElement.insertBefore(XMLUtils.createElement(document, "desc", this.desc), scriptsElement);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -107,12 +107,12 @@ public class XMLScriptLibrary extends ScriptLibrary {
 		scriptElement.setAttribute("src", manifest.getManifestSrc());
 		
 		if (merge) {
-			XMLUtils.appendAttrNode(document, scriptElement, "mainClass", manifest.getMainClass());
-			XMLUtils.appendAttrNode(document, scriptElement, "id", manifest.getID());
-			XMLUtils.appendAttrNode(document, scriptElement, "name", manifest.getName());
-			XMLUtils.appendAttrNode(document, scriptElement, "version", manifest.getVersion());
-			XMLUtils.appendAttrNode(document, scriptElement, "desc", manifest.getDescription());
-			XMLUtils.appendAttrNode(document, scriptElement, "path", manifest.getFilesPath());
+			XMLUtils.appendElement(document, scriptElement, "mainClass", manifest.getMainClass());
+			XMLUtils.appendElement(document, scriptElement, "id", manifest.getID());
+			XMLUtils.appendElement(document, scriptElement, "name", manifest.getName());
+			XMLUtils.appendElement(document, scriptElement, "version", manifest.getVersion());
+			XMLUtils.appendElement(document, scriptElement, "desc", manifest.getDescription());
+			XMLUtils.appendElement(document, scriptElement, "path", manifest.getFilesPath());
 		}
 		scriptsElement.appendChild(scriptElement);
 	}
@@ -146,7 +146,9 @@ public class XMLScriptLibrary extends ScriptLibrary {
 		NodeList nodes = document.getElementsByTagName("script");
 		
 		Element scriptElement = (Element)nodes.item(index);
-		return new XMLScriptManifest(scriptElement);
+		ScriptManifest manifest = new XMLScriptManifest(scriptElement);
+		manifest.setLibrary(this);
+		return manifest;
 	}
 	
 	@Override
@@ -161,9 +163,15 @@ public class XMLScriptLibrary extends ScriptLibrary {
 			String src = scriptElement.getAttribute("src");
 			
 			if (!empty) {
-				manifests.add(new XMLScriptManifest(scriptElement));
+				ScriptManifest manifest = new XMLScriptManifest(scriptElement);
+				manifest.setLibrary(this);
+				
+				manifests.add(manifest);
 			} else {
-				manifests.add(new XMLScriptManifest(src));
+				ScriptManifest manifest = new XMLScriptManifest(src);
+				manifest.setLibrary(this);
+				
+				manifests.add(manifest);
 			}
 		}
 		ScriptManifest[] results = new ScriptManifest[manifests.size()];
@@ -205,20 +213,20 @@ public class XMLScriptLibrary extends ScriptLibrary {
 		Element libraryElement = document.createElement("library");
 		libraryElement.setAttribute("src", library.getLibraryPath());
 		if (merge) {
-			XMLUtils.appendAttrNode(document, libraryElement, "name", library.getName());
-			XMLUtils.appendAttrNode(document, libraryElement, "version", library.getVersion());
-			XMLUtils.appendAttrNode(document, libraryElement, "description", library.getDescription());
+			XMLUtils.appendElement(document, libraryElement, "name", library.getName());
+			XMLUtils.appendElement(document, libraryElement, "version", library.getVersion());
+			XMLUtils.appendElement(document, libraryElement, "description", library.getDescription());
 			
 			for (ScriptManifest manifest : library.getScripts()) {
 				Element scriptElement = document.createElement("script");
 				scriptElement.setAttribute("src", manifest.getManifestSrc());
 				
-				XMLUtils.appendAttrNode(document, scriptElement, "mainClass", manifest.getMainClass());
-				XMLUtils.appendAttrNode(document, scriptElement, "id", manifest.getID());
-				XMLUtils.appendAttrNode(document, scriptElement, "name", manifest.getName());
-				XMLUtils.appendAttrNode(document, scriptElement, "version", manifest.getVersion());
-				XMLUtils.appendAttrNode(document, scriptElement, "desc", manifest.getDescription());
-				XMLUtils.appendAttrNode(document, scriptElement, "path", manifest.getFilesPath());
+				XMLUtils.appendElement(document, scriptElement, "mainClass", manifest.getMainClass());
+				XMLUtils.appendElement(document, scriptElement, "id", manifest.getID());
+				XMLUtils.appendElement(document, scriptElement, "name", manifest.getName());
+				XMLUtils.appendElement(document, scriptElement, "version", manifest.getVersion());
+				XMLUtils.appendElement(document, scriptElement, "desc", manifest.getDescription());
+				XMLUtils.appendElement(document, scriptElement, "path", manifest.getFilesPath());
 				
 				libraryElement.appendChild(scriptElement);
 			}

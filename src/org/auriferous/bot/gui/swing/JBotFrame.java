@@ -19,7 +19,7 @@ import javax.swing.event.ChangeListener;
 
 import org.auriferous.bot.Bot;
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.gui.swing.script.JGuiListener;
+import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorFrame;
 import org.auriferous.bot.gui.swing.tabs.JTab;
 import org.auriferous.bot.gui.swing.tabs.JTabBar;
@@ -92,7 +92,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 				while (true) {
 					int index = tabBar.getSelectedIndex();
 					if (index >= 0) {
-						TabView view = (TabView) tabBar.getSelectedComponent();
+						TabView view = (TabView) ((JTab)tabBar.getSelectedComponent()).getTabView();
 						
 						if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
 							view.repaint(UPDATE_INTERVAL);
@@ -183,8 +183,8 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		}
 		
 		JMenu menu = new JMenu(script.getManifest().getName());
-		if (script instanceof JGuiListener)
-			((JGuiListener)script).onJMenuCreated(menu);
+		if (script instanceof JScriptGuiListener)
+			((JScriptGuiListener)script).onJMenuCreated(menu);
 		
 		menu.addSeparator();
 		menu.add(new MenuActionItem("Terminate", script, ACTION_TERMINATE_SCRIPT));
