@@ -98,7 +98,8 @@ public class Tab {
 		    @Override
 			public void run() {
 		    	for (Browser browser : BROWSER_INSTANCES) {
-		    		browser.dispose();
+		    		if (!browser.isDisposed())
+		    			browser.dispose();
 		    	}
 		    }
 		});

@@ -1,7 +1,8 @@
-package org.auriferous.bot.script.library;
+package org.auriferous.bot.config.library;
 
 public abstract class ScriptManifest {
 	protected String src = "";
+	private ScriptLibrary owner;
 	
 	public ScriptManifest() {
 	}
@@ -9,9 +10,22 @@ public abstract class ScriptManifest {
 	public ScriptManifest(String src) {
 		this.src = src;
 	}
+	
+	public ScriptManifest(ScriptLibrary owner, String src) {
+		this.src = src;
+		this.owner = owner;
+	}
 	 
 	public String getManifestSrc() {
 		return src;
+	}
+	
+	public void setLibrary(ScriptLibrary owner) {
+		this.owner = owner;
+	}
+	
+	public ScriptLibrary getLibrary() {
+		return owner;
 	}
 	
 	public abstract String getID();

@@ -1,4 +1,4 @@
-package org.auriferous.bot.script.library;
+package org.auriferous.bot.config.library;
 
 import java.io.File;
 
@@ -42,9 +42,9 @@ public abstract class ScriptLibrary {
 	
 	public abstract void addLibrary(ScriptLibrary library, boolean merge);
 	
-	public  abstract void removeLibrary(ScriptLibrary library);
+	public abstract void removeLibrary(ScriptLibrary library);
 	
-	public  abstract ScriptLibrary[] getLibraries();
+	public abstract ScriptLibrary[] getLibraries();
 	
-	public  abstract boolean save(File file);
+	public abstract boolean save(File file);
 }

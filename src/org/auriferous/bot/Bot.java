@@ -1,27 +1,42 @@
 package org.auriferous.bot;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 
 import javax.swing.JFrame;
 
+import org.auriferous.bot.config.Configurable;
+import org.auriferous.bot.config.ConfigurableEntry;
+import org.auriferous.bot.config.library.ScriptLibrary;
+import org.auriferous.bot.config.library.xml.XMLScriptLibrary;
+import org.auriferous.bot.config.library.xml.XMLScriptManifest;
+import org.auriferous.bot.config.xml.XMLConfigurableFile;
 import org.auriferous.bot.gui.swing.JBotFrame;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.executor.ScriptExecutor;
-import org.auriferous.bot.script.library.ScriptLibrary;
-import org.auriferous.bot.script.library.xml.XMLScriptLibrary;
-import org.auriferous.bot.script.library.xml.XMLScriptManifest;
 import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.script.loader.ScriptLoaderImpl;
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.LoggerProvider;
 
-public class Bot {
+public class Bot implements Configurable {
 	private JBotFrame botGUI;
 	private ScriptLibrary scriptLibrary;
 	private ScriptLoader scriptLoader;
 	private ScriptExecutor scriptExecutor;
 	
+	private XMLConfigurableFile config;
+	
 	public Bot(String args[], boolean createGUI) {
+		try {
+			config = new XMLConfigurableFile(new File("config/config.xml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		LoggerProvider.setLevel(Level.OFF);
 		
 		BrowserPreferences.setUserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
@@ -35,16 +50,31 @@ public class Bot {
 		XMLScriptManifest manifest2 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.adclicker.AdClicker", "4", "Ad Clicker", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest2, true);
 		
-		scriptLoader = new ScriptLoaderImpl(new ScriptContext(this));
+		scriptLoader = new ScriptLoaderImpl(this, new ScriptContext(this));
 		scriptLoader.addLibrary(scriptLibrary);
 		
 		scriptExecutor = new ScriptExecutor();
 		
-		if (createGUI)
+		if (createGUI) {
 			botGUI = new JBotFrame(this);
+			botGUI.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosing(WindowEvent e) {
+					super.windowClosing(e);
+					
+					config.save();
+				}
+			});
+		}
+		
+		config.addConfigurable(this);
 		
 		//Script c = new TestAdClicking(manifest2, new ScriptContext(this));
 		//scriptExecutor.runScript(c);
+	}
+	
+	public XMLConfigurableFile getConfig() {
+		return config;
 	}
 	
 	public ScriptLibrary getScriptLibrary() {
@@ -61,5 +91,19 @@ public class Bot {
 	
 	public JFrame getBotGUI() {
 		return botGUI;
+	}
+
+	@Override
+	public void loadDefault() {
+		System.out.println("Loading default");
+	}
+
+	@Override
+	public ConfigurableEntry[] getConfigurableEntries() {
+		return new ConfigurableEntry[] {new ConfigurableEntry("testfff", "gggg"), new ConfigurableEntry("testfff", "gggg")};
+	}
+
+	@Override
+	public void load(ConfigurableEntry[] configEntries) {
 	}
 }

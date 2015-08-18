@@ -3,9 +3,9 @@ package org.auriferous.bot.script.loader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.auriferous.bot.config.library.ScriptLibrary;
+import org.auriferous.bot.config.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
-import org.auriferous.bot.script.library.ScriptLibrary;
-import org.auriferous.bot.script.library.ScriptManifest;
 
 public abstract class ScriptLoader {
 	protected List<ScriptLibrary> libraries = new ArrayList<ScriptLibrary>();

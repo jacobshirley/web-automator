@@ -1,11 +1,13 @@
-package org.auriferous.bot.script.library.xml;
+package org.auriferous.bot.config.library.xml;
 
 import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.auriferous.bot.script.library.ScriptManifest;
+import org.auriferous.bot.config.library.ScriptLibrary;
+import org.auriferous.bot.config.library.ScriptManifest;
+import org.auriferous.bot.config.xml.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -41,6 +43,7 @@ public class XMLScriptManifest extends ScriptManifest {
 	
 	public XMLScriptManifest(String src, InputSource source) {
 		super(src);
+		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();

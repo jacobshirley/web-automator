@@ -4,14 +4,19 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
+
+import org.auriferous.bot.Bot;
+import org.auriferous.bot.config.Configurable;
+import org.auriferous.bot.config.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
-import org.auriferous.bot.script.library.ScriptManifest;
 
 public class ScriptLoaderImpl extends ScriptLoader{
 	private ScriptContext context;
+	private Bot bot;
 
-	public ScriptLoaderImpl(ScriptContext context) {
+	public ScriptLoaderImpl(Bot bot, ScriptContext context) {
+		this.bot = bot;
 		this.context = context;
 	}
 
@@ -40,7 +45,15 @@ public class ScriptLoaderImpl extends ScriptLoader{
 			Constructor<?> constr = cls.getConstructor(ScriptManifest.class, ScriptContext.class);
 			constr.setAccessible(true);
 			
-			return (Script)constr.newInstance(manifest, context);
+			Script script = (Script)constr.newInstance(manifest, context);
+			
+			if (script instanceof Configurable) {
+				bot.getConfig().addConfigurable((Configurable)script);
+			}
+			
+			classLoader.close();
+			
+			return script;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
