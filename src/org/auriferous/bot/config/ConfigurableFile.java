@@ -1,6 +1,7 @@
 package org.auriferous.bot.config;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,9 +45,11 @@ public abstract class ConfigurableFile {
 		return file;
 	}
 	
-	public boolean save() {
-		return save(file);
+	public boolean save() throws IOException {
+		if (file != null)
+			return save(file);
+		else throw new IOException("Please make sure you have set an output path. Use setPath.");
 	}
 	
-	public abstract boolean save(File file);
+	public abstract boolean save(File file) throws IOException;
 }

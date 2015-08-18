@@ -93,6 +93,7 @@ public class XMLConfigurableFile extends ConfigurableFile{
 		return null;
 	}
 	
+	@Override
 	protected ConfigurableEntry[] getEntries(Configurable configurable) {
 		String className = configurable.getClass().getName();
 		NodeList list = configElement.getElementsByTagName(className);
@@ -120,6 +121,7 @@ public class XMLConfigurableFile extends ConfigurableFile{
 		parent.appendChild(entryElem);
 	}
 	
+	@Override
 	public void compile() {
 		for (Entry<String, Configurable> configurableEntry : configurables.entrySet()) {
 			String cName = configurableEntry.getKey();
@@ -142,11 +144,12 @@ public class XMLConfigurableFile extends ConfigurableFile{
 		}
 	}
 	
-	public boolean save() {
-		return save(file);
-	}
-	
-	public boolean save(File path) {
+	public boolean save(File path) throws IOException {
+		if (!path.exists()) {
+			path.getParentFile().mkdirs();
+			path.createNewFile();
+		}
+		
 		compile();
 		
 		try {

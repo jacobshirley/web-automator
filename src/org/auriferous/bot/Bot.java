@@ -66,7 +66,11 @@ public class Bot implements ScriptExecutionListener {
 				public void windowClosing(WindowEvent e) {
 					super.windowClosing(e);
 					
-					config.save();
+					try {
+						config.save();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 			});
 		}
