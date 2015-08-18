@@ -354,8 +354,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 
 	@Override
 	public void onStart() {
-		setSignature();
-		//new TaskManager(tasks);
+		new TaskManager(tasks);
 	}
 
 	@Override
