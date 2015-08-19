@@ -20,6 +20,7 @@ import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
+import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.scripts.adclicker.gui.SetSignatureFrame;
 import org.auriferous.bot.scripts.adclicker.gui.TaskManager;
@@ -34,8 +35,9 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	private static final int STAGE_URL = 1;
 	private static final int STAGE_WAIT_ON_AD = 2;
 	private static final int STAGE_SUB_CLICKS = 3;
-	private static final int STAGE_DONE = 4;
-	private static final int STAGE_NEXT_TASK = 5;
+	private static final int STAGE_FACEBOOK = 4;
+	private static final int STAGE_DONE = 5;
+	private static final int STAGE_NEXT_TASK = 6;
 	
 	private static final int SUB_CLICK_TIME = 10;
 	private static final int SUB_CLICK_RANDOM_TIME = 4;
@@ -153,6 +155,22 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		searchAdTries = 0;
 	}
 	
+	private String compileSignature() {
+		try {
+			URL url = new URL(saveURL);
+			String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
+			String base = url.getProtocol() + "://" + url.getHost() + path;
+			
+			String title = base.split("\\.")[1];
+			
+			return currentSignature.replace("$title", title).replace("$base", base);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 	private boolean tickShuffles() {
 		if (curShuffles < currentTask.shuffles) {
 			curShuffles++;
@@ -258,30 +276,45 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
         		botTab.loadURL(saveURL);
 			}
 		} else {
-			taskStage = STAGE_DONE;
+			taskStage = STAGE_FACEBOOK;
 			return false;
 		}
 		
 		return true;
 	}
 	
-	public boolean tickPostComment() {
-		return false;
+	public boolean tickFBPostComment() {
+		if (botTab.getURL().equals(currentTask.fbLink)) {
+			System.out.println("On Facebook page!!!!");
+			
+			ElementBounds fbFoto = methods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
+			
+			if (fbFoto != null) {
+				System.out.println("Found Facebook photo");
+				
+				Point p = fbFoto.getRandomPointFromCentre(0.5, 0.5);
+				
+				p.x += 150;
+				
+				methods.mouse(p, ClickType.LCLICK);
+				methods.mouse(p, ClickType.LCLICK);
+				methods.type("hi Gerry!");
+			}
+			
+			taskStage = STAGE_DONE;
+			
+			return true;
+		}
+		
+		botTab.loadURL(currentTask.fbLink);
+		
+		return true;
 	}
 	
 	public boolean tickTaskDone() {
 		System.out.println("Finished current task");
-		try {
-			URL url = new URL(saveURL);
-			String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
-			String base = url.getProtocol() + "://" + url.getHost() + path;
-			
-			String title = base.split("\\.")[1];
-			
-			System.out.println(currentSignature.replace("$title", title).replace("$base", base));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		System.out.println(compileSignature());
 		
 		taskStage = STAGE_NEXT_TASK;
 		
@@ -293,9 +326,11 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		
 		currentTask = tasks.poll();
 		
-		System.out.println("Starting next task "+currentTask.url);
+		if (currentTask != null)
+			System.out.println("Starting next task "+currentTask.url);
 		
 		if (currentTask == null) {
+			System.out.println("Finished all tasks");
 			status = STATE_EXIT_SUCCESS;
 		} else {
 			startExec = true;
@@ -350,6 +385,9 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 								break;
 						case STAGE_SUB_CLICKS:
 							if (tickSubClicks())
+								break;
+						case STAGE_FACEBOOK:
+							if (tickFBPostComment())
 								break;
 						case STAGE_DONE:
 							if (tickTaskDone())

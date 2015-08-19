@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
+import org.auriferous.bot.Utils;
 import org.auriferous.bot.config.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
@@ -30,6 +31,8 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 	private Tab currentTab;
 	private int status = STATE_RUNNING;
 	
+	private boolean startExec = false;
+	
 	public TestAdClicking(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
 		//this.browser.loadURL("naht.tk");
@@ -42,7 +45,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		//openTab("naht.tk/random");//
 		System.out.println("Starting");
 		//openTab("naht.tk/random");//
-		currentTab = openTab("https://www.facebook.com/groups/1638486806364494/permalink/1673139366232571/");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		currentTab = openTab("https://www.facebook.com/groups/381168852071038/permalink/454881514699771/");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
 		currentTab.getTabView().addTabPaintListener(this);
 		getTabs().addTabControlListener(new TabControlAdapter() {
@@ -63,7 +66,38 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 
 	@Override
 	public int tick() {
-		return status;
+		if (startExec) {
+			startExec = false;
+
+			System.out.println("Finished loading main frame");
+			
+			//methods.getRandomLink(false);//
+			ElementBounds rects = methods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
+			
+			System.out.println("finished");
+			
+			//methods.moveMouse(300, 300);
+			if (rects != null) {
+				System.out.println("Found");
+				Point p = rects.getRandomPointFromCentre(0.5, 0.5);
+				
+				r = rects;//iframe;
+				
+				p.x += 200;
+				
+				//break;
+				methods.mouse(p, ClickType.LCLICK);
+				methods.mouse(p, ClickType.LCLICK);
+				methods.type("test");
+			}
+			/*r = methods.getElements("$('iframe');")[1];
+			
+			Point p = r.getRandomPointInRect();
+			
+			methods.mouse(p, ClickType.NO_CLICK);*/
+		}
+		
+		return super.tick();
 	}
 	
 	@Override
@@ -113,26 +147,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		long frame = event.getFrameId();
 		
 		if (event.isMainFrame()) {
-			System.out.println("Finished loading main frame");
-			
-			//methods.getRandomLink(false);//
-			ElementBounds rects = methods.getRandomClickable(true);
-			
-			methods.moveMouse(300, 300);
-			if (rects != null) {
-				System.out.println("Found");
-				Point p = rects.getRandomPointFromCentre(0.5, 0.5);
-				
-				r = rects;//iframe;
-				
-				//break;
-				//methods.mouse(p, ClickType.NO_CLICK);
-			}
-			/*r = methods.getElements("$('iframe');")[1];
-			
-			Point p = r.getRandomPointInRect();
-			
-			methods.mouse(p, ClickType.NO_CLICK);*/
+			startExec = true;
 		}
 	}
 

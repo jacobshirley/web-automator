@@ -187,6 +187,9 @@ public class ScriptMethods {
 				int width = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(el);").getNumber();
 				int height = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(el);").getNumber();
 				
+				x -= getPageXOffset();
+				y -= getPageYOffset();
+				
 				rects.add(new ElementBounds(x, y, width, height));
 			}
     	} catch (Exception e) {
