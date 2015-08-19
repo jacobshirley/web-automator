@@ -78,9 +78,11 @@ public class Tabs {
 	
 	public void closeTab(Tab tab) {
 		tab.getBrowserWindow().dispose();
-		tabsList.remove(tab);
-		for (TabControlListener listener : tabListeners) {
-			listener.onTabClosed(tab);
+		if (tabsList.contains(tab)) {
+			tabsList.remove(tab);
+			for (TabControlListener listener : tabListeners) {
+				listener.onTabClosed(tab);
+			}
 		}
 	}
 	
