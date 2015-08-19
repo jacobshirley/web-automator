@@ -88,6 +88,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		
 		timer = System.currentTimeMillis();
 		
+		System.out.println("Starting task "+currentTask.url);
+		
 		reset();
 	}
 	
@@ -291,10 +293,12 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	}
 	
 	private boolean tickNextTask() {
-		System.out.println("Starting next task");
+		
 		reset();
 		
 		currentTask = tasks.poll();
+		
+		System.out.println("Starting next task "+currentTask.url);
 		
 		if (currentTask == null) {
 			status = STATE_EXIT_SUCCESS;
@@ -320,7 +324,14 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 			if (!loading) {
 				if (startExec || forceExec) {
 					startExec = false;
-					forceExec = false;
+					
+					curURL = botTab.getBrowserWindow().getURL();
+					
+					String title = botTab.getTitle();
+					if (title.equals("Not found.")) {
+						System.out.println("Page not found. Next task...");
+						taskStage = STAGE_NEXT_TASK;
+					}
 					
 					curURL = botTab.getBrowserWindow().getURL();
 					
@@ -330,8 +341,15 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 							if (tickShuffles())
 								break;
 						case STAGE_URL:
-							if (tickAdClicking())
+							if (forceExec) {
+								if (currentTask.url.endsWith("/"))
+									botTab.loadURL(currentTask.url+"random");
+								else
+									botTab.loadURL(currentTask.url+"/random");
 								break;
+							} else
+								if (tickAdClicking())
+									break;
 						case STAGE_WAIT_ON_AD:
 							if (tickWaitOnAd())
 								break;
@@ -351,6 +369,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 						taskStage = STAGE_NEXT_TASK;
 						forceExec = true;
 					}
+					
+					forceExec = false;
 					
 					timer = System.currentTimeMillis();
 				} else {
