@@ -7,11 +7,14 @@ import java.util.List;
 import org.auriferous.bot.tabs.view.TabView;
 
 import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.BrowserContext;
 import com.teamdev.jxbrowser.chromium.events.TitleEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleListener;
 
 public class Tab {
 	private static final List<Browser> BROWSER_INSTANCES = new ArrayList<Browser>();
+	
+	private static final BrowserContext DEFAULT_CONTEXT = new BrowserContext("test");
 	
 	private int id;
 	private String originalURL;
@@ -25,7 +28,7 @@ public class Tab {
 	public Tab(int id, String url) {
 		this.id = id;
 		
-		this.browser = new Browser();
+		this.browser = new Browser(DEFAULT_CONTEXT);
 		this.tabView = new TabView(this.browser);
 		
 		this.browser.getPreferences().setLocalStorageEnabled(true);

@@ -1,25 +1,16 @@
 package org.auriferous.bot.scripts.adclicker;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.config.Configurable;
@@ -33,7 +24,6 @@ import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.scripts.adclicker.gui.SetSignatureFrame;
 import org.auriferous.bot.scripts.adclicker.gui.TaskManager;
 import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.TabControlAdapter;
 import org.auriferous.bot.tabs.view.TabPaintListener;
 
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
@@ -232,7 +222,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		System.out.println("Saving URL "+saveURL);
 		
 		System.out.println("Now waiting on ad");
-		Utils.wait(currentTask.timeOnAd*1000 + Utils.random(5000));
+		Utils.wait((currentTask.timeOnAd*1000) + Utils.random(5000));
 
 		taskStage = STAGE_SUB_CLICKS;
 		
