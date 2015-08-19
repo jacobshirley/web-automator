@@ -186,7 +186,9 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		System.out.println("Started ad clicking");
     	Utils.wait(2000);
     	
-    	if (blogURL != null && !botTab.getBrowserWindow().getURL().equals(blogURL)) {
+    	String url = botTab.getURL();
+    	
+    	if (blogURL != null && !url.equals(blogURL) && !url.contains("tumblr")) {
     		System.out.println("Clicked ad successfully.");
     		taskStage = STAGE_WAIT_ON_AD;
     		
@@ -225,7 +227,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	}
 	
 	private boolean tickWaitOnAd() {
-		saveURL = botTab.getBrowserWindow().getURL();
+		saveURL = botTab.getURL();
 		
 		System.out.println("Saving URL "+saveURL);
 		
@@ -273,6 +275,10 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		return true;
 	}
 	
+	public boolean tickPostComment() {
+		return false;
+	}
+	
 	public boolean tickTaskDone() {
 		System.out.println("Finished current task");
 		try {
@@ -293,7 +299,6 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	}
 	
 	private boolean tickNextTask() {
-		
 		reset();
 		
 		currentTask = tasks.poll();
@@ -391,14 +396,17 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 
 	@Override
 	public void onPause() {
-		
 	}
 
+	@Override
+	public void onResume() {
+	}
+	
 	@Override
 	public void onTerminate() {
 		
 	}
-	
+
 	@Override
 	public void onPaint(Graphics g) {
 		if (debugElement != null) {

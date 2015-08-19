@@ -10,4 +10,6 @@ public interface ScriptExecutionListener {
 	public void onTerminateScript(Script script);
 
 	public void onPauseScript(Script script);
+	
+	public void onResumeScript(Script script);
 }

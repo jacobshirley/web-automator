@@ -28,6 +28,8 @@ public class Tab {
 		this.browser = new Browser();
 		this.tabView = new TabView(this.browser);
 		
+		this.browser.getPreferences().setLocalStorageEnabled(true);
+		
 		BROWSER_INSTANCES.add(browser);
 		
 		browser.addTitleListener(new TitleListener() {
@@ -66,7 +68,15 @@ public class Tab {
 	}
 	
 	public String getTitle() {
-		return browser.getTitle();
+		if (!browser.isDisposed())
+			return browser.getTitle();
+		return "";
+	}
+	
+	public String getURL() {
+		if (!browser.isDisposed())
+			return browser.getURL();
+		return "";
 	}
 	
 	public String getOriginalURL() {

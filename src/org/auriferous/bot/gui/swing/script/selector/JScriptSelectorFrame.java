@@ -30,6 +30,7 @@ public class JScriptSelectorFrame extends JFrame implements ActionListener, Tree
 	private LinkedList<JScriptSelectorListener> scriptSelListeners = new LinkedList<JScriptSelectorListener>();
 
 	private Bot bot;
+	private Object lastSelected = null;
 	
 	private ScriptLibrary library;
 	
@@ -92,12 +93,14 @@ public class JScriptSelectorFrame extends JFrame implements ActionListener, Tree
 		ScriptLoader loader = bot.getScriptLoader();
 
 		try {
-			Script script = loader.loadScript(lastSelected.manifest);
-			ScriptExecutor executor = bot.getScriptExecutor();
-			executor.runScript(script);
-			
-			for (JScriptSelectorListener listener : scriptSelListeners) {
-				listener.onScriptSelected(script);
+			if (lastSelected instanceof ScriptTreeNode) {
+				Script script = loader.loadScript(((ScriptTreeNode)lastSelected).manifest);
+				ScriptExecutor executor = bot.getScriptExecutor();
+				executor.runScript(script);
+				
+				for (JScriptSelectorListener listener : scriptSelListeners) {
+					listener.onScriptSelected(script);
+				}
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -112,13 +115,9 @@ public class JScriptSelectorFrame extends JFrame implements ActionListener, Tree
 		this.scriptSelListeners.remove(listener);
 	}
 	
-	private ScriptTreeNode lastSelected = null;
-	
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
-		Object o = tree.getLastSelectedPathComponent();
-		if (o instanceof ScriptTreeNode)
-			lastSelected = (ScriptTreeNode)o;
+		lastSelected = tree.getLastSelectedPathComponent();
 	}
 	
 	class ScriptTreeNode extends DefaultMutableTreeNode {

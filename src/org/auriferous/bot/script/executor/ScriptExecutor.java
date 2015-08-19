@@ -38,6 +38,14 @@ public class ScriptExecutor {
 		execution.start();
 	}
 	
+	public void pauseScript(Script script) {
+		scripts.get(script).pause();
+	}
+	
+	public void resumeScript(Script script) {
+		scripts.get(script).resume();
+	}
+	
 	public void terminateScript(Script script) {
 		scripts.get(script).stop();
 	}
@@ -55,6 +63,8 @@ public class ScriptExecutor {
 			this.thread = new Thread(this);
 		}
 		
+		
+
 		public void start() {
 			if (!this.running) {
 				this.running = true;
@@ -70,6 +80,10 @@ public class ScriptExecutor {
 		
 		public void pause() {
 			this.paused = true;
+		}
+		
+		public void resume() {
+			this.paused = false;
 		}
 		
 		public void terminate() {
@@ -99,6 +113,10 @@ public class ScriptExecutor {
 						}
 						Thread.yield();
 					}
+					
+					script.onResume();
+					for (ScriptExecutionListener listener : listeners)
+						listener.onResumeScript(script);
 				}
 				
 				if (!this.running) {

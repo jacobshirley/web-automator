@@ -11,16 +11,19 @@ public class Task {
 	public int timeInterval;
 	public int subClicks;
 	
+	public String fbLink;
+	
 	public Task(ConfigurableEntry entry) {
 		load(entry);
 	}
 	
-	public Task(String url, int shuffles, int timeInterval, int timeOnAd, int subClicks) {
+	public Task(String url, int shuffles, int timeInterval, int timeOnAd, int subClicks, String fbLink) {
 		this.url = url;
 		this.shuffles = shuffles;
 		this.timeInterval = timeInterval;
 		this.timeOnAd = timeOnAd;
 		this.subClicks = subClicks;
+		this.fbLink = fbLink;
 	}
 	
 	public void load(ConfigurableEntry config) {
@@ -31,9 +34,11 @@ public class Task {
 		this.timeInterval = Integer.parseInt(""+entries.get(2).getValue());
 		this.timeOnAd = Integer.parseInt(""+entries.get(3).getValue());
 		this.subClicks = Integer.parseInt(""+entries.get(4).getValue());
+		
+		this.fbLink = ""+entries.get(5).getValue();
 	}
 	
 	public Task copy() {
-		return new Task(url, shuffles, timeInterval, timeOnAd, subClicks);
+		return new Task(url, shuffles, timeInterval, timeOnAd, subClicks, fbLink);
 	}
 }

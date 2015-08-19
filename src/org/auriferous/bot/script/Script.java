@@ -36,6 +36,7 @@ public abstract class Script {
 	
 	public abstract void onStart();
 	public abstract void onPause();
+	public abstract void onResume();
 	public abstract void onTerminate();
 	
 	public final Tab openTab() {

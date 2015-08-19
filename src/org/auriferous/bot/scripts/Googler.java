@@ -45,4 +45,10 @@ public class Googler extends Script implements JScriptGuiListener{
 	@Override
 	public void onJMenuCreated(JMenu menu) {
 	}
+
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		
+	}
 }

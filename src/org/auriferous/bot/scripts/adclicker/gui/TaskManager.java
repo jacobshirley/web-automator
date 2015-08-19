@@ -91,7 +91,7 @@ public class TaskManager extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			switch (actionID) {
-				case 0: Task t = new Task("http://naht.tk", 1, 0, 0, 2);
+				case 0: Task t = new Task("http://naht.tk", 1, 0, 0, 2, "");
 						tasks.add(t);
 						
 						taskConfig.getChildren().add(new TaskConfigEntry(t));
@@ -101,7 +101,6 @@ public class TaskManager extends JFrame{
 						break;
 				case 2: int selected = taskTable.getSelectedRow();
 						if (selected >= 0) {
-							System.out.println(selected);
 							Task task = tasks.get(selected).copy();
 							tasks.add(task);
 						}
@@ -116,7 +115,7 @@ public class TaskManager extends JFrame{
 	
 	class MyTableModel extends AbstractTableModel {
 		private List<Task> tasks;
-		private String[] columns = new String[] {"URL", "Shuffles", "Shuffle Time Interval (seconds)", "Time On Ad (seconds)", "Clicks In Ad"};
+		private String[] columns = new String[] {"URL", "Shuffles", "Shuffle Time Interval (seconds)", "Time On Ad (seconds)", "Clicks In Ad", "Facebook Link"};
 
 		public MyTableModel(List<Task> tasks) {
 			this.tasks = tasks;
@@ -151,6 +150,7 @@ public class TaskManager extends JFrame{
 				case 2: return task.timeInterval;
 				case 3: return task.timeOnAd;
 				case 4: return task.subClicks;
+				case 5: return task.fbLink;
 			}
 			return null;
 		}
@@ -170,6 +170,8 @@ public class TaskManager extends JFrame{
 				case 3: task.timeOnAd = Integer.parseInt((String)aValue);
 						break;
 				case 4: task.subClicks = Integer.parseInt((String)aValue);
+						break;
+				case 5: task.fbLink = (String)aValue;
 						break;
 			}
 		}

@@ -1,7 +1,10 @@
 package org.auriferous.bot.gui.swing;
 
 import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
@@ -13,6 +16,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -43,6 +47,8 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private static final int ACTION_EXIT_BOT = 2;
 	private static final int ACTION_TERMINATE_SCRIPT = 3;
 	private static final int ACTION_CREATE_TAB = 4;
+	private static final int ACTION_PAUSE_SCRIPT = 5;
+	private static final int ACTION_RESUME_SCRIPT = 6;
 	
 	private static final int REFRESH_RATE = 50;
 	private static final int UPDATE_INTERVAL = 1000/REFRESH_RATE;
@@ -57,6 +63,8 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private JMenu scriptsMenu;
 	
 	private Map<Script, JMenu> scriptMenuMap = new HashMap<Script, JMenu>();
+	
+	private Window window = new Window(this);
 	
 	public JBotFrame(final Bot bot) {
 		super("Web Automator");
@@ -117,6 +125,11 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		setVisible(true);
 	}
 	
+	@Override
+	public void setLocation(int x, int y) {
+		super.setLocation(x, y);
+	}
+	
 	private JMenu createFileMenu() {
 		JMenu fileMenu = new JMenu("File");
 		JMenuItem exitBotItem = new JMenuItem(new MenuActionItem("Exit", ACTION_EXIT_BOT));
@@ -175,6 +188,20 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 
 	@Override
 	public void onPauseScript(Script script) {
+		JMenu menu = scriptMenuMap.get(script);
+		MenuActionItem pauseItem = (MenuActionItem) menu.getItem(menu.getItemCount()-2).getAction();
+		
+		pauseItem.setAction(ACTION_RESUME_SCRIPT);
+		pauseItem.putValue(MenuActionItem.NAME, "Resume");
+	}
+	
+	@Override
+	public void onResumeScript(Script script) {
+		JMenu menu = scriptMenuMap.get(script);
+		MenuActionItem pauseItem = (MenuActionItem) menu.getItem(menu.getItemCount()-2).getAction();
+		
+		pauseItem.setAction(ACTION_PAUSE_SCRIPT);
+		pauseItem.putValue(MenuActionItem.NAME, "Pause");
 	}
 	
 	private void addScriptToMenu(Script script) {
@@ -187,6 +214,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 			((JScriptGuiListener)script).onJMenuCreated(menu);
 		
 		menu.addSeparator();
+		menu.add(new MenuActionItem("Pause", script, ACTION_PAUSE_SCRIPT));
 		menu.add(new MenuActionItem("Terminate", script, ACTION_TERMINATE_SCRIPT));
 		
 		scriptMenuMap.put(script, menu);
@@ -232,6 +260,14 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 			this.actionID = actionID;
 		}
 		
+		public void setAction(int id) {
+			this.actionID = id;
+		}
+		
+		public int getAction() {
+			return actionID;
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			switch (this.actionID) {
@@ -244,8 +280,13 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 			case ACTION_TERMINATE_SCRIPT:
 				bot.getScriptExecutor().terminateScript(script);
 				break;
+			case ACTION_PAUSE_SCRIPT:
+				bot.getScriptExecutor().pauseScript(script);
+				break;
+			case ACTION_RESUME_SCRIPT:
+				bot.getScriptExecutor().resumeScript(script);
+				break;
 			case ACTION_CREATE_TAB:
-				
 				String s = (String)JOptionPane.showInputDialog(
 	                    JBotFrame.this,
 	                    "Tab URL: ",
