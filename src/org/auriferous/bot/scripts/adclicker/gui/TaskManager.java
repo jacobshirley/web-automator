@@ -21,21 +21,26 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import org.auriferous.bot.config.ConfigurableEntry;
 import org.auriferous.bot.scripts.adclicker.Task;
+import org.auriferous.bot.scripts.adclicker.TaskConfigEntry;
 
 public class TaskManager extends JFrame{
 	private JTable taskTable;
 	private List<Task> tasks;
+	private ConfigurableEntry taskConfig;
 	
-	public TaskManager(List<Task> tasks) {
+	public TaskManager(List<Task> tasks, ConfigurableEntry taskConfig) {
 		super("Task Manager");
 		
 		this.tasks = tasks;
+		this.taskConfig = taskConfig;
 		
 		JPanel content = new JPanel();
 		content.setLayout(new BorderLayout());
 		content.setBorder(new EmptyBorder(10, 10, 10, 10));
-
+		
+		
 		MyTableModel model = new MyTableModel(tasks);
 		
         //Create the list and put it in a scroll pane.
@@ -83,7 +88,11 @@ public class TaskManager extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			switch (actionID) {
-				case 0: tasks.add(new Task("http://naht.tk", 1, 0, 0, 2));
+				case 0: Task t = new Task("http://naht.tk", 1, 0, 0, 2);
+						tasks.add(t);
+						
+						taskConfig.getChildren().add(new TaskConfigEntry(t));
+						
 						break;
 				case 1: tasks.remove(taskTable.getSelectedRow());
 						break;

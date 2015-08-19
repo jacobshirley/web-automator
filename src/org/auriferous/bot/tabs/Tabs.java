@@ -12,8 +12,7 @@ public class Tabs {
 	public Tabs() {
 	}
 	
-	public Tab openTab(String url) {
-		Tab tab = new Tab(url);
+	public Tab openTab(Tab tab) {
 		tabsList.add(tab);
 
 		tab.setID(tabsList.indexOf(tab));
@@ -26,6 +25,10 @@ public class Tabs {
 		}
 		
 		return tab;
+	}
+	
+	public Tab openTab(String url) {
+		return openTab(new Tab(url));
 	}
 	
 	public Tab openTab() {

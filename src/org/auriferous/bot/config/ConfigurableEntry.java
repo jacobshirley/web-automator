@@ -1,46 +1,59 @@
 package org.auriferous.bot.config;
 
-public class ConfigurableEntry {
-	private String key;
-	private String value;
-	private ConfigurableEntry[] children;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class ConfigurableEntry<N,V> {
+	private N key;
+	private V value;
 	
-	public ConfigurableEntry(String key, String value) {
-		this(key, value, null);
+	private List<ConfigurableEntry> children = new ArrayList<ConfigurableEntry>();
+	
+	public ConfigurableEntry(N key) {
+		this(key, null);
 	}
 	
-	public ConfigurableEntry(String key, String value, ConfigurableEntry[] children) {
+	public ConfigurableEntry(N key, V value) {
 		this.key = key;
 		this.value = value;
-		
-		this.children = children;
+	}
+
+	public ConfigurableEntry<N,V> copy() {
+		return new ConfigurableEntry<N,V>(key, value);
 	}
 	
-	public ConfigurableEntry copy() {
-		return new ConfigurableEntry(key, value, children);
-	}
-	
-	public void setKey(String key) {
+	public void setKey(N key) {
 		this.key = key;
 	}
 	
-	public void setValue(String value) {
+	public void setValue(V value) {
 		this.value = value;
 	}
 	
-	public void setChildren(ConfigurableEntry[] children) {
-		this.children = children;
-	}
-	
-	public String getKey() {
+	public N getKey() {
 		return key;
 	}
 	
-	public String getValue() {
+	public V getValue() {
 		return value;
 	}
 	
-	public ConfigurableEntry[] getChildren() {
+	public List<ConfigurableEntry> getChildren() {
 		return children;
+	}
+	
+	public void setChildren(List<ConfigurableEntry> children) {
+		this.children = children;
+	}
+	
+	public List<ConfigurableEntry<Object,Object>> get(Object key) {
+		List<ConfigurableEntry<Object,Object>> results = new ArrayList<ConfigurableEntry<Object,Object>>();
+		for (ConfigurableEntry<Object,Object> cE : children) {
+			if (cE.key.equals(key)) {
+				results.add(cE);
+			}
+		}
+		return results;
 	}
 }

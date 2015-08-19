@@ -20,20 +20,25 @@ public abstract class ConfigurableFile {
 		String cName = configurable.getClass().getName();
 		
 		if (!this.configurables.containsKey(cName)) {
-			ConfigurableEntry[] entries = getEntries(configurable);
+			ConfigurableEntry entries = getEntries(configurable);
 			if (entries != null) {
 				configurable.load(entries);
 			} else {
 				configurable.loadDefault();
 			}
 		} else {
-			configurable.load(this.configurables.get(cName).getConfigurableEntries());
+			configurable.load(this.configurables.get(cName).getConfiguration());
 		}
 		
 		this.configurables.put(cName, configurable);
 	}
 	
-	protected abstract ConfigurableEntry[] getEntries(Configurable configurable);
+	private void merge(ConfigurableEntry entry1, ConfigurableEntry entry2) {
+		
+	}
+	
+	
+	protected abstract ConfigurableEntry getEntries(Configurable configurable);
 	
 	public abstract void compile();
 	

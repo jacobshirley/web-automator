@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,54 +72,64 @@ public class XMLConfigurableFile extends ConfigurableFile{
 		}
 	}
 	
-	private void writeEntry(Element parent, ConfigurableEntry entry) {
-		Element entryElem = XMLUtils.createOrGetElement(document, parent, entry.getKey(), entry.getValue());
+	private ConfigurableEntry<Object,Object> getEntries(ConfigurableEntry<Object,Object> parent, NodeList nodes) {
+		List<ConfigurableEntry<Object,Object>> list = new ArrayList<ConfigurableEntry<Object,Object>>();
 		
-		ConfigurableEntry[] entries = entry.getChildren();
-		if (entries != null) {
-			for (ConfigurableEntry entry2 : entries) {
-				Element elem = XMLUtils.createOrGetElement(document, entryElem, entry2.getKey(), entry2.getValue());
-
-				writeEntry(elem, entry2);
-				
-				entryElem.appendChild(elem);
-			}
-		}
-		
-		parent.appendChild(entryElem);
-	}
-	
-	private ConfigurableEntry[] getEntries(ConfigurableEntry parent, NodeList nodes) {
-		List<ConfigurableEntry> list = new ArrayList<ConfigurableEntry>();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
 			if (node instanceof Element) {
 				Element elem = (Element)node;
 				
 				NodeList children = elem.getChildNodes();
-				ConfigurableEntry entry = new ConfigurableEntry(elem.getTagName(), elem.getTextContent());
+				ConfigurableEntry<Object,Object> entry = new ConfigurableEntry<Object,Object>(elem.getTagName(), elem.getTextContent());
 				
 				getEntries(entry, children);
 				
 				list.add(entry);
 			}
 		}
-		if (!list.isEmpty()) {
-			ConfigurableEntry[] entries = new ConfigurableEntry[list.size()];
-			list.toArray(entries);
-			return entries;
+		
+		if (parent != null) {
+			List<ConfigurableEntry> cChildren = parent.getChildren();
+			if (cChildren != null)
+				cChildren.addAll(list);
+		}
+		
+		return parent;
+	}
+	
+	@Override
+	protected ConfigurableEntry<Object,Object> getEntries(Configurable configurable) {
+		String className = configurable.getClass().getName();
+		NodeList classElements = configElement.getElementsByTagName(className);
+		if (classElements.getLength() > 0) {
+			Element classElem = (Element)classElements.item(0);
+
+			String root = classElem.getAttribute("root");
+			if (root.length() > 0) {
+				Element rootElem = (Element) classElem.getElementsByTagName(root).item(0);
+				
+				ConfigurableEntry<Object,Object> rootEntry = new ConfigurableEntry<Object, Object>(rootElem.getTagName(), rootElem.getTextContent());
+				
+				ConfigurableEntry<Object,Object> entries = getEntries(rootEntry, rootElem.getChildNodes());
+				
+				return entries;
+			}
 		}
 		return null;
 	}
 	
-	@Override
-	protected ConfigurableEntry[] getEntries(Configurable configurable) {
-		String className = configurable.getClass().getName();
-		NodeList list = configElement.getElementsByTagName(className);
-		if (list.getLength() == 0) {
-			return null;
-		} else {
-			return getEntries(null, list);
+	private void writeEntry(Element parent, ConfigurableEntry entry) {
+		List<ConfigurableEntry<Object,Object>> entries = entry.getChildren();
+		if (entries != null) {
+			for (ConfigurableEntry<Object,Object> entry2 : entries) {
+				Object val = entry2.getValue();
+				Element elem = XMLUtils.createElement(document, ""+entry2.getKey(), ""+(val == null ? "" : val));
+
+				writeEntry(elem, entry2);
+				
+				parent.appendChild(elem);
+			}
 		}
 	}
 	
@@ -127,13 +139,16 @@ public class XMLConfigurableFile extends ConfigurableFile{
 			String cName = configurableEntry.getKey();
 			Configurable configurable = configurableEntry.getValue();
 			
-			ConfigurableEntry[] entries = configurable.getConfigurableEntries();
+			ConfigurableEntry<?,?> entries = configurable.getConfiguration();
 			if (entries != null) {
 				Element configurableElem = XMLUtils.createElement(document, cName, "");
+				configurableElem.setAttribute("root", entries.getKey().toString());
 				
-				for (ConfigurableEntry entry : entries) {
-					writeEntry(configurableElem, entry);
-				}
+				Element rootElem = XMLUtils.createElement(document, entries.getKey().toString(), "");
+				
+				writeEntry(rootElem, entries);
+				
+				configurableElem.appendChild(rootElem);
 				
 				Element tempElem = XMLUtils.getElement(configElement, cName);
 				if (tempElem != null)

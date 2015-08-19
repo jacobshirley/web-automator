@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -68,6 +70,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	public String currentSignature = "";
 	
 	private SetSignatureFrame setSigFrame = new SetSignatureFrame(this);
+	
+	private ConfigurableEntry<String,String> taskConfig = new ConfigurableEntry<String,String>("tasks");
 	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -306,6 +310,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 				resetTab();
 				return super.tick();
 			}
+			
 			boolean loading = botTab.getBrowserWindow().isLoading();
 			if (!loading) {
 				if (startExec || forceExec) {
@@ -354,7 +359,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 
 	@Override
 	public void onStart() {
-		new TaskManager(tasks);
+		new TaskManager(tasks, taskConfig);
 	}
 
 	@Override
@@ -398,7 +403,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			switch (actionID) {
-				case 0: new TaskManager(tasks);
+				case 0: new TaskManager(tasks, taskConfig);
 						break;
 				case 1:	executeTasks();
 						break;
@@ -413,14 +418,37 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	}
 
 	@Override
-	public void load(ConfigurableEntry[] configEntries) {
-		currentSignature = configEntries[0].getValue();
-
+	public void load(ConfigurableEntry configEntries) {
+		List<ConfigurableEntry> l = configEntries.get("signature");
+		
+		currentSignature = (String) l.get(0).getValue();
 		setSigFrame.setText(currentSignature);
+		
+		l = configEntries.get("tasks");
+		if (!l.isEmpty()) {
+			taskConfig = l.get(0);
+			for (ConfigurableEntry<Object,Object> taskEntry : taskConfig.getChildren()) {
+				Task t = new Task(taskEntry);
+				
+				tasks.add(t);
+			}
+		}
 	}
 
 	@Override
-	public ConfigurableEntry[] getConfigurableEntries() {
-		return new ConfigurableEntry[] {new ConfigurableEntry("signature", currentSignature)};
+	public ConfigurableEntry<String,String> getConfiguration() {
+		ConfigurableEntry<String,String> root = new ConfigurableEntry("config");
+		
+		root.getChildren().add(new ConfigurableEntry<String,String>("signature", currentSignature));
+		
+		taskConfig = new ConfigurableEntry<String,String>("tasks");
+		
+		for (Task t : tasks) {
+			taskConfig.getChildren().add(new TaskConfigEntry(t));
+		}
+		
+		root.getChildren().add(taskConfig);
+		
+		return root;
 	}
 }

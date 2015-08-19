@@ -15,15 +15,15 @@ public class XMLUtils {
 		} else {
 			el = (Element)list.item(0);
 		}
-		if (value != null && !value.equals(""))
-			el.setTextContent(value);
+		
+		el.setTextContent(value);
 		return el;
 	}
 	
 	public static final Element createElement(Document document, String name, String value) {
 		Element el = document.createElement(name);
-		if (value != null && !value.equals(""))
-			el.setTextContent(value);
+		el.setTextContent(value);
+		
 		return el;
 	}
 	
