@@ -48,17 +48,21 @@ public class Tab {
 	public void loadURL(String url) {
 		this.originalURL = url;
 		
-		this.browser.loadURL(url);
+		if (!this.browser.isDisposed()) {
+			this.browser.loadURL(url);
 		
-		for (TabListener listener : tabListeners) 
-			listener.onTabUpdating();
+			for (TabListener listener : tabListeners) 
+				listener.onTabUpdating();
+		}
 	}
 	
 	public void reload() {
-		this.browser.reload();
+		if (!this.browser.isDisposed()) {
+			this.browser.reload();
 		
-		for (TabListener listener : tabListeners) 
-			listener.onTabReloaded();
+			for (TabListener listener : tabListeners) 
+				listener.onTabReloaded();
+		}
 	}
 	
 	public String getTitle() {

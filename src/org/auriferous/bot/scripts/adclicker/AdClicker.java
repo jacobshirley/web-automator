@@ -47,6 +47,9 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	private static final int STAGE_DONE = 4;
 	private static final int STAGE_NEXT_TASK = 5;
 	
+	private static final int SUB_CLICK_TIME = 10;
+	private static final int SUB_CLICK_RANDOM_TIME = 4;
+	
 	private Tab botTab;
 	private ScriptMethods methods;
 	
@@ -92,10 +95,16 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		setSigFrame.setVisible(true);
 	}
 	
+	private String curURL;
+	
 	private void resetTab() {
 		System.out.println("Opening tab");
 		
-		botTab = openTab();
+		if (botTab != null)
+			botTab = openTab(curURL);
+		else
+			botTab = openTab();
+		
 		botTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
 			@Override
 			public void onFinishLoadingFrame(FinishLoadingEvent event) {
@@ -242,7 +251,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	        	methods.mouse(p.x, p.y);
 	        	
 	        	System.out.println("Waiting 10 seconds + random time (0 - 4 seconds)");
-	        	Utils.wait((int)(10000+Utils.randomRange(0, 4000)));
+	        	Utils.wait((int)((SUB_CLICK_TIME*1000)+Utils.randomRange(0, SUB_CLICK_RANDOM_TIME*1000)));
 	        	
 	        	System.out.println("Going back to ad");
 	        	botTab.loadURL(saveURL);
@@ -271,11 +280,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 			
 			String title = base.split("\\.")[1];
 			
-			String signature = currentSignature;
-			signature.replace("$title", title);
-			signature.replace("$base", base);
-			
-			System.out.println(signature);
+			System.out.println(currentSignature.replace("$title", title).replace("$base", base));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -316,6 +321,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 				if (startExec || forceExec) {
 					startExec = false;
 					forceExec = false;
+					
+					curURL = botTab.getBrowserWindow().getURL();
 					
 					try {
 						switch (taskStage){

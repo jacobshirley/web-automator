@@ -52,7 +52,9 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 
 	@Override
 	public void onTabClosed(Tab tab) {
-		super.remove(getBarIndexByTab(tab));
+		int id = getBarIndexByTab(tab);
+		System.out.println("Closing tab "+id);
+		super.remove(id);
 	}
 
 	@Override
@@ -85,6 +87,7 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 			for (Tabs tabs : scriptTabs) {
 				if (tabs.containsTab(tab)) {
 					tabs.closeTab(tab);
+					break;
 				}
 			}
 		}

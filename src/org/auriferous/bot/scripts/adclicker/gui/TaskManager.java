@@ -56,10 +56,13 @@ public class TaskManager extends JFrame{
 		JButton addTask = new JButton(new ButtonAction("Add", 0));
 		JButton copyTask = new JButton(new ButtonAction("Copy", 2));
 		JButton removeTask = new JButton(new ButtonAction("Remove", 1));
+		JButton clearTasks = new JButton(new ButtonAction("Clear", 3));
 		
 		buttonPanel.add(addTask);
 		buttonPanel.add(copyTask);
 		buttonPanel.add(removeTask);
+		buttonPanel.add(clearTasks);
+		
 		content.add(buttonPanel, BorderLayout.SOUTH);
 		
 		setContentPane(content);
@@ -102,6 +105,8 @@ public class TaskManager extends JFrame{
 							Task task = tasks.get(selected).copy();
 							tasks.add(task);
 						}
+						break;
+				case 3: tasks.clear();
 						break;
 			}
 			taskTable.revalidate();
