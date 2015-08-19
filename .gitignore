@@ -1,2 +1,4 @@
 /bin
 *.xml
+/chrome
+/config
