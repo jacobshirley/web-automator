@@ -50,7 +50,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private static final int ACTION_PAUSE_SCRIPT = 5;
 	private static final int ACTION_RESUME_SCRIPT = 6;
 	
-	private static final int REFRESH_RATE = 50;
+	private static final int REFRESH_RATE = 20;
 	private static final int UPDATE_INTERVAL = 1000/REFRESH_RATE;
 	
 	private Bot bot;
@@ -105,7 +105,8 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 						if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
 							view.repaint(UPDATE_INTERVAL);
 						}
-						Utils.wait(UPDATE_INTERVAL);
+						
+						Thread.yield();
 					}
 				}
 			}

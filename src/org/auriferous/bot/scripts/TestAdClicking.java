@@ -89,6 +89,8 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 				methods.mouse(p, ClickType.LCLICK);
 				methods.mouse(p, ClickType.LCLICK);
 				methods.type("hi Gerry");
+				
+				return STATE_EXIT_SUCCESS;
 			}
 			/*r = methods.getElements("$('iframe');")[1];
 			

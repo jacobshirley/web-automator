@@ -205,7 +205,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
         	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
 
         	if (adElement != null) {
-        		blogURL = botTab.getBrowserWindow().getURL();
+        		blogURL = botTab.getURL();
         		
         		adElement.width -= 35;
         		
@@ -284,29 +284,36 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	}
 	
 	public boolean tickFBPostComment() {
-		if (botTab.getURL().equals(currentTask.fbLink)) {
-			System.out.println("On Facebook page!!!!");
-			
-			ElementBounds fbFoto = methods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
-			
-			if (fbFoto != null) {
-				System.out.println("Found Facebook photo");
-				
-				Point p = fbFoto.getRandomPointFromCentre(0.5, 0.5);
-				
-				p.x += 150;
-				
-				methods.mouse(p, ClickType.LCLICK);
-				methods.mouse(p, ClickType.LCLICK);
-				methods.type("hi Gerry!");
-			}
-			
-			taskStage = STAGE_DONE;
-			
-			return true;
-		}
+		final Tab fbTab = openTab(currentTask.fbLink);
 		
-		botTab.loadURL(currentTask.fbLink);
+		fbTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
+			@Override
+			public void onFinishLoadingFrame(FinishLoadingEvent arg0) {
+				if (arg0.isMainFrame()) {
+					System.out.println("On Facebook page!!!!");
+					
+					ScriptMethods fbMethods = new ScriptMethods(fbTab);
+					
+					ElementBounds fbFoto = fbMethods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
+					
+					if (fbFoto != null) {
+						System.out.println("Found Facebook photo");
+						
+						Point p = fbFoto.getRandomPointFromCentre(0.5, 0.5);
+						
+						p.x += 150;
+						
+						fbMethods.mouse(p, ClickType.LCLICK);
+						fbMethods.mouse(p, ClickType.LCLICK);
+						fbMethods.type(compileSignature());
+					}
+					
+					
+				}
+			}
+		});
+		
+		taskStage = STAGE_DONE;
 		
 		return true;
 	}

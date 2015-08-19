@@ -77,8 +77,8 @@ public class Bot implements ScriptExecutionListener {
 			});
 		}
 
-		Script c = new TestAdClicking(manifest2, new ScriptContext(this));
-		scriptExecutor.runScript(c);
+		//Script c = new TestAdClicking(manifest2, new ScriptContext(this));
+		//scriptExecutor.runScript(c);
 	}
 	
 	public ConfigurableFile getConfig() {
