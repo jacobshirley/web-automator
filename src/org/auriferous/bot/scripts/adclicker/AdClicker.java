@@ -284,34 +284,36 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	}
 	
 	public boolean tickFBPostComment() {
-		final Tab fbTab = openTab(currentTask.fbLink);
-		
-		fbTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
-			@Override
-			public void onFinishLoadingFrame(FinishLoadingEvent arg0) {
-				if (arg0.isMainFrame()) {
-					System.out.println("On Facebook page!!!!");
-					
-					ScriptMethods fbMethods = new ScriptMethods(fbTab);
-					
-					ElementBounds fbFoto = fbMethods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
-					
-					if (fbFoto != null) {
-						System.out.println("Found Facebook photo");
+		if (!currentTask.fbLink.equals("")) {
+			final Tab fbTab = openTab(currentTask.fbLink);
+			
+			fbTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
+				@Override
+				public void onFinishLoadingFrame(FinishLoadingEvent arg0) {
+					if (arg0.isMainFrame()) {
+						System.out.println("On Facebook page!!!!");
 						
-						Point p = fbFoto.getRandomPointFromCentre(0.5, 0.5);
+						ScriptMethods fbMethods = new ScriptMethods(fbTab);
 						
-						p.x += 150;
+						ElementBounds fbFoto = fbMethods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
 						
-						fbMethods.mouse(p, ClickType.LCLICK);
-						fbMethods.mouse(p, ClickType.LCLICK);
-						fbMethods.type(compileSignature());
+						if (fbFoto != null) {
+							System.out.println("Found Facebook photo");
+							
+							Point p = fbFoto.getRandomPointFromCentre(0.5, 0.5);
+							
+							p.x += 150;
+							
+							fbMethods.mouse(p, ClickType.LCLICK);
+							fbMethods.mouse(p, ClickType.LCLICK);
+							fbMethods.type(compileSignature());
+						}
+						
+						
 					}
-					
-					
 				}
-			}
-		});
+			});
+		}
 		
 		taskStage = STAGE_DONE;
 		
