@@ -274,8 +274,11 @@ public class ScriptMethods {
 	
 	public void mouse(int x, int y, ClickType clickType) {
 		while (y - getPageYOffset() >= target.getTabView().getHeight()) {
-			scrollMouse(false, 5);
-			
+			scrollMouse(false, 3);
+		}
+		
+		while (y - getPageYOffset() <= 0) {
+			scrollMouse(true, 3);
 		}
 		
 		x -= getPageXOffset();
