@@ -3,31 +3,23 @@ package org.auriferous.bot.script.input;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.tabs.view.TabView;
 
 public class Keyboard extends Input {
 	
-	public Keyboard(Component target) {
+	public Keyboard(TabView target) {
 		super(target);
 	}
 	
-	public void type(int c, int time, int mods) {
-		pressKey(c);
-		
-		KeyEvent event = new KeyEvent(target, KeyEvent.KEY_TYPED, System.currentTimeMillis(), mods, KeyEvent.VK_UNDEFINED, (char)c, KeyEvent.KEY_LOCATION_UNKNOWN);
-		target.dispatchEvent(event);
-	
-		Utils.wait(time+Utils.random(20));
-	
-		releaseKey(c);
+	public void typeKey(int c, int time, int mods) {
+		target.dispatchTypeKey(c, time, mods);
 	}
 	
 	public void pressKey(int c) {
-		KeyEvent event = new KeyEvent(target, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, c, KeyEvent.CHAR_UNDEFINED, KeyEvent.KEY_LOCATION_STANDARD);
-		target.dispatchEvent(event);
+		target.dispatchPressKey(c);
 	}
 	
 	public void releaseKey(int c) {
-		KeyEvent event = new KeyEvent(target, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 0, c, KeyEvent.CHAR_UNDEFINED, KeyEvent.KEY_LOCATION_STANDARD);
-		target.dispatchEvent(event);
+		target.dispatchReleaseKey(c);
 	}
 }

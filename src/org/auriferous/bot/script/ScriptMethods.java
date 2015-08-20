@@ -417,16 +417,16 @@ public class ScriptMethods {
 	}
 	
 	public void type(int c, int time) {
-		keyboard.type(c, time, 0);
+		keyboard.typeKey(c, time, 0);
 	}
 	
 	public final void type(int c) {
 		int mods = 0;
 		if (SHIFT_KEYS.contains(""+(char)c)) {
-			keyboard.type(KeyEvent.VK_SHIFT, DEFAULT_KEY_TIME, InputEvent.SHIFT_DOWN_MASK);
+			keyboard.typeKey(KeyEvent.VK_SHIFT, DEFAULT_KEY_TIME, InputEvent.SHIFT_DOWN_MASK);
 			mods |= InputEvent.SHIFT_DOWN_MASK;
 		}
-		keyboard.type(c, DEFAULT_KEY_TIME, mods);
+		keyboard.typeKey(c, DEFAULT_KEY_TIME, mods);
 	}
 
 	public Browser getBrowser() {

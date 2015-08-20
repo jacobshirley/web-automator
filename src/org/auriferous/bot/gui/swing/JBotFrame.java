@@ -27,10 +27,10 @@ import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorFrame;
 import org.auriferous.bot.gui.swing.tabs.JTab;
 import org.auriferous.bot.gui.swing.tabs.JTabBar;
+import org.auriferous.bot.gui.swing.tabs.JTabView;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.executor.ScriptExecutionListener;
 import org.auriferous.bot.tabs.Tabs;
-import org.auriferous.bot.tabs.view.TabView;
 
 public class JBotFrame extends JFrame implements ScriptExecutionListener, ChangeListener{
 	
@@ -100,7 +100,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 				while (true) {
 					int index = tabBar.getSelectedIndex();
 					if (index >= 0) {
-						TabView view = (TabView) ((JTab)tabBar.getSelectedComponent()).getTabView();
+						JTabView view = (JTabView) ((JTab)tabBar.getSelectedComponent()).getJTabView();
 						
 						if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
 							view.repaint(UPDATE_INTERVAL);

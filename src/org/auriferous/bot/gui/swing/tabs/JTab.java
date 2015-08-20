@@ -12,6 +12,7 @@ public class JTab extends JPanel implements TabListener {
 	private JTabComponent tabComponent;
 	private Tab tab;
 	private JTabBar tabBar;
+	private JTabView tabView;
 	
 	public JTab(JTabBar tabBar, Tab tab) {
 		super(new BorderLayout());
@@ -22,7 +23,10 @@ public class JTab extends JPanel implements TabListener {
 		this.tab = tab;
 		this.tab.addTabListener(this);
 		
-		this.add(tab.getTabView());
+		this.tabView = new JTabView(this.tab);
+		this.tab.setTabView(tabView);
+		
+		this.add(tabView);
 	}
 	
 	public JTabComponent getTabComponent() {
@@ -33,8 +37,8 @@ public class JTab extends JPanel implements TabListener {
 		return tab;
 	}
 	
-	public TabView getTabView() {
-		return tab.getTabView();
+	public JTabView getJTabView() {
+		return tabView;
 	}
 
 	@Override

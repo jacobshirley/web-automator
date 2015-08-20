@@ -2,18 +2,20 @@ package org.auriferous.bot.script.input;
 
 import java.awt.Component;
 
-public class Input {
-	protected Component target;
+import org.auriferous.bot.tabs.view.TabView;
 
-	public Input(Component target) {
+public class Input {
+	protected TabView target;
+
+	public Input(TabView target) {
 		this.target = target;
 	}
 	
-	public void setTarget(Component target) {
+	public void setTarget(TabView target) {
 		this.target = target;
 	}
 	
-	public Component getTarget() {
+	public TabView getTarget() {
 		return target;
 	}
 }

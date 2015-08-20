@@ -1,54 +1,20 @@
 package org.auriferous.bot.tabs.view;
 
-import java.awt.Graphics;
-import java.util.LinkedList;
-import java.util.List;
+import java.awt.event.KeyEvent;
 
-import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.Utils;
 
-import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.events.DisposeEvent;
-import com.teamdev.jxbrowser.chromium.events.DisposeListener;
-import com.teamdev.jxbrowser.chromium.swing.BrowserView;
-
-public class TabView extends BrowserView implements DisposeListener<Browser> {
-	private List<TabPaintListener> paintListeners = new LinkedList<TabPaintListener>();
-	private long lastPainted = 0;
+public interface TabView {
+	public void addTabPaintListener(TabPaintListener listener);
+	public void removeTabPaintListener(TabPaintListener listener);
 	
-	public TabView(Tab tab) {
-		this(tab.getBrowserWindow());
-	}
+	public void dispatchMoveMouse(int x, int y);
+	public void dispatchClickMouse(int x, int y, int button);
+	public void dispatchScrollMouse(boolean up, int rotation);
 	
-	public TabView(Browser browser) {
-		super(browser);
-		
-		browser.addDisposeListener(this);
-	}
+	public void dispatchTypeKey(int c, int time, int mods);
 	
-	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
-		
-		lastPainted = System.currentTimeMillis();
-		
-		for (TabPaintListener listener : paintListeners) 
-			listener.onPaint(g);
-	}
+	public void dispatchPressKey(int c);
 	
-	public void addTabPaintListener(TabPaintListener listener) {
-		this.paintListeners.add(listener);
-	}
-	
-	public void removeTabPaintListener(TabPaintListener listener) {
-		this.paintListeners.remove(listener);
-	}
-	
-	public long getLastTimePainted() {
-		return lastPainted;
-	}
-
-	@Override
-	public void onDisposed(DisposeEvent<Browser> arg0) {
-		this.paintListeners.clear();
-	}
+	public void dispatchReleaseKey(int c);
 }

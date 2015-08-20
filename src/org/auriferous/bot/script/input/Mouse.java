@@ -11,12 +11,13 @@ import java.awt.event.MouseWheelEvent;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.tabs.view.TabPaintListener;
+import org.auriferous.bot.tabs.view.TabView;
 
 public class Mouse extends Input implements TabPaintListener {
 	private int mouseX;
 	private int mouseY;
 	
-	public Mouse(Component target) {
+	public Mouse(TabView target) {
 		super(target);
 	}
 	
@@ -24,20 +25,14 @@ public class Mouse extends Input implements TabPaintListener {
 		this.mouseX = x;
 		this.mouseY = y;
 		
-		MouseEvent event = new MouseEvent(target, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, x, y, 1, false);
-		target.dispatchEvent(event);
+		target.dispatchMoveMouse(x, y);
 	}
 	
 	public final void clickMouse(int x, int y, int button) {
-		MouseEvent event = new MouseEvent(target, MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, x, y, 1, false, button);
-		target.dispatchEvent(event);
+		this.mouseX = x;
+		this.mouseY = y;
 		
-		Utils.wait((int)(Utils.randomRange(20, 50)));
-		event = new MouseEvent(target, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, x, y, 1, false, button);
-		target.dispatchEvent(event);
-		
-		event = new MouseEvent(target, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0, x, y, 1, false, button);
-		target.dispatchEvent(event);
+		target.dispatchClickMouse(x, y, button);
 	}
 	
 	public final void clickMouse(int x, int y) {
@@ -45,8 +40,7 @@ public class Mouse extends Input implements TabPaintListener {
 	}
 	
 	public final void scrollMouse(boolean up, int rotation) {
-		MouseWheelEvent mwe = new MouseWheelEvent(target, MouseEvent.MOUSE_WHEEL, System.currentTimeMillis(), 0, mouseX, mouseY, 0, false, MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, up ? -rotation : rotation);
-		target.dispatchEvent(mwe);
+		target.dispatchScrollMouse(up, rotation);
 	}
 	
 	public final int getScrollIncrement() {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.auriferous.bot.gui.swing.tabs.JTabView;
 import org.auriferous.bot.tabs.view.TabView;
 
 import com.teamdev.jxbrowser.chromium.Browser;
@@ -29,8 +30,6 @@ public class Tab {
 		this.id = id;
 		
 		this.browser = new Browser(DEFAULT_CONTEXT);
-		this.tabView = new TabView(this.browser);
-		
 		this.browser.getPreferences().setLocalStorageEnabled(true);
 		
 		BROWSER_INSTANCES.add(browser);
@@ -96,6 +95,10 @@ public class Tab {
 	
 	public Browser getBrowserWindow() {
 		return browser;
+	}
+	
+	public void setTabView(TabView tabView) {
+		this.tabView = tabView;
 	}
 	
 	public TabView getTabView() {
