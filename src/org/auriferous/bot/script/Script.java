@@ -38,6 +38,7 @@ public abstract class Script {
 	public abstract void onPause();
 	public abstract void onResume();
 	public abstract void onTerminate();
+	public abstract void onFinished();
 	
 	public final Tab openTab() {
 		return tabs.openTab();

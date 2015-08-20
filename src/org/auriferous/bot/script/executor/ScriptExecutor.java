@@ -96,16 +96,17 @@ public class ScriptExecutor {
 		public void run() {
 			int state = 0;
 			
-			script.onStart();
-			
 			for (ScriptExecutionListener listener : listeners)
 				listener.onRunScript(script);
 			
+			script.onStart();
+			
 			while ((state = script.tick()) == Script.STATE_RUNNING) {
 				if (this.paused) {
-					script.onPause();
 					for (ScriptExecutionListener listener : listeners)
 						listener.onPauseScript(script);
+					
+					script.onPause();
 					
 					while (this.paused) {
 						if (!this.running) {
@@ -114,9 +115,10 @@ public class ScriptExecutor {
 						Thread.yield();
 					}
 					
-					script.onResume();
 					for (ScriptExecutionListener listener : listeners)
 						listener.onResumeScript(script);
+					
+					script.onResume();
 				}
 				
 				if (!this.running) {
@@ -130,6 +132,8 @@ public class ScriptExecutor {
 			if (this.running) {
 				for (ScriptExecutionListener listener : listeners)
 					listener.onScriptFinished(script);
+				
+				script.onFinished();
 			}
 			
 			scripts.remove(script);

@@ -8,6 +8,17 @@ public interface TabView {
 	public void addTabPaintListener(TabPaintListener listener);
 	public void removeTabPaintListener(TabPaintListener listener);
 	
+	public int getMouseX();
+	public int getMouseY();
+	
+	public void setMousePos(int x, int y);
+	
+	public int getX();
+	public int getY();
+	
+	public int getWidth();
+	public int getHeight();
+	
 	public void dispatchMoveMouse(int x, int y);
 	public void dispatchClickMouse(int x, int y, int button);
 	public void dispatchScrollMouse(boolean up, int rotation);

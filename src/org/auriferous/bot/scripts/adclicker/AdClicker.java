@@ -521,4 +521,10 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		
 		return root;
 	}
+
+	@Override
+	public void onFinished() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -34,4 +34,10 @@ public class FacebookCommenter extends Script{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onFinished() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -51,4 +51,10 @@ public class Googler extends Script implements JScriptGuiListener{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onFinished() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -14,24 +14,15 @@ import org.auriferous.bot.tabs.view.TabPaintListener;
 import org.auriferous.bot.tabs.view.TabView;
 
 public class Mouse extends Input implements TabPaintListener {
-	private int mouseX;
-	private int mouseY;
-	
 	public Mouse(TabView target) {
 		super(target);
 	}
 	
 	public final void moveMouse(int x, int y) {
-		this.mouseX = x;
-		this.mouseY = y;
-		
 		target.dispatchMoveMouse(x, y);
 	}
 	
 	public final void clickMouse(int x, int y, int button) {
-		this.mouseX = x;
-		this.mouseY = y;
-		
 		target.dispatchClickMouse(x, y, button);
 	}
 	
@@ -48,16 +39,15 @@ public class Mouse extends Input implements TabPaintListener {
 	}
 	
 	public int getMouseX() {
-		return mouseX;
+		return target.getMouseX();
 	}
 	
 	public int getMouseY() {
-		return mouseY;
+		return target.getMouseY();
 	}
 	
 	public void setMousePos(int x, int y) {
-		this.mouseX = x;
-		this.mouseY = y;
+		target.setMousePos(x, y);
 	}
 	
 	public void setMousePos(Point p) {
@@ -66,6 +56,9 @@ public class Mouse extends Input implements TabPaintListener {
 
 	@Override
 	public void onPaint(Graphics g) {
+		int mouseX = getMouseX();
+		int mouseY = getMouseY();
+		
 		Graphics2D g2d = (Graphics2D)g;
 		
 		g2d.setColor(Color.green);

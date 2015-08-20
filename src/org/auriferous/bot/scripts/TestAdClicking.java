@@ -43,25 +43,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		//this.browser.loadURL("https://www.google.com/intx/en_uk/work/apps/business/products/gmail/index.html?utm_source=gdn&utm_medium=display&utm_campaign=emea-gb-en-gmail-rmkt-all-trial-120077397&utm_content=puppyscrubber");
 		
 		//openTab("naht.tk/random");//
-		System.out.println("Starting");
-		//openTab("naht.tk/random");//
-		currentTab = openTab("https://www.facebook.com/groups/381168852071038/permalink/454881514699771/");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
-		currentTab.getTabView().addTabPaintListener(this);
-		getTabs().addTabControlListener(new TabControlAdapter() {
-			@Override
-			public void onTabClosed(Tab tab) {
-				super.onTabClosed(tab);
-				
-				if (tab.equals(currentTab)) {
-					status = STATE_EXIT_SUCCESS;
-				}
-			}
-		});
-		
-		methods = new ScriptMethods(currentTab);
-		browser = this.methods.getBrowser();
-		browser.addLoadListener(this);
 	}
 
 	@Override
@@ -129,6 +111,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 					result = methods.getElements(s);
 					if (result != null) {
 						System.out.println("Found "+s);
+						
 						bounds.add(result[0]);
 						bounds.width = result[0].width;
 						bounds.height = result[0].height;
@@ -165,6 +148,25 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 
 	@Override
 	public void onStart() {
+		System.out.println("Starting");
+		//openTab("naht.tk/random");//
+		currentTab = openTab("https://www.facebook.com/groups/381168852071038/permalink/454881514699771/");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		
+		//currentTab.getTabView().addTabPaintListener(this);
+		getTabs().addTabControlListener(new TabControlAdapter() {
+			@Override
+			public void onTabClosed(Tab tab) {
+				super.onTabClosed(tab);
+				
+				if (tab.equals(currentTab)) {
+					status = STATE_EXIT_SUCCESS;
+				}
+			}
+		});
+		
+		methods = new ScriptMethods(currentTab);
+		browser = this.methods.getBrowser();
+		browser.addLoadListener(this);
 	}
 
 	@Override
@@ -190,6 +192,12 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 
 	@Override
 	public void onResume() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFinished() {
 		// TODO Auto-generated method stub
 		
 	}

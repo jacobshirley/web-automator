@@ -55,6 +55,9 @@ public class Bot implements ScriptExecutionListener {
 		XMLScriptManifest manifest2 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.adclicker.AdClicker", "4", "Ad Clicker", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest2, true);
 		
+		XMLScriptManifest manifest3 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.TestAdClicking", "4", "Test Script", "1.0", "RAARR", "bin");
+		scriptLibrary.addScript(manifest3, true);
+		
 		scriptLoader = new ScriptLoaderImpl(this, new ScriptContext(this));
 		scriptLoader.addLibrary(scriptLibrary);
 		
@@ -77,8 +80,8 @@ public class Bot implements ScriptExecutionListener {
 			});
 		}
 
-		//Script c = new TestAdClicking(manifest2, new ScriptContext(this));
-		//scriptExecutor.runScript(c);
+		Script c = new TestAdClicking(manifest3, new ScriptContext(this));
+		scriptExecutor.runScript(c);
 	}
 	
 	public ConfigurableFile getConfig() {

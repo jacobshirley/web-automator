@@ -113,4 +113,20 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 0, c, KeyEvent.CHAR_UNDEFINED, KeyEvent.KEY_LOCATION_STANDARD);
 		dispatchEvent(event);
 	}
+
+	@Override
+	public int getMouseX() {
+		return mouseX;
+	}
+
+	@Override
+	public int getMouseY() {
+		return mouseY;
+	}
+
+	@Override
+	public void setMousePos(int x, int y) {
+		this.mouseX = x;
+		this.mouseY = y;
+	}
 }
