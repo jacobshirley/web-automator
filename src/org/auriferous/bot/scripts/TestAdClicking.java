@@ -68,7 +68,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 				p.x += 200;
 				
 				//break;
-				methods.mouse(p, ClickType.LCLICK);
+				methods.mouse(p, ClickType.NO_CLICK);
 				methods.mouse(p, ClickType.LCLICK);
 				methods.type("hi Gerry");
 				

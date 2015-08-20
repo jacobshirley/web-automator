@@ -187,9 +187,6 @@ public class ScriptMethods {
 				int width = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementWidth(el);").getNumber();
 				int height = (int) browser.executeJavaScriptAndReturnValue(frameID, "getElementHeight(el);").getNumber();
 				
-				x -= getPageXOffset();
-				y -= getPageYOffset();
-				
 				rects.add(new ElementBounds(x, y, width, height));
 			}
     	} catch (Exception e) {
@@ -276,20 +273,27 @@ public class ScriptMethods {
 	}
 	
 	public void mouse(int x, int y, ClickType clickType) {
-		while (y - getPageYOffset() >= target.getTabView().getHeight())
-			scrollMouse(false, 3);
+		while (y - getPageYOffset() >= target.getTabView().getHeight()) {
+			scrollMouse(false, 5);
+			
+		}
 		
-		double x1 = mouse.getMouseX();
-		double y1 = mouse.getMouseY();
+		x -= getPageXOffset();
+		y -= getPageYOffset();
 		
-		double randSpeed = ((Math.random() * mouseSpeed) / 2.0 + mouseSpeed) / 10.0;
-		
-		humanWindMouse(x1, y1, x, y, 7, 5, 10.0 / randSpeed, 15.0 / randSpeed, 10.0 * randSpeed);
-		
-		if (clickType == ClickType.LCLICK) {
-			mouse.clickMouse(x, y, MouseEvent.BUTTON1);
-		} else if (clickType == ClickType.RCLICK) {
-			mouse.clickMouse(x, y, MouseEvent.BUTTON2);
+		if (x <= target.getTabView().getWidth()) {
+			double x1 = mouse.getMouseX();
+			double y1 = mouse.getMouseY();
+			
+			double randSpeed = ((Math.random() * mouseSpeed) / 2.0 + mouseSpeed) / 10.0;
+			
+			humanWindMouse(x1, y1, x, y, 7, 5, 10.0 / randSpeed, 15.0 / randSpeed, 10.0 * randSpeed);
+			
+			if (clickType == ClickType.LCLICK) {
+				mouse.clickMouse(x, y, MouseEvent.BUTTON1);
+			} else if (clickType == ClickType.RCLICK) {
+				mouse.clickMouse(x, y, MouseEvent.BUTTON2);
+			}
 		}
 	}
 	
@@ -319,6 +323,7 @@ public class ScriptMethods {
 	
 	public void scrollMouse(boolean up, int notches) {
 		this.mouse.scrollMouse(up, notches);
+		Utils.wait(50+Utils.random(20));
 	}
 	
 	private double hypot(double dx, double dy) {
