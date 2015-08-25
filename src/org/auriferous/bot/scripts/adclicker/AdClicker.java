@@ -13,6 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.config.WritableEntry;
 import org.auriferous.bot.config.Configurable;
 import org.auriferous.bot.config.ConfigurableEntry;
 import org.auriferous.bot.config.library.ScriptManifest;
@@ -67,7 +68,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	
 	private SetSignatureFrame setSigFrame = new SetSignatureFrame(this);
 	
-	private ConfigurableEntry<String,String> taskConfig = new ConfigurableEntry<String,String>("tasks");
+	private ConfigurableEntry<String,String> taskConfig = new WritableEntry<String,String>("tasks");
 	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -505,29 +506,29 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 
 	@Override
 	public void load(ConfigurableEntry configEntries) {
-		List<ConfigurableEntry> l = configEntries.get("signature");
+		Object s = configEntries.get("//signature", "");
 		
-		currentSignature = (String) l.get(0).getValue();
+		currentSignature = (String) s;
 		setSigFrame.setText(currentSignature);
 		
-		l = configEntries.get("tasks");
-		if (!l.isEmpty()) {
-			taskConfig = l.get(0);
+		List<ConfigurableEntry> l = configEntries.get("//tasks");
+		for (ConfigurableEntry tasks : l) {
+			taskConfig = tasks;
 			for (ConfigurableEntry<Object,Object> taskEntry : taskConfig.getChildren()) {
 				Task t = new Task(taskEntry);
 				
-				tasks.add(t);
+				this.tasks.add(t);
 			}
 		}
 	}
 
 	@Override
 	public ConfigurableEntry<String,String> getConfiguration() {
-		ConfigurableEntry<String,String> root = new ConfigurableEntry("config");
+		ConfigurableEntry<String,String> root = new WritableEntry("config");
 		
-		root.getChildren().add(new ConfigurableEntry<String,String>("signature", currentSignature));
+		root.getChildren().add(new WritableEntry<String,String>("signature", currentSignature));
 		
-		taskConfig = new ConfigurableEntry<String,String>("tasks");
+		taskConfig = new WritableEntry<String,String>("tasks");
 		
 		for (Task t : tasks) {
 			taskConfig.getChildren().add(new TaskConfigEntry(t));

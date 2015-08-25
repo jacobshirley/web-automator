@@ -81,7 +81,7 @@ public class XMLConfigurableFile extends ConfigurableFile{
 				Element elem = (Element)node;
 				
 				NodeList children = elem.getChildNodes();
-				ConfigurableEntry<Object,Object> entry = new ConfigurableEntry<Object,Object>(elem.getTagName(), elem.getTextContent());
+				ConfigurableEntry<Object,Object> entry = new XMLConfigurableEntry<Object,Object>(elem);
 				
 				getEntries(entry, children);
 				
@@ -109,7 +109,7 @@ public class XMLConfigurableFile extends ConfigurableFile{
 			if (root.length() > 0) {
 				Element rootElem = (Element) classElem.getElementsByTagName(root).item(0);
 				
-				ConfigurableEntry<Object,Object> rootEntry = new ConfigurableEntry<Object, Object>(rootElem.getTagName(), rootElem.getTextContent());
+				ConfigurableEntry<Object,Object> rootEntry = new XMLConfigurableEntry<Object, Object>(rootElem);
 				
 				ConfigurableEntry<Object,Object> entries = getEntries(rootEntry, rootElem.getChildNodes());
 				
@@ -144,7 +144,9 @@ public class XMLConfigurableFile extends ConfigurableFile{
 				Element configurableElem = XMLUtils.createElement(document, cName, "");
 				configurableElem.setAttribute("root", entries.getKey().toString());
 				
-				Element rootElem = XMLUtils.createElement(document, entries.getKey().toString(), "");
+				String val = "";//entries.getValue() == null ? "" : entries.getValue().toString();
+				
+				Element rootElem = XMLUtils.createElement(document, entries.getKey().toString(), val);
 				
 				writeEntry(rootElem, entries);
 				
