@@ -52,6 +52,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	private int taskStage = STAGE_SHUFFLES;
 	private boolean startExec = false;
 	private boolean forceExec = false;
+	private boolean skipTask = false;
 	
 	private Task currentTask = null;
 	private LinkedList<Task> tasks = new LinkedList<Task>();
@@ -178,10 +179,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 			
 			Utils.wait(currentTask.timeInterval*1000);
 			
-			if (currentTask.url.endsWith("/"))
-				botTab.loadURL(currentTask.url+"random");
-			else
-				botTab.loadURL(currentTask.url+"/random");
+			loadURL();
 		} else {
 			taskStage = STAGE_URL;
 			return false;
@@ -291,6 +289,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 				@Override
 				public void onFinishLoadingFrame(FinishLoadingEvent arg0) {
 					if (arg0.isMainFrame()) {
+						Utils.wait(5000);
 						System.out.println("On Facebook page!!!!");
 						
 						ScriptMethods fbMethods = new ScriptMethods(fbTab);
@@ -305,11 +304,10 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 							p.x += 150;
 							
 							fbMethods.mouse(p, ClickType.LCLICK);
+							Utils.wait(1000);
 							fbMethods.mouse(p, ClickType.LCLICK);
 							fbMethods.type(compileSignature());
 						}
-						
-						
 					}
 				}
 			});
@@ -348,6 +346,15 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		return true;
 	}
 	
+	private void loadURL() {
+		if (currentTask != null) {
+			if (currentTask.url.endsWith("/"))
+				botTab.loadURL(currentTask.url+"random");
+			else
+				botTab.loadURL(currentTask.url+"/random");
+		}
+	}
+	
 	@Override
 	public int tick() {
 		if (botTab != null) {
@@ -357,6 +364,12 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 				System.out.println("Apparently disposed. Opening new tab.");
 				resetTab();
 				return super.tick();
+			}
+			
+			if (skipTask) {
+				System.out.println("Skipping task...");
+				skipTask = false;
+				taskStage = STAGE_NEXT_TASK;
 			}
 			
 			boolean loading = botTab.getBrowserWindow().isLoading();
@@ -381,10 +394,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 								break;
 						case STAGE_URL:
 							if (forceExec) {
-								if (currentTask.url.endsWith("/"))
-									botTab.loadURL(currentTask.url+"random");
-								else
-									botTab.loadURL(currentTask.url+"/random");
+								loadURL();
 								break;
 							} else
 								if (tickAdClicking())
@@ -457,10 +467,12 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		JMenuItem setSignature = new JMenuItem(new MenuAction("Signature", 2));
 		JMenuItem manageTasks = new JMenuItem(new MenuAction("Manage Tasks", 0));
 		JMenuItem executeTasks = new JMenuItem(new MenuAction("Execute Tasks", 1));
+		JMenuItem skipTask = new JMenuItem(new MenuAction("Skip Task", 3));
 		
 		menu.add(setSignature);
 		menu.add(manageTasks);
 		menu.add(executeTasks);
+		menu.add(skipTask);
 	}
 	
 	class MenuAction extends AbstractAction {
@@ -480,6 +492,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 				case 1:	executeTasks();
 						break;
 				case 2:	setSignature();
+						break;
+				case 3:	skipTask = true;
 						break;
 			}
 		}
