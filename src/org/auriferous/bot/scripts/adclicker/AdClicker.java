@@ -120,7 +120,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	private int foundID = 0;
 	
 	private ElementBounds findAds(String... jqueryStrings) {
-		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle').css('position', 'fixed').css('z-index', '99999999').css('left', '0px').css('top', '0px')");
+		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()");
 		foundID = 0;
 		if (adsbygoogle != null) {
 			System.out.println("Found basic ad");
@@ -226,15 +226,17 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
         		
         		System.out.println("Clicking at "+p.x+", "+p.y);
         		if (foundID != 5) {
+        			System.out.println("Moving mouse");
+        			
         			methods.moveMouse(p);
         			Utils.wait(500);
-        			System.out.println("Moving mouse");
         			if (!methods.getStatus().equals("")) {
-        				System.out.println("Got status...");
+        				System.out.println("Status checked");
                 		methods.mouse(p.x, p.y);
         			}
         		} else {
         			System.out.println("Clicking here");
+        			
         			methods.mouse(p);
         		}
         	} else if (searchAdTries < 10) {
@@ -257,7 +259,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		
 		System.out.println("Saving URL "+saveURL);
 		
-		System.out.println("Now waiting on ad");
+		System.out.println("Now waiting on ad with random 5 seconds");
 		Utils.wait((currentTask.timeOnAd*1000) + Utils.random(5000));
 
 		taskStage = STAGE_SUB_CLICKS;
@@ -281,7 +283,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	        	methods.mouse(p.x, p.y);
 	        	
 	        	System.out.println("Waiting 10 seconds + random time (0 - 4 seconds)");
-	        	Utils.wait((int)((SUB_CLICK_TIME*1000)+Utils.randomRange(0, SUB_CLICK_RANDOM_TIME*1000)));
+	        	Utils.wait((int)((SUB_CLICK_TIME*1000)+Utils.random(0, SUB_CLICK_RANDOM_TIME*1000)));
 	        	
 	        	System.out.println("Going back to ad");
 	        	botTab.loadURL(saveURL);
@@ -495,6 +497,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		menu.add(setSignature);
 		menu.add(manageTasks);
 		menu.add(executeTasks);
+		menu.addSeparator();
 		menu.add(skipTask);
 	}
 	

@@ -400,7 +400,7 @@ public class ScriptMethods {
 
 			double rCnc = Utils.random(6);
 			if (rCnc == 1)
-				D = Utils.randomRange(2, 3);
+				D = Utils.random(2, 3);
 
 			if (D <= Math.round(dist))
 				maxStep = D;

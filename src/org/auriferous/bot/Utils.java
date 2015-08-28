@@ -32,15 +32,15 @@ public class Utils {
         return response.toString();
     }
 	
-	public static double randomRange(double min, double max) {
+	public static double random(double min, double max) {
 		return min+(Math.random()*(max-min));
+	}
+	
+	public static int random(double n) {
+		return (int)(n*Math.random());
 	}
 	
 	public static boolean inRange(double x, double min, double max) {
 		return x >= min && x <= max;
-	}
-
-	public static int random(double n) {
-		return (int)(n*Math.random());
 	}
 }

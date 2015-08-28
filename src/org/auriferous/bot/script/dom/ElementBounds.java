@@ -20,8 +20,8 @@ public class ElementBounds extends Rectangle{
 		double w = width/2;
 		double h = height/2;
 
-		int xx = (int) (getCenterX()+(w*Utils.randomRange(-percX, percX)));
-		int yy = (int) (getCenterY()+(h*Utils.randomRange(-percY, percY)));
+		int xx = (int) (getCenterX()+(w*Utils.random(-percX, percX)));
+		int yy = (int) (getCenterY()+(h*Utils.random(-percY, percY)));
 		
 		return new Point(xx, yy);
 	}
