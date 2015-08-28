@@ -120,7 +120,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	private int foundID = 0;
 	
 	private ElementBounds findAds(String... jqueryStrings) {
-		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle')");
+		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle').css('position', 'fixed').css('z-index', '99999999').css('left', '0px').css('top', '0px')");
 		foundID = 0;
 		if (adsbygoogle != null) {
 			System.out.println("Found basic ad");
@@ -228,11 +228,14 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
         		if (foundID != 5) {
         			methods.moveMouse(p);
         			Utils.wait(500);
+        			System.out.println("Moving mouse");
         			if (!methods.getStatus().equals("")) {
+        				System.out.println("Got status...");
                 		methods.mouse(p.x, p.y);
         			}
         		} else {
-        			methods.mouse(p.x, p.y);
+        			System.out.println("Clicking here");
+        			methods.mouse(p);
         		}
         	} else if (searchAdTries < 10) {
         		searchAdTries++;
@@ -446,7 +449,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 					
 					timer = System.currentTimeMillis();
 				} else {
-					if (currentTask != null && System.currentTimeMillis()-timer >= MAX_WAIT_TIME) {
+					if (currentTask != null && System.currentTimeMillis()-timer >= MAX_WAIT_TIME*10000) {
 						System.out.println("It's been "+MAX_WAIT_TIME+" seconds. Forcing execution.");
 						forceExec = true;
 					}

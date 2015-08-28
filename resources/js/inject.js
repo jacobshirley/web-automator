@@ -28,7 +28,7 @@ function getJSClickables() {
 	return $("*").filter(function(i) {
 		if (this.onclick != null) 
 			return true;
-		});
+		}).findVisibles("*");
 }
 
 function _findElementsInIFrames(parent, sel, offset) {

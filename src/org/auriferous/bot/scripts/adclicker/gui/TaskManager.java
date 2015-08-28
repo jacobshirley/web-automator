@@ -91,7 +91,7 @@ public class TaskManager extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			switch (actionID) {
-				case 0: Task t = new Task("http://lumiant.tumblr.com/", 1, 0, 0, 2, "");
+				case 0: Task t = new Task("http://tk-eaziness.tk/", 1, 0, 0, 2, "");
 						tasks.add(t);
 						
 						taskConfig.getChildren().add(new TaskConfigEntry(t));
