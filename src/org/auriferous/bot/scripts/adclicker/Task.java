@@ -27,15 +27,13 @@ public class Task {
 	}
 	
 	public void load(ConfigurableEntry config) {
-		List<ConfigurableEntry> entries = config.getChildren();
+		this.url = ""+config.get("url", "");
+		this.shuffles = Integer.parseInt(""+config.get("shuffles", "0"));
+		this.timeInterval = Integer.parseInt(""+config.get("interval", "0"));
+		this.timeOnAd = Integer.parseInt(""+config.get("time-on-ad", "0"));
+		this.subClicks = Integer.parseInt(""+""+config.get("sub-clicks", "0"));
 		
-		this.url = (String) entries.get(0).getValue();
-		this.shuffles = Integer.parseInt(""+entries.get(1).getValue());
-		this.timeInterval = Integer.parseInt(""+entries.get(2).getValue());
-		this.timeOnAd = Integer.parseInt(""+entries.get(3).getValue());
-		this.subClicks = Integer.parseInt(""+entries.get(4).getValue());
-		
-		this.fbLink = ""+entries.get(5).getValue();
+		this.fbLink = ""+""+config.get("fb-link", "");
 	}
 	
 	public Task copy() {

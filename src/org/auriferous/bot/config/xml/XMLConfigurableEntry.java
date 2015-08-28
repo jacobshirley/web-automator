@@ -39,7 +39,7 @@ public class XMLConfigurableEntry<N,V> extends ConfigurableEntry<N,V>{
 			for (int i = 0; i < nl.getLength(); i++) {
 				Node n = nl.item(i);
 				if (n instanceof Element) {
-					l.add(new XMLConfigurableEntry<Object,Object>((Element)n));
+					l.add(getEntry((Element)n));
 				}
 			}
 		} catch (Exception e) {
@@ -53,6 +53,25 @@ public class XMLConfigurableEntry<N,V> extends ConfigurableEntry<N,V>{
 	public ConfigurableEntry<N, V> copy() {
 		return new XMLConfigurableEntry<N, V>(element);
 	}
-
 	
+	public Element getElement() {
+		return element;
+	}
+	
+	private XMLConfigurableEntry getEntry(ConfigurableEntry parent, Element element) {
+		XMLConfigurableEntry xmlEntry = (XMLConfigurableEntry)parent;
+		if (xmlEntry.getElement().equals(element)) 
+			return xmlEntry;
+		
+		for (ConfigurableEntry entry : (List<ConfigurableEntry>)parent.getChildren()) {
+			xmlEntry = getEntry(entry, element);
+			if (xmlEntry != null) 
+				return xmlEntry;
+		}
+		return null;
+	}
+	
+	private XMLConfigurableEntry getEntry(Element element) {
+		return getEntry(this, element);
+	}
 }

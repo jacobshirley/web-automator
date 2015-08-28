@@ -24,6 +24,7 @@ public class TaskConfigEntry extends WritableEntry<String,String>{
 		attrs.add(new WritableEntry<String,Integer>("interval", task.timeInterval));
 		attrs.add(new WritableEntry<String,Integer>("time-on-ad", task.timeOnAd));
 		attrs.add(new WritableEntry<String,Integer>("sub-clicks", task.subClicks));
+		attrs.add(new WritableEntry<String,String>("fb-link", task.fbLink));
 		
 		return attrs;
 	}
