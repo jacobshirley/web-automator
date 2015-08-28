@@ -67,6 +67,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 
 	private long timer = 0;
 	public String currentSignature = "";
+	public String currentTaskURL = "";
 	
 	private SetSignatureFrame setSigFrame = new SetSignatureFrame(this);
 	
@@ -206,12 +207,13 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
     	
     	String url = botTab.getURL();
     	
-    	if (blogURL != null && !url.contains(getBaseURL(currentTask.url))) {
+    	if (blogURL != null && !url.contains(getBaseURL(currentTaskURL))) {
     		System.out.println("Clicked ad successfully.");
     		taskStage = STAGE_WAIT_ON_AD;
     		
     		return false;
     	} else {
+    		currentTaskURL = url;
         	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
 
         	if (adElement != null) {
@@ -286,7 +288,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	        	Utils.wait((int)((SUB_CLICK_TIME*1000)+Utils.random(0, SUB_CLICK_RANDOM_TIME*1000)));
 	        	
 	        	System.out.println("Going back to ad");
-	        	botTab.loadURL(saveURL);
+	        	botTab.goBack();
 	        	
 	        	curSubClick++;
 			} else if (searchAdTries < 5){

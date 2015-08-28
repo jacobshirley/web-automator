@@ -120,7 +120,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		});
 		
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setSize(1300, 1000);
+		setSize(800, 500);
 		
 		setLocationRelativeTo(null);
 		setVisible(true);
