@@ -43,6 +43,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	private static final int SUB_CLICK_TIME = 10;
 	private static final int SUB_CLICK_RANDOM_TIME = 4;
 	
+	private static final int MAX_WAIT_TIME = 10;
+	
 	private Tab botTab;
 	private ScriptMethods methods;
 	
@@ -115,9 +117,11 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		methods = new ScriptMethods(botTab);
 	}
 	
+	private int foundID = 0;
+	
 	private ElementBounds findAds(String... jqueryStrings) {
 		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle')");
-		
+		foundID = 0;
 		if (adsbygoogle != null) {
 			System.out.println("Found basic ad");
 			
@@ -128,6 +132,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 				
 				ElementBounds[] result = null;
 				for (String s : jqueryStrings) {
+					foundID++;
+					
 					System.out.println("Trying "+s);
 					
 					result = methods.getElements(s);
@@ -157,20 +163,25 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		searchAdTries = 0;
 	}
 	
-	private String compileSignature() {
+	private String getBaseURL(String urlString) {
 		try {
-			URL url = new URL(saveURL);
+			URL url = new URL(urlString);
+			
 			String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
 			String base = url.getProtocol() + "://" + url.getHost() + path;
 			
-			String title = base.split("\\.")[1];
-			
-			return currentSignature.replace("$title", title).replace("$base", base);
+			return base;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return "";
+	}
+	
+	private String compileSignature(String urlString) {
+		String base = getBaseURL(urlString);
+		String title = base.split("\\.")[1];
 		
-		return null;
+		return currentSignature.replace("$title", title).replace("$base", base);
 	}
 	
 	private boolean tickShuffles() {
@@ -195,7 +206,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
     	
     	String url = botTab.getURL();
     	
-    	if (blogURL != null && !url.equals(blogURL) && !url.contains("tumblr")) {
+    	if (blogURL != null && !url.contains(getBaseURL(currentTask.url))) {
     		System.out.println("Clicked ad successfully.");
     		taskStage = STAGE_WAIT_ON_AD;
     		
@@ -211,13 +222,18 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
         		debugElement = adElement;
 	        	
         		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
-        		
-        		methods.moveMouse(p);
-	        	Utils.wait(500);
         		searchAdTries = 0;
         		
         		System.out.println("Clicking at "+p.x+", "+p.y);
-        		methods.mouse(p.x, p.y);
+        		if (foundID != 5) {
+        			methods.moveMouse(p);
+        			Utils.wait(500);
+        			if (!methods.getStatus().equals("")) {
+                		methods.mouse(p.x, p.y);
+        			}
+        		} else {
+        			methods.mouse(p.x, p.y);
+        		}
         	} else if (searchAdTries < 10) {
         		searchAdTries++;
         		System.out.println("Couldn't find ad on try "+searchAdTries+"/10. Reloading page.");
@@ -284,6 +300,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	
 	public boolean tickFBPostComment() {
 		if (!currentTask.fbLink.equals("")) {
+			final String url = saveURL;
 			final Tab fbTab = openTab(currentTask.fbLink);
 			
 			fbTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
@@ -305,9 +322,9 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 							p.x += 150;
 							
 							fbMethods.mouse(p, ClickType.LCLICK);
-							Utils.wait(1000);
+							Utils.wait(500);
 							fbMethods.mouse(p, ClickType.LCLICK);
-							fbMethods.type(compileSignature());
+							fbMethods.type(compileSignature(url));
 						}
 					}
 				}
@@ -322,7 +339,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	public boolean tickTaskDone() {
 		System.out.println("Finished current task");
 		
-		System.out.println(compileSignature());
+		System.out.println(compileSignature(saveURL));
 		
 		taskStage = STAGE_NEXT_TASK;
 		
@@ -421,14 +438,16 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 						System.out.println("There was an error. Skipping task "+currentTask.url);
 						taskStage = STAGE_NEXT_TASK;
 						forceExec = true;
+						
+						return super.tick();
 					}
 					
 					forceExec = false;
 					
 					timer = System.currentTimeMillis();
 				} else {
-					if (currentTask != null && System.currentTimeMillis()-timer >= 5000) {
-						System.out.println("It's been 5 seconds. Forcing execution.");
+					if (currentTask != null && System.currentTimeMillis()-timer >= MAX_WAIT_TIME) {
+						System.out.println("It's been "+MAX_WAIT_TIME+" seconds. Forcing execution.");
 						forceExec = true;
 					}
 				}

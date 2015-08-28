@@ -54,7 +54,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 			System.out.println("Finished loading main frame");
 			
 			//methods.getRandomLink(false);//
-			ElementBounds rects = methods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
+			ElementBounds rects = methods.getRandomElement("getJSClickables();");
 			
 			System.out.println("finished");
 			
@@ -65,12 +65,11 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 				
 				r = rects;//iframe;
 				
-				p.x += 200;
 				
 				//break;
 				methods.mouse(p, ClickType.NO_CLICK);
-				methods.mouse(p, ClickType.LCLICK);
-				methods.type("hi Gerry");
+				//methods.mouse(p, ClickType.LCLICK);
+				//methods.type("hi Gerry");
 				
 				return STATE_EXIT_SUCCESS;
 			}
@@ -150,7 +149,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 	public void onStart() {
 		System.out.println("Starting");
 		//openTab("naht.tk/random");//
-		currentTab = openTab("https://www.facebook.com/groups/381168852071038/permalink/454881514699771/");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		currentTab = openTab("http://www.pconverter.com/index.jhtml");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
 		//currentTab.getTabView().addTabPaintListener(this);
 		getTabs().addTabControlListener(new TabControlAdapter() {
@@ -167,6 +166,8 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		methods = new ScriptMethods(currentTab);
 		browser = this.methods.getBrowser();
 		browser.addLoadListener(this);
+		
+		currentTab.getTabView().addTabPaintListener(this);
 	}
 
 	@Override

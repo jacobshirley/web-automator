@@ -5,6 +5,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.auriferous.bot.ResourceLoader;
@@ -214,18 +215,38 @@ public class ScriptMethods {
 		return browser.executeJavaScriptAndReturnValue("$(window).height()").getNumber();
 	}
 	
-	public ElementBounds getRandomElement(String selector) {
-		ElementBounds[] elems = getElementsInIFrames(selector);
-
-		if (elems == null)
+	public ElementBounds getRandomElement(String... selector) {
+		List<ElementBounds> elemsList = new ArrayList<ElementBounds>();
+		for (String s : selector) {
+			ElementBounds[] elems = getElementsInIFrames(s);
+	
+			if (elems == null)
+				continue;
+			
+			elemsList.addAll(Arrays.asList(elems));
+		}
+		
+		if (elemsList.isEmpty())
 			return null;
-
-		return elems[(int) Math.floor(Math.random()*elems.length)];
+	
+		return elemsList.get((int) Math.floor(Math.random()*elemsList.size()));
 	}
 	
-	public ElementBounds getRandomElement(long frameID, String selector) {
-		ElementBounds[] elems = getElements(frameID, selector);
-		return elems[(int) Math.floor(Math.random()*elems.length)];
+	public ElementBounds getRandomElement(long frameID, String... selector) {
+		List<ElementBounds> elemsList = new ArrayList<ElementBounds>();
+		for (String s : selector) {
+			ElementBounds[] elems = getElements(frameID, s);
+	
+			if (elems == null)
+				continue;
+			
+			elemsList.addAll(Arrays.asList(elems));
+		}
+		
+		if (elemsList.isEmpty())
+			return null;
+	
+		return elemsList.get((int) Math.floor(Math.random()*elemsList.size()));
 	}
 	
 	public ElementBounds getRandomTextField(long frameID) {
@@ -233,17 +254,23 @@ public class ScriptMethods {
 	}
 	
 	public ElementBounds getRandomClickable(boolean includeButtons) {
+		ElementBounds el = null;
 		if (includeButtons)
-			return getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
-		else
-			return getRandomElement("$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');");
+			el = getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");", "getJSClickables();");
+		else {
+			el = getRandomElement("$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');", "getJSClickables();");
+		}
+		return el;
 	}
 
 	public ElementBounds getRandomClickable(long frameID, boolean includeButtons) {
+		ElementBounds el = null;
 		if (includeButtons)
-			return getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
-		else
-			return getRandomElement(frameID, "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');");
+			el = getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");", "getJSClickables();");
+		else {
+			el = getRandomElement(frameID, "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');", "getJSClickables();");
+		}
+		return el;
 	}
 
 	public void clickElement(ElementBounds element) {
