@@ -32,6 +32,19 @@ public class XMLConfigurableFile extends ConfigurableFile{
 	private Document document;
 	private Element configElement;
 	
+	public XMLConfigurableFile(String path) throws IOException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilder builder = factory.newDocumentBuilder();
+
+			document = builder.parse(Thread.currentThread().getContextClassLoader().getResourceAsStream(path));
+			
+			configElement = (Element)document.getElementsByTagName("config").item(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public XMLConfigurableFile(File file) throws IOException {
 		super(file);
 		

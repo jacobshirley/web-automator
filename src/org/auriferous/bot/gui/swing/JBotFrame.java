@@ -42,6 +42,9 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		}*/
 	}
 	
+	private static final int WIDTH = 1300;
+	private static final int HEIGHT = 1000;
+	
 	private static final int ACTION_RUN_SCRIPT = 0;
 	private static final int ACTION_ENABLE_DEBUG = 1;
 	private static final int ACTION_EXIT_BOT = 2;
@@ -120,7 +123,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		});
 		
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setSize(800, 500);
+		setSize(WIDTH, HEIGHT);
 		
 		setLocationRelativeTo(null);
 		setVisible(true);
