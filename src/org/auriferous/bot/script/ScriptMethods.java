@@ -299,14 +299,20 @@ public class ScriptMethods {
 		return mouseSpeed;
 	}
 	
-	public void mouse(int x, int y, ClickType clickType) {
+	public void scrollTo(int y, int timeWait, int randomTime) {
 		while (y - getPageYOffset() >= target.getTabView().getHeight()) {
+			Utils.wait(timeWait+Utils.random(randomTime));
 			scrollMouse(false, 3);
 		}
 		
 		while (y - getPageYOffset() <= 0) {
+			Utils.wait(timeWait+Utils.random(randomTime));
 			scrollMouse(true, 3);
 		}
+	}
+	
+	public void mouse(int x, int y, ClickType clickType) {
+		scrollTo(y, 0, 0);
 		
 		x -= getPageXOffset();
 		y -= getPageYOffset();
@@ -345,10 +351,6 @@ public class ScriptMethods {
 	
 	public void moveMouse(Point p) {
 		moveMouse(p.x, p.y);
-	}
-	
-	public void scrollTo(double percentageX, double percentageY) {
-		
 	}
 	
 	public void scrollMouse(boolean up, int notches) {

@@ -25,7 +25,7 @@ $.fn.findVisibles = function(sel) {
 }
 
 function getJSClickables() {
-	return $("*").filter(function(i) {
+	return $("div").filter(function(i) {
 		if (this.onclick != null) 
 			return true;
 		}).findVisibles("*");
