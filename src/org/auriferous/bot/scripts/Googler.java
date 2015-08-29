@@ -1,5 +1,7 @@
 package org.auriferous.bot.scripts;
 
+import java.awt.event.KeyEvent;
+
 import javax.swing.JMenu;
 
 import org.auriferous.bot.config.library.ScriptManifest;
@@ -27,8 +29,12 @@ public class Googler extends Script implements JScriptGuiListener{
 		googleTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
 			@Override
 			public void onFinishLoadingFrame(FinishLoadingEvent event) {
+				System.out.println("Started typing");
+				
 				methods = new ScriptMethods(googleTab);
 				methods.type("I like to Google stuff.");
+				methods.type(KeyEvent.VK_ENTER);
+				
 				status = STATE_EXIT_SUCCESS;
 			}
 		});
@@ -48,13 +54,9 @@ public class Googler extends Script implements JScriptGuiListener{
 
 	@Override
 	public void onResume() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onFinished() {
-		// TODO Auto-generated method stub
-		
 	}
 }

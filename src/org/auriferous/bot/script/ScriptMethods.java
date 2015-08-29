@@ -5,6 +5,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.auriferous.bot.ResourceLoader;
@@ -214,18 +215,38 @@ public class ScriptMethods {
 		return browser.executeJavaScriptAndReturnValue("$(window).height()").getNumber();
 	}
 	
-	public ElementBounds getRandomElement(String selector) {
-		ElementBounds[] elems = getElementsInIFrames(selector);
-
-		if (elems == null)
+	public ElementBounds getRandomElement(String... selector) {
+		List<ElementBounds> elemsList = new ArrayList<ElementBounds>();
+		for (String s : selector) {
+			ElementBounds[] elems = getElementsInIFrames(s);
+	
+			if (elems == null)
+				continue;
+			
+			elemsList.addAll(Arrays.asList(elems));
+		}
+		
+		if (elemsList.isEmpty())
 			return null;
-
-		return elems[(int) Math.floor(Math.random()*elems.length)];
+	
+		return elemsList.get((int) Math.floor(Math.random()*elemsList.size()));
 	}
 	
-	public ElementBounds getRandomElement(long frameID, String selector) {
-		ElementBounds[] elems = getElements(frameID, selector);
-		return elems[(int) Math.floor(Math.random()*elems.length)];
+	public ElementBounds getRandomElement(long frameID, String... selector) {
+		List<ElementBounds> elemsList = new ArrayList<ElementBounds>();
+		for (String s : selector) {
+			ElementBounds[] elems = getElements(frameID, s);
+	
+			if (elems == null)
+				continue;
+			
+			elemsList.addAll(Arrays.asList(elems));
+		}
+		
+		if (elemsList.isEmpty())
+			return null;
+	
+		return elemsList.get((int) Math.floor(Math.random()*elemsList.size()));
 	}
 	
 	public ElementBounds getRandomTextField(long frameID) {
@@ -233,17 +254,23 @@ public class ScriptMethods {
 	}
 	
 	public ElementBounds getRandomClickable(boolean includeButtons) {
+		ElementBounds el = null;
 		if (includeButtons)
-			return getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
-		else
-			return getRandomElement("$(document).findVisibles('a[href^=\"http\"]');");
+			el = getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");", "getJSClickables();");
+		else {
+			el = getRandomElement("$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');", "getJSClickables();");
+		}
+		return el;
 	}
 
 	public ElementBounds getRandomClickable(long frameID, boolean includeButtons) {
+		ElementBounds el = null;
 		if (includeButtons)
-			return getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");");
-		else
-			return getRandomElement(frameID, "$(document).findVisibles('a[href^=\"http\"]');");
+			el = getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");", "getJSClickables();");
+		else {
+			el = getRandomElement(frameID, "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');", "getJSClickables();");
+		}
+		return el;
 	}
 
 	public void clickElement(ElementBounds element) {
@@ -373,7 +400,7 @@ public class ScriptMethods {
 
 			double rCnc = Utils.random(6);
 			if (rCnc == 1)
-				D = Utils.randomRange(2, 3);
+				D = Utils.random(2, 3);
 
 			if (D <= Math.round(dist))
 				maxStep = D;
@@ -423,8 +450,24 @@ public class ScriptMethods {
 	}
 	
 	public final void type(String message) {
-		for (char c : message.toCharArray())
-			type(c);
+		boolean shiftDown = false;
+		int mods = 0;
+		for (char c : message.toCharArray()) {
+			boolean isShiftKey = SHIFT_KEYS.contains(""+(char)c);
+			if (!shiftDown) {
+				if (isShiftKey) {
+					shiftDown = true;
+					keyboard.pressKey(KeyEvent.VK_SHIFT, InputEvent.SHIFT_DOWN_MASK);
+					mods |= InputEvent.SHIFT_DOWN_MASK;
+				} else
+					mods = 0;
+			} else if (shiftDown && !isShiftKey) {
+				shiftDown = false;
+				keyboard.releaseKey(KeyEvent.VK_SHIFT, InputEvent.SHIFT_DOWN_MASK);
+				mods = 0;
+			}
+			keyboard.typeKey(c, DEFAULT_KEY_TIME, mods);
+		}
 	}
 	
 	public void type(int c, int time) {

@@ -1,10 +1,14 @@
 package org.auriferous.bot.config;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class ConfigurableEntry<N,V> {
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+
+public abstract class ConfigurableEntry<N,V> {
 	private N key;
 	private V value;
 	
@@ -19,9 +23,7 @@ public class ConfigurableEntry<N,V> {
 		this.value = value;
 	}
 
-	public ConfigurableEntry<N,V> copy() {
-		return new ConfigurableEntry<N,V>(key, value);
-	}
+	public abstract ConfigurableEntry<N,V> copy();
 	
 	public void setKey(N key) {
 		this.key = key;
@@ -47,13 +49,13 @@ public class ConfigurableEntry<N,V> {
 		this.children = children;
 	}
 	
-	public List<ConfigurableEntry<Object,Object>> get(Object key) {
-		List<ConfigurableEntry<Object,Object>> results = new ArrayList<ConfigurableEntry<Object,Object>>();
-		for (ConfigurableEntry<Object,Object> cE : children) {
-			if (cE.key.equals(key)) {
-				results.add(cE);
-			}
-		}
-		return results;
+	public Object get(Object path, Object defaultValue) {
+		List<ConfigurableEntry<Object,Object>> l = get(path);
+		if (l.size() > 0)
+			return l.get(0).getValue();
+		
+		return defaultValue;
 	}
+	
+	public abstract List<ConfigurableEntry<Object,Object>> get(Object path);
 }

@@ -3,6 +3,7 @@ package org.auriferous.bot.tabs;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import org.auriferous.bot.gui.swing.tabs.JTabView;
 import org.auriferous.bot.tabs.view.TabView;
@@ -25,7 +26,7 @@ public class Tab {
 	private List<TabListener> tabListeners = new LinkedList<TabListener>();
 
 	private TabView tabView;
-
+	
 	public Tab(int id, String url) {
 		this.id = id;
 		
@@ -49,10 +50,18 @@ public class Tab {
 		this(-1, url);
 	}
 	
+	public void goBack() {
+		this.browser.goBack();
+	}
+	
+	public void goForward() {
+		this.browser.goForward();
+	}
+	
 	public void loadURL(String url) {
-		this.originalURL = url;
-		
 		if (!this.browser.isDisposed()) {
+			this.originalURL = url;
+		
 			this.browser.loadURL(url);
 		
 			for (TabListener listener : tabListeners) 

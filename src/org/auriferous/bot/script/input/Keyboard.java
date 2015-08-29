@@ -15,11 +15,11 @@ public class Keyboard extends Input {
 		target.dispatchTypeKey(c, time, mods);
 	}
 	
-	public void pressKey(int c) {
-		target.dispatchPressKey(c);
+	public void pressKey(int c, int mods) {
+		target.dispatchPressKey(c, mods);
 	}
 	
-	public void releaseKey(int c) {
-		target.dispatchReleaseKey(c);
+	public void releaseKey(int c, int mods) {
+		target.dispatchReleaseKey(c, mods);
 	}
 }

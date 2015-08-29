@@ -25,7 +25,7 @@ public interface TabView {
 	
 	public void dispatchTypeKey(int c, int time, int mods);
 	
-	public void dispatchPressKey(int c);
+	public void dispatchPressKey(int c, int mods);
 	
-	public void dispatchReleaseKey(int c);
+	public void dispatchReleaseKey(int c, int mods);
 }

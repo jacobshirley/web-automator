@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.auriferous.bot.config.ConfigurableEntry;
+import org.auriferous.bot.config.WritableEntry;
 
-public class TaskConfigEntry extends ConfigurableEntry<String,String>{
+public class TaskConfigEntry extends WritableEntry<String,String>{
 	private Task task;
 
 	public TaskConfigEntry(Task t) {
@@ -18,11 +19,12 @@ public class TaskConfigEntry extends ConfigurableEntry<String,String>{
 	public List<ConfigurableEntry> getChildren() {
 		List<ConfigurableEntry> attrs = new ArrayList<ConfigurableEntry>();
 		
-		attrs.add(new ConfigurableEntry<String,String>("url", task.url));
-		attrs.add(new ConfigurableEntry<String,Integer>("shuffles", task.shuffles));
-		attrs.add(new ConfigurableEntry<String,Integer>("interval", task.timeInterval));
-		attrs.add(new ConfigurableEntry<String,Integer>("time-on-ad", task.timeOnAd));
-		attrs.add(new ConfigurableEntry<String,Integer>("sub-clicks", task.subClicks));
+		attrs.add(new WritableEntry<String,String>("url", task.url));
+		attrs.add(new WritableEntry<String,Integer>("shuffles", task.shuffles));
+		attrs.add(new WritableEntry<String,Integer>("interval", task.timeInterval));
+		attrs.add(new WritableEntry<String,Integer>("time-on-ad", task.timeOnAd));
+		attrs.add(new WritableEntry<String,Integer>("sub-clicks", task.subClicks));
+		attrs.add(new WritableEntry<String,String>("fb-link", task.fbLink));
 		
 		return attrs;
 	}

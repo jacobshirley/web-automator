@@ -13,6 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.config.WritableEntry;
 import org.auriferous.bot.config.Configurable;
 import org.auriferous.bot.config.ConfigurableEntry;
 import org.auriferous.bot.config.library.ScriptManifest;
@@ -42,6 +43,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	private static final int SUB_CLICK_TIME = 10;
 	private static final int SUB_CLICK_RANDOM_TIME = 4;
 	
+	private static final int MAX_WAIT_TIME = 10;
+	
 	private Tab botTab;
 	private ScriptMethods methods;
 	
@@ -64,10 +67,11 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 
 	private long timer = 0;
 	public String currentSignature = "";
+	public String currentTaskURL = "";
 	
 	private SetSignatureFrame setSigFrame = new SetSignatureFrame(this);
 	
-	private ConfigurableEntry<String,String> taskConfig = new ConfigurableEntry<String,String>("tasks");
+	private ConfigurableEntry<String,String> taskConfig = new WritableEntry<String,String>("tasks");
 	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -114,9 +118,11 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		methods = new ScriptMethods(botTab);
 	}
 	
+	private int foundID = 0;
+	
 	private ElementBounds findAds(String... jqueryStrings) {
-		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle')");
-		
+		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()");
+		foundID = 0;
 		if (adsbygoogle != null) {
 			System.out.println("Found basic ad");
 			
@@ -127,6 +133,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 				
 				ElementBounds[] result = null;
 				for (String s : jqueryStrings) {
+					foundID++;
+					
 					System.out.println("Trying "+s);
 					
 					result = methods.getElements(s);
@@ -156,20 +164,25 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		searchAdTries = 0;
 	}
 	
-	private String compileSignature() {
+	private String getBaseURL(String urlString) {
 		try {
-			URL url = new URL(saveURL);
+			URL url = new URL(urlString);
+			
 			String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
 			String base = url.getProtocol() + "://" + url.getHost() + path;
 			
-			String title = base.split("\\.")[1];
-			
-			return currentSignature.replace("$title", title).replace("$base", base);
+			return base;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return "";
+	}
+	
+	private String compileSignature(String urlString) {
+		String base = getBaseURL(urlString);
+		String title = base.split("\\.")[1];
 		
-		return null;
+		return currentSignature.replace("$title", title).replace("$base", base);
 	}
 	
 	private boolean tickShuffles() {
@@ -194,12 +207,13 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
     	
     	String url = botTab.getURL();
     	
-    	if (blogURL != null && !url.equals(blogURL) && !url.contains("tumblr")) {
+    	if (blogURL != null && !url.contains(getBaseURL(currentTaskURL))) {
     		System.out.println("Clicked ad successfully.");
     		taskStage = STAGE_WAIT_ON_AD;
     		
     		return false;
     	} else {
+    		currentTaskURL = url;
         	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
 
         	if (adElement != null) {
@@ -210,13 +224,23 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
         		debugElement = adElement;
 	        	
         		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
-        		
-        		methods.moveMouse(p);
-	        	Utils.wait(500);
         		searchAdTries = 0;
         		
         		System.out.println("Clicking at "+p.x+", "+p.y);
-        		methods.mouse(p.x, p.y);
+        		if (foundID != 5) {
+        			System.out.println("Moving mouse");
+        			
+        			methods.moveMouse(p);
+        			Utils.wait(500);
+        			if (!methods.getStatus().equals("")) {
+        				System.out.println("Status checked");
+                		methods.mouse(p.x, p.y);
+        			}
+        		} else {
+        			System.out.println("Clicking here");
+        			
+        			methods.mouse(p);
+        		}
         	} else if (searchAdTries < 10) {
         		searchAdTries++;
         		System.out.println("Couldn't find ad on try "+searchAdTries+"/10. Reloading page.");
@@ -237,7 +261,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		
 		System.out.println("Saving URL "+saveURL);
 		
-		System.out.println("Now waiting on ad");
+		System.out.println("Now waiting on ad with random 5 seconds");
 		Utils.wait((currentTask.timeOnAd*1000) + Utils.random(5000));
 
 		taskStage = STAGE_SUB_CLICKS;
@@ -261,10 +285,10 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	        	methods.mouse(p.x, p.y);
 	        	
 	        	System.out.println("Waiting 10 seconds + random time (0 - 4 seconds)");
-	        	Utils.wait((int)((SUB_CLICK_TIME*1000)+Utils.randomRange(0, SUB_CLICK_RANDOM_TIME*1000)));
+	        	Utils.wait((int)((SUB_CLICK_TIME*1000)+Utils.random(0, SUB_CLICK_RANDOM_TIME*1000)));
 	        	
 	        	System.out.println("Going back to ad");
-	        	botTab.loadURL(saveURL);
+	        	botTab.goBack();
 	        	
 	        	curSubClick++;
 			} else if (searchAdTries < 5){
@@ -283,6 +307,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	
 	public boolean tickFBPostComment() {
 		if (!currentTask.fbLink.equals("")) {
+			final String url = saveURL;
 			final Tab fbTab = openTab(currentTask.fbLink);
 			
 			fbTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
@@ -304,9 +329,9 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 							p.x += 150;
 							
 							fbMethods.mouse(p, ClickType.LCLICK);
-							Utils.wait(1000);
+							Utils.wait(500);
 							fbMethods.mouse(p, ClickType.LCLICK);
-							fbMethods.type(compileSignature());
+							fbMethods.type(compileSignature(url));
 						}
 					}
 				}
@@ -321,7 +346,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	public boolean tickTaskDone() {
 		System.out.println("Finished current task");
 		
-		System.out.println(compileSignature());
+		System.out.println(compileSignature(saveURL));
 		
 		taskStage = STAGE_NEXT_TASK;
 		
@@ -420,14 +445,16 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 						System.out.println("There was an error. Skipping task "+currentTask.url);
 						taskStage = STAGE_NEXT_TASK;
 						forceExec = true;
+						
+						return super.tick();
 					}
 					
 					forceExec = false;
 					
 					timer = System.currentTimeMillis();
 				} else {
-					if (currentTask != null && System.currentTimeMillis()-timer >= 5000) {
-						System.out.println("It's been 5 seconds. Forcing execution.");
+					if (currentTask != null && System.currentTimeMillis()-timer >= MAX_WAIT_TIME*10000) {
+						System.out.println("It's been "+MAX_WAIT_TIME+" seconds. Forcing execution.");
 						forceExec = true;
 					}
 				}
@@ -472,6 +499,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		menu.add(setSignature);
 		menu.add(manageTasks);
 		menu.add(executeTasks);
+		menu.addSeparator();
 		menu.add(skipTask);
 	}
 	
@@ -505,29 +533,29 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 
 	@Override
 	public void load(ConfigurableEntry configEntries) {
-		List<ConfigurableEntry> l = configEntries.get("signature");
+		Object s = configEntries.get("//signature", "");
 		
-		currentSignature = (String) l.get(0).getValue();
+		currentSignature = (String) s;
 		setSigFrame.setText(currentSignature);
 		
-		l = configEntries.get("tasks");
-		if (!l.isEmpty()) {
-			taskConfig = l.get(0);
+		List<ConfigurableEntry> l = configEntries.get("//tasks");
+		for (ConfigurableEntry tasks : l) {
+			taskConfig = tasks;
 			for (ConfigurableEntry<Object,Object> taskEntry : taskConfig.getChildren()) {
 				Task t = new Task(taskEntry);
 				
-				tasks.add(t);
+				this.tasks.add(t);
 			}
 		}
 	}
 
 	@Override
 	public ConfigurableEntry<String,String> getConfiguration() {
-		ConfigurableEntry<String,String> root = new ConfigurableEntry("config");
+		ConfigurableEntry<String,String> root = new WritableEntry("config");
 		
-		root.getChildren().add(new ConfigurableEntry<String,String>("signature", currentSignature));
+		root.getChildren().add(new WritableEntry<String,String>("signature", currentSignature));
 		
-		taskConfig = new ConfigurableEntry<String,String>("tasks");
+		taskConfig = new WritableEntry<String,String>("tasks");
 		
 		for (Task t : tasks) {
 			taskConfig.getChildren().add(new TaskConfigEntry(t));

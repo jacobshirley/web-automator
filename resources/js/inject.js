@@ -24,6 +24,13 @@ $.fn.findVisibles = function(sel) {
 	return findVisibleElements(this, sel);
 }
 
+function getJSClickables() {
+	return $("*").filter(function(i) {
+		if (this.onclick != null) 
+			return true;
+		}).findVisibles("*");
+}
+
 function _findElementsInIFrames(parent, sel, offset) {
 	var el = oldFind.call(parent, sel);
     

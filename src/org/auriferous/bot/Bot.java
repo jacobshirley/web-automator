@@ -8,6 +8,7 @@ import java.util.logging.Level;
 
 import javax.swing.JFrame;
 
+import org.auriferous.bot.config.WritableEntry;
 import org.auriferous.bot.config.Configurable;
 import org.auriferous.bot.config.ConfigurableEntry;
 import org.auriferous.bot.config.ConfigurableFile;
@@ -27,7 +28,7 @@ import org.auriferous.bot.scripts.TestAdClicking;
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.LoggerProvider;
 
-public class Bot implements ScriptExecutionListener {
+public class Bot implements ScriptExecutionListener, Configurable {
 	private JBotFrame botGUI;
 	private ScriptLibrary scriptLibrary;
 	private ScriptLoader scriptLoader;
@@ -80,8 +81,20 @@ public class Bot implements ScriptExecutionListener {
 			});
 		}
 
-		Script c = new TestAdClicking(manifest3, new ScriptContext(this));
-		scriptExecutor.runScript(c);
+		//Script c = new TestAdClicking(manifest3, new ScriptContext(this));
+		try {
+			scriptExecutor.runScript(scriptLoader.loadScript(manifest));
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}//*/
+		
+		/*config.addConfigurable(this);
+		try {
+			config.save();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 	}
 	
 	public ConfigurableFile getConfig() {
@@ -125,5 +138,25 @@ public class Bot implements ScriptExecutionListener {
 
 	@Override
 	public void onResumeScript(Script script) {
+	}
+
+	@Override
+	public void loadDefault() {
+		System.out.println("Loading default");
+	}
+
+	@Override
+	public void load(ConfigurableEntry<?, ?> configuation) {
+		System.out.println(configuation.get("//hello", "def"));
+	}
+
+	@Override
+	public ConfigurableEntry<?, ?> getConfiguration() {
+		WritableEntry entry = new WritableEntry<String, String>("test");
+		
+		entry.getChildren().add(new WritableEntry("hello", "what"));
+		entry.getChildren().add(new WritableEntry("hello", "what2"));
+		
+		return entry;
 	}
 }

@@ -33,6 +33,12 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 		browser.addDisposeListener(this);
 	}
 	
+	//So it registers key events
+	@Override
+	public boolean isShowing() {
+		return true;
+	}
+	
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -76,7 +82,7 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 		MouseEvent event = new MouseEvent(this, MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, x, y, 1, false, button);
 		dispatchEvent(event);
 		
-		Utils.wait((int)(Utils.randomRange(20, 50)));
+		Utils.wait((int)(Utils.random(20, 50)));
 		event = new MouseEvent(this, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, x, y, 1, false, button);
 		dispatchEvent(event);
 		
@@ -92,25 +98,25 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 	
 	@Override
 	public void dispatchTypeKey(int c, int time, int mods) {
-		dispatchPressKey(c);
+		dispatchPressKey(c, mods);
 		
 		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_TYPED, System.currentTimeMillis(), mods, KeyEvent.VK_UNDEFINED, (char)c, KeyEvent.KEY_LOCATION_UNKNOWN);
 		dispatchEvent(event);
 	
 		Utils.wait(time+Utils.random(20));
 	
-		dispatchReleaseKey(c);
+		dispatchReleaseKey(c, mods);
 	}
 	
 	@Override
-	public void dispatchPressKey(int c) {
-		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, c, KeyEvent.CHAR_UNDEFINED, KeyEvent.KEY_LOCATION_STANDARD);
+	public void dispatchPressKey(int c, int mods) {
+		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), mods, c, KeyEvent.CHAR_UNDEFINED, KeyEvent.KEY_LOCATION_STANDARD);
 		dispatchEvent(event);
 	}
 	
 	@Override
-	public void dispatchReleaseKey(int c) {
-		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 0, c, KeyEvent.CHAR_UNDEFINED, KeyEvent.KEY_LOCATION_STANDARD);
+	public void dispatchReleaseKey(int c, int mods) {
+		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), mods, c, KeyEvent.CHAR_UNDEFINED, KeyEvent.KEY_LOCATION_STANDARD);
 		dispatchEvent(event);
 	}
 
