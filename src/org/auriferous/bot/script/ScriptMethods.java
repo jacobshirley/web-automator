@@ -450,8 +450,24 @@ public class ScriptMethods {
 	}
 	
 	public final void type(String message) {
-		for (char c : message.toCharArray())
-			type(c);
+		boolean shiftDown = false;
+		int mods = 0;
+		for (char c : message.toCharArray()) {
+			boolean isShiftKey = SHIFT_KEYS.contains(""+(char)c);
+			if (!shiftDown) {
+				if (isShiftKey) {
+					shiftDown = true;
+					keyboard.pressKey(KeyEvent.VK_SHIFT, InputEvent.SHIFT_DOWN_MASK);
+					mods |= InputEvent.SHIFT_DOWN_MASK;
+				} else
+					mods = 0;
+			} else if (shiftDown && !isShiftKey) {
+				shiftDown = false;
+				keyboard.releaseKey(KeyEvent.VK_SHIFT, InputEvent.SHIFT_DOWN_MASK);
+				mods = 0;
+			}
+			keyboard.typeKey(c, DEFAULT_KEY_TIME, mods);
+		}
 	}
 	
 	public void type(int c, int time) {

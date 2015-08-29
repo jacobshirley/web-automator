@@ -81,8 +81,12 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			});
 		}
 
-		/*Script c = new TestAdClicking(manifest3, new ScriptContext(this));
-		scriptExecutor.runScript(c);//*/
+		//Script c = new TestAdClicking(manifest3, new ScriptContext(this));
+		try {
+			scriptExecutor.runScript(scriptLoader.loadScript(manifest));
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}//*/
 		
 		/*config.addConfigurable(this);
 		try {
