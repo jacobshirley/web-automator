@@ -43,4 +43,8 @@ public class Utils {
 	public static boolean inRange(double x, double min, double max) {
 		return x >= min && x <= max;
 	}
+	
+	public static Object getRandomObject(Object[] arr) {
+		return arr[(int) Math.floor(Math.random()*arr.length)];
+	}
 }

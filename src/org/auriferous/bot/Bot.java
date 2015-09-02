@@ -50,7 +50,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		
 		scriptLibrary = new XMLScriptLibrary("Local Script Library", "1.0", "Local script library that contains the scripts on the local machine.");
 		
-		XMLScriptManifest manifest = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.Googler", "3", "Googler", "1.0", "RAARR", "bin");
+		XMLScriptManifest manifest = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.googler.Googler", "3", "Googler", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest, true);
 		
 		XMLScriptManifest manifest2 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.adclicker.AdClicker", "4", "Ad Clicker", "1.0", "RAARR", "bin");
