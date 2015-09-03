@@ -146,7 +146,7 @@ public class Googler extends Script implements JScriptGuiListener{
 			
 			ElementBounds clickable = (ElementBounds)Utils.getRandomObject(elements);
 			if (clickable != null) {
-				methods.mouse(clickable.getRandomPointFromCentre(0.5, 0.5));
+				methods.mouse(clickable.getRandomPointFromCentre(0.7, 0.7));
 			} else {
 				System.out.println("couldn't find link");
 			}
@@ -166,6 +166,8 @@ public class Googler extends Script implements JScriptGuiListener{
 		int waitTime = getWaitTime();
 		System.out.println("Waiting "+(waitTime/1000)+" seconds");
 		Utils.wait(waitTime);
+		
+		methods.moveMouseRandom();
 		
 		System.out.println("Returing to original link");
 		googleTab.loadURL(saveURL);

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.auriferous.bot.ResourceLoader;
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.input.Keyboard;
 import org.auriferous.bot.script.input.Mouse;
@@ -207,6 +208,14 @@ public class ScriptMethods {
 		return browser.executeJavaScriptAndReturnValue("window.pageYOffset").getNumber();
 	}
 	
+	public double getPageWidth() {
+		return browser.executeJavaScriptAndReturnValue("$(document).width()").getNumber();
+	}
+	
+	public double getPageHeight() {
+		return browser.executeJavaScriptAndReturnValue("$(document).height()").getNumber();
+	}
+	
 	public double getWindowWidth() {
 		return browser.executeJavaScriptAndReturnValue("$(window).width()").getNumber();
 	}
@@ -311,8 +320,16 @@ public class ScriptMethods {
 		}
 	}
 	
+	public void scrollTo(int y) {
+		scrollTo(y, 10, 20);
+	}
+	
+	public void moveMouseRandom() {
+		mouse((int)Math.round(Math.random()*getWindowWidth()), (int)Math.round(Math.random()*getPageHeight()), ClickType.NO_CLICK);
+	}
+	
 	public void mouse(int x, int y, ClickType clickType) {
-		scrollTo(y, 0, 0);
+		scrollTo(y);
 		
 		x -= getPageXOffset();
 		y -= getPageYOffset();

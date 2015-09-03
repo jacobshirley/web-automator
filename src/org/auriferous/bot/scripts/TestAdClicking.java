@@ -49,7 +49,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 	@Override
 	public int tick() {
 		if (startExec) {
-			startExec = false;
+			/*startExec = false;
 
 			System.out.println("Finished loading main frame");
 			
@@ -78,6 +78,14 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 			Point p = r.getRandomPointInRect();
 			
 			methods.mouse(p, ClickType.NO_CLICK);*/
+			
+			System.out.println("started scrolling");
+			//System.out.println("offset "+methods.getPageYOffset()+", height "+methods.getPageHeight());
+
+			System.out.println("finished scrolling");
+			methods.mouse((int)Math.round(Math.random()*methods.getWindowWidth()), (int)Math.round(Math.random()*methods.getPageHeight()), ClickType.NO_CLICK);
+			
+			System.out.println("finished mousing");
 		}
 		
 		return super.tick();
@@ -149,7 +157,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 	public void onStart() {
 		System.out.println("Starting");
 		//openTab("naht.tk/random");//
-		currentTab = openTab("http://www.pconverter.com/index.jhtml");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		currentTab = openTab("http://stackoverflow.com/questions/1145850/how-to-get-height-of-entire-document-with-javascript");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
 		//currentTab.getTabView().addTabPaintListener(this);
 		getTabs().addTabControlListener(new TabControlAdapter() {
