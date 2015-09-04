@@ -82,7 +82,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		}
 
 		//Script c = new TestAdClicking(manifest3, new ScriptContext(this));
-		/*try {
+		try {
 			scriptExecutor.runScript(scriptLoader.loadScript(manifest));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

@@ -1,3 +1,5 @@
+window.injectionLoaded = true;
+
 function Offset() {
 	this.left = 0;
 	this.top = 0;
@@ -22,6 +24,22 @@ $.fn.find = function(sel) {
 
 $.fn.findVisibles = function(sel) {
 	return findVisibleElements(this, sel);
+}
+
+function sendBackResults(results) {
+	results.each(function (i) {
+		var el = $(this);
+		var off = el.offset2();
+		
+		var x = off.left;
+		var y = off.top;
+				
+		var width = getElementWidth(el);
+		var height = getElementHeight(el);
+		
+		tabCallback(i, x, y, width, height);
+	});
+	return null;
 }
 
 function getJSClickables() {
@@ -162,3 +180,5 @@ function getElementHeight(elem) {
 	});
 	return height;
 }
+
+println("Code injected successfully");

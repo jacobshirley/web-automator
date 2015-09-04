@@ -2,11 +2,15 @@ package org.auriferous.bot.gui.swing.tabs;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabListener;
 import org.auriferous.bot.tabs.view.TabView;
+
+import com.teamdev.jxbrowser.chromium.DialogParams;
+import com.teamdev.jxbrowser.chromium.swing.DefaultDialogHandler;
 
 public class JTab extends JPanel implements TabListener {
 	private JTabComponent tabComponent;
@@ -25,6 +29,16 @@ public class JTab extends JPanel implements TabListener {
 		
 		this.tabView = new JTabView(this.tab);
 		this.tab.setTabView(tabView);
+		
+		this.tab.getBrowserWindow().setDialogHandler(new DefaultDialogHandler(tabView) {
+            @Override
+            public void onAlert(DialogParams params) {
+                String title = "From: "+params.getURL();
+                String message = params.getMessage();
+                JOptionPane.showMessageDialog(null, message, title,
+                        JOptionPane.PLAIN_MESSAGE);
+            }
+        });
 		
 		this.add(tabView);
 	}

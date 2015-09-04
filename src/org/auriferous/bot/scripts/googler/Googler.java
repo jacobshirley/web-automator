@@ -15,6 +15,7 @@ import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.tabs.TabCallback;
 
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
@@ -65,22 +66,20 @@ public class Googler extends Script implements JScriptGuiListener{
 	}
 	
 	private boolean tickNextSearch() {
-		
-		
-		
 		return false;
 	}
 	
 	private boolean tickGoogle() {
 		if (!searches.isEmpty()) {
-			Utils.wait(2000);
+			Utils.wait(1000);
 			
 			System.out.println("Started typing");
 			int random = (int)Math.floor(searches.size()*Math.random());
 			String search = searches.remove(random);
 			
 			System.out.println("Looking for input element");
-			methods.clickElement(methods.getRandomElement(mainFrame, "$('#lst-ib')"));
+			
+			methods.clickElement(methods.getRandomElement("$('#lst-ib');"));
 			System.out.println("Found input element");
 			
 			methods.type(search);
@@ -89,7 +88,7 @@ public class Googler extends Script implements JScriptGuiListener{
 			Utils.wait(2000);
 			
 			ElementBounds el = methods.getRandomElement("$('.g').find('.r').find('a')");
-			methods.scrollTo((int)el.getCenterY(), 500, 2000);
+			methods.scrollTo((int)el.getCenterY(), 500, 500);
 			methods.mouse((int)el.getCenterX(), (int)el.getCenterY());
 			
 			stage = STAGE_SAVE_URL;
@@ -176,7 +175,6 @@ public class Googler extends Script implements JScriptGuiListener{
 		
 		return true;
 	}
-
 	
 	private long timer = 0;
 	

@@ -3,15 +3,23 @@ package org.auriferous.bot.tabs;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Stack;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
+import org.auriferous.bot.ResourceLoader;
 import org.auriferous.bot.gui.swing.tabs.JTabView;
 import org.auriferous.bot.tabs.view.TabView;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
+import com.teamdev.jxbrowser.chromium.BrowserFunction;
+import com.teamdev.jxbrowser.chromium.JSObject;
+import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.events.TitleEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleListener;
+import com.teamdev.jxbrowser.chromium.swing.DefaultDialogHandler;
 
 public class Tab {
 	private static final List<Browser> BROWSER_INSTANCES = new ArrayList<Browser>();
@@ -24,11 +32,12 @@ public class Tab {
 	private Browser browser;
 	
 	private List<TabListener> tabListeners = new LinkedList<TabListener>();
+	private List<TabCallback> tabCallbacks = new ArrayList<TabCallback>();
 
 	private TabView tabView;
 	
-	public Tab(int id, String url) {
-		this.id = id;
+	public Tab(Tabs parent, String url) {
+		this.id = -1;
 		
 		this.browser = new Browser(DEFAULT_CONTEXT);
 		this.browser.getPreferences().setLocalStorageEnabled(true);
@@ -44,10 +53,48 @@ public class Tab {
         });
 		
 		loadURL(url);
-	}
-	
-	public Tab(String url) {
-		this(-1, url);
+		
+		this.browser.registerFunction("tabCallback", new BrowserFunction() {
+			@Override
+		    public JSValue invoke(JSValue... args) {
+		    	TabCallback callback = tabCallbacks.get(0);
+		    	
+		    	if (callback != null) {
+			    	Object[] oArgs = new Object[args.length];
+			    	
+			    	int c = 0;
+			        for (JSValue arg : args) {
+			            if (arg.isBoolean())
+			            	oArgs[c] = arg.getBoolean();
+			            else if (arg.isNumber())
+			            	oArgs[c] = arg.getNumber();
+			            else if (arg.isString())
+			            	oArgs[c] = arg.getString();
+			            else if (arg.isNull())
+			            	oArgs[c] = null;
+			            c++;
+			        }
+			        Object returned = callback.onInvoke(oArgs);
+			       
+			        if (returned instanceof Number)
+			        	return JSValue.create(Double.parseDouble(returned.toString()));
+			        else if (returned instanceof Boolean)
+			        	return JSValue.create((Boolean)returned);
+			        else if (returned instanceof String)
+			        	return JSValue.create((String)returned);
+			        
+			        return JSValue.createNull();
+		    	}
+		    	return JSValue.createNull();
+	    	}
+		});
+		this.browser.registerFunction("println", new BrowserFunction() {
+			@Override
+		    public JSValue invoke(JSValue... args) {
+		    	System.out.println("JAVASCRIPT: "+args[0].getString());
+		    	return JSValue.createNull();
+	    	}
+		});
 	}
 	
 	public void goBack() {
@@ -56,6 +103,18 @@ public class Tab {
 	
 	public void goForward() {
 		this.browser.goForward();
+	}
+	
+	public void alert(String message) {
+		browser.executeJavaScript("alert('"+message+"');");
+	}
+	
+	public void pushCallback(TabCallback callback) {
+		tabCallbacks.add(callback);
+	}
+	
+	public void popCallback() {
+		tabCallbacks.remove(0);
 	}
 	
 	public void loadURL(String url) {

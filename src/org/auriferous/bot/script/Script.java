@@ -34,6 +34,14 @@ public abstract class Script {
 		return status;
 	}
 	
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	
+	public int getStatus() {
+		return status;
+	}
+	
 	public abstract void onStart();
 	public abstract void onPause();
 	public abstract void onResume();
