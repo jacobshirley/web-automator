@@ -21,6 +21,8 @@ import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
 public class Googler extends Script implements JScriptGuiListener{
+	private static final String[] SEARCHES = new String[] {"insurance marketplace", "insurance quotes", "insurance companies", "interest rates", "restaurants in Brighton", "pubs in Brighton"};
+	
 	private static final int STAGE_GOOGLE = 0;
 	private static final int STAGE_CLICK_LINK = 1;
 	private static final int STAGE_SAVE_URL = 2;
@@ -28,10 +30,8 @@ public class Googler extends Script implements JScriptGuiListener{
 	private static final int STAGE_RETURN_TO_LINK = 4;
 	private static final int STAGE_NEXT_SEARCH = 5;
 	
-	private static final int MAX_CLICKS = 1;
-	
-	private static final String[] SEARCHES = new String[] {"insurance marketplace", "insurance quotes", "insurance companies", "interest rates", "restaurants in Brighton", "pubs in Brighton"};
-	
+	private static final int MAX_CLICKS = 6;
+
 	private int stage;
 	
 	private ScriptMethods methods;
