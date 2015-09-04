@@ -74,26 +74,30 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 		this.mouseY = y;
 		
 		MouseEvent event = new MouseEvent(this, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, x, y, 1, false);
-		dispatchEvent(event);
+		forwardMouseEvent(event);
 	}
 	
 	@Override
 	public final void dispatchClickMouse(int x, int y, int button) {
 		MouseEvent event = new MouseEvent(this, MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, x, y, 1, false, button);
-		dispatchEvent(event);
+		//dispatchEvent(event);
+		forwardMouseEvent(event);
 		
 		Utils.wait((int)(Utils.random(20, 50)));
 		event = new MouseEvent(this, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, x, y, 1, false, button);
-		dispatchEvent(event);
+		//dispatchEvent(event);
+		forwardMouseEvent(event);
 		
 		event = new MouseEvent(this, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0, x, y, 1, false, button);
-		dispatchEvent(event);
+		//dispatchEvent(event);
+		forwardMouseEvent(event);
 	}
 	
 	@Override
 	public final void dispatchScrollMouse(boolean up, int rotation) {
 		MouseWheelEvent mwe = new MouseWheelEvent(this, MouseEvent.MOUSE_WHEEL, System.currentTimeMillis(), 0, mouseX, mouseY, 0, false, MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, up ? -rotation : rotation);
-		dispatchEvent(mwe);
+		//dispatchEvent(mwe);
+		forwardMouseWheelEvent(mwe);
 	}
 	
 	@Override
@@ -101,7 +105,7 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 		dispatchPressKey(c, mods);
 		
 		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_TYPED, System.currentTimeMillis(), mods, KeyEvent.VK_UNDEFINED, (char)c, KeyEvent.KEY_LOCATION_UNKNOWN);
-		dispatchEvent(event);
+		forwardKeyTypedEvent(event);
 	
 		Utils.wait(time+Utils.random(20));
 	
@@ -111,13 +115,13 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 	@Override
 	public void dispatchPressKey(int c, int mods) {
 		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), mods, c, KeyEvent.CHAR_UNDEFINED, KeyEvent.KEY_LOCATION_STANDARD);
-		dispatchEvent(event);
+		forwardKeyPressedEvent(event);
 	}
 	
 	@Override
 	public void dispatchReleaseKey(int c, int mods) {
 		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), mods, c, KeyEvent.CHAR_UNDEFINED, KeyEvent.KEY_LOCATION_STANDARD);
-		dispatchEvent(event);
+		forwardKeyReleasedEvent(event);
 	}
 
 	@Override

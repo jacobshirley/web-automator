@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
+import javax.swing.JOptionPane;
+
 public class Utils {
 	public static final void wait(int ms) {
 		try {
@@ -32,6 +34,10 @@ public class Utils {
         return response.toString();
     }
 	
+	public static int random(int min, int max) {
+		return (int)(min+(Math.random()*(max-min)));
+	}
+	
 	public static double random(double min, double max) {
 		return min+(Math.random()*(max-min));
 	}
@@ -46,5 +52,14 @@ public class Utils {
 	
 	public static Object getRandomObject(Object[] arr) {
 		return arr[(int) Math.floor(Math.random()*arr.length)];
+	}
+	
+	public static void alert(String message) {
+		alert("ALERT", message);
+	}
+	
+	public static void alert(String title, String message) {
+		JOptionPane.showMessageDialog(null, message, title,
+                JOptionPane.PLAIN_MESSAGE);
 	}
 }

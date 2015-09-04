@@ -33,11 +33,6 @@ public abstract class ConfigurableFile {
 		this.configurables.put(cName, configurable);
 	}
 	
-	private void merge(ConfigurableEntry entry1, ConfigurableEntry entry2) {
-		
-	}
-	
-	
 	protected abstract ConfigurableEntry getEntries(Configurable configurable);
 	
 	public abstract void compile();

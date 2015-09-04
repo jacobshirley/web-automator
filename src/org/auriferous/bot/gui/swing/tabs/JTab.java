@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.auriferous.bot.Utils;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabListener;
 import org.auriferous.bot.tabs.view.TabView;
@@ -35,8 +36,7 @@ public class JTab extends JPanel implements TabListener {
             public void onAlert(DialogParams params) {
                 String title = "From: "+params.getURL();
                 String message = params.getMessage();
-                JOptionPane.showMessageDialog(null, message, title,
-                        JOptionPane.PLAIN_MESSAGE);
+                Utils.alert(title, message);
             }
         });
 		

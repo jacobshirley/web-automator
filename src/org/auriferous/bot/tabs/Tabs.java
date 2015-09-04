@@ -7,7 +7,7 @@ public class Tabs {
 	private List<Tab> tabsList = new ArrayList<Tab>();
 
 	private List<TabControlListener> tabListeners = new ArrayList<TabControlListener>();
-	private int currentTabIndex = 0;
+	private int currentTabIndex = -1;
 
 	public Tabs() {
 	}
@@ -34,6 +34,9 @@ public class Tabs {
 	}
 	
 	public Tab getCurrentTab() {
+		if (currentTabIndex == -1) 
+			return null;
+		
 		return tabsList.get(currentTabIndex);
 	}
 	

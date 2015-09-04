@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -30,6 +31,7 @@ import org.auriferous.bot.gui.swing.tabs.JTabBar;
 import org.auriferous.bot.gui.swing.tabs.JTabView;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.executor.ScriptExecutionListener;
+import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.Tabs;
 
 public class JBotFrame extends JFrame implements ScriptExecutionListener, ChangeListener{
@@ -52,9 +54,13 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private static final int ACTION_CREATE_TAB = 4;
 	private static final int ACTION_PAUSE_SCRIPT = 5;
 	private static final int ACTION_RESUME_SCRIPT = 6;
+	private static final int ACTION_TAB_GO_BACK = 7;
+	private static final int ACTION_TAB_GO_FORWARD = 8;
+	
 	
 	private static final int REFRESH_RATE = 30;
 	private static final int UPDATE_INTERVAL = 1000/REFRESH_RATE;
+	
 	
 	private Bot bot;
 	
@@ -154,7 +160,10 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	
 	private JMenu createTabsMenu() {
 		JMenu tabsMenu = new JMenu("Tabs");
+		tabsMenu.add(new MenuActionItem("Go back", ACTION_TAB_GO_BACK));
+		tabsMenu.add(new MenuActionItem("Go forward", ACTION_TAB_GO_FORWARD));
 		
+		tabsMenu.addSeparator();
 		tabsMenu.add(new MenuActionItem("Create", ACTION_CREATE_TAB));
 		
 		return tabsMenu;
@@ -274,6 +283,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			Tab current = JBotFrame.this.userTabs.getCurrentTab();
 			switch (this.actionID) {
 			case ACTION_RUN_SCRIPT:
 				createScriptSelector(scriptsMenu);
@@ -289,6 +299,20 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 				break;
 			case ACTION_RESUME_SCRIPT:
 				bot.getScriptExecutor().resumeScript(script);
+				break;
+			case ACTION_TAB_GO_BACK:
+				if (current != null) {
+					current.goBack();
+				} else {
+					Utils.alert("Cannot access tab.");
+				}
+				break;
+			case ACTION_TAB_GO_FORWARD:
+				if (current != null) {
+					current.goForward();
+				} else {
+					Utils.alert("Cannot access tab.");
+				}
 				break;
 			case ACTION_CREATE_TAB:
 				String s = (String)JOptionPane.showInputDialog(

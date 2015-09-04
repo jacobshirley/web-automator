@@ -79,7 +79,7 @@ public class Googler extends Script implements JScriptGuiListener{
 			
 			System.out.println("Looking for input element");
 			
-			methods.clickElement(methods.getRandomElement("$('#lst-ib');"));
+			methods.clickElement(methods.getRandomElement(mainFrame, "$('#lst-ib');"));
 			System.out.println("Found input element");
 			
 			methods.type(search);
@@ -107,13 +107,15 @@ public class Googler extends Script implements JScriptGuiListener{
 	private ElementBounds[] elements = null;
 	
 	private int getWaitTime(ElementBounds[] elements) {
-		int time = (int) (elements.length*0.5);
-		if (time > 16)
-			time = 16;
-		else if (time < 5)
-			time = 5;
-		
-		return time*1000;
+		int time = 6;
+		if (elements != null) {
+			time = (int) (elements.length*0.5);
+			if (time > 16)
+				time = 16;
+			else if (time < 5)
+				time = 5;
+		}
+		return (time+Utils.random(-5, 5))*1000;
 	}
 	
 	private int getWaitTime() {
