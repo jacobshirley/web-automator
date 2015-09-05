@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.auriferous.bot.ResourceLoader;
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.input.Keyboard;
 import org.auriferous.bot.script.input.Mouse;
@@ -18,8 +17,6 @@ import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabCallback;
 
 import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.BrowserFunction;
-import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.events.StatusEvent;
 import com.teamdev.jxbrowser.chromium.events.StatusListener;
 
@@ -498,7 +495,7 @@ public class ScriptMethods {
 		boolean shiftDown = false;
 		int mods = 0;
 		for (char c : message.toCharArray()) {
-			boolean isShiftKey = SHIFT_KEYS.contains(""+(char)c);
+			boolean isShiftKey = SHIFT_KEYS.contains(""+c);
 			if (!shiftDown) {
 				if (isShiftKey) {
 					shiftDown = true;

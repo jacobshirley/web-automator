@@ -3,11 +3,6 @@ package org.auriferous.bot.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-
 public abstract class ConfigurableEntry<N,V> {
 	private N key;
 	private V value;

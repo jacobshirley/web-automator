@@ -3,21 +3,18 @@ package org.auriferous.bot.gui.swing;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
-import javax.swing.Icon;
+import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -109,7 +106,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 				while (true) {
 					int index = tabBar.getSelectedIndex();
 					if (index >= 0) {
-						JTabView view = (JTabView) ((JTab)tabBar.getSelectedComponent()).getJTabView();
+						JTabView view = ((JTab)tabBar.getSelectedComponent()).getJTabView();
 						
 						if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
 							view.repaint(UPDATE_INTERVAL);
@@ -205,7 +202,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		MenuActionItem pauseItem = (MenuActionItem) menu.getItem(menu.getItemCount()-2).getAction();
 		
 		pauseItem.setAction(ACTION_RESUME_SCRIPT);
-		pauseItem.putValue(MenuActionItem.NAME, "Resume");
+		pauseItem.putValue(Action.NAME, "Resume");
 	}
 	
 	@Override
@@ -214,7 +211,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		MenuActionItem pauseItem = (MenuActionItem) menu.getItem(menu.getItemCount()-2).getAction();
 		
 		pauseItem.setAction(ACTION_PAUSE_SCRIPT);
-		pauseItem.putValue(MenuActionItem.NAME, "Pause");
+		pauseItem.putValue(Action.NAME, "Pause");
 	}
 	
 	private void addScriptToMenu(Script script) {

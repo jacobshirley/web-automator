@@ -2,14 +2,11 @@ package org.auriferous.bot.gui.swing.tabs;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabListener;
-import org.auriferous.bot.tabs.view.TabView;
-
 import com.teamdev.jxbrowser.chromium.DialogParams;
 import com.teamdev.jxbrowser.chromium.swing.DefaultDialogHandler;
 

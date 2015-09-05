@@ -5,7 +5,6 @@ import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.auriferous.bot.config.library.ScriptLibrary;
 import org.auriferous.bot.config.library.ScriptManifest;
 import org.auriferous.bot.config.xml.XMLUtils;
 import org.w3c.dom.Document;

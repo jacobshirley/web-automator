@@ -83,7 +83,7 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 		//dispatchEvent(event);
 		forwardMouseEvent(event);
 		
-		Utils.wait((int)(Utils.random(20, 50)));
+		Utils.wait((Utils.random(20, 50)));
 		event = new MouseEvent(this, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, x, y, 1, false, button);
 		//dispatchEvent(event);
 		forwardMouseEvent(event);

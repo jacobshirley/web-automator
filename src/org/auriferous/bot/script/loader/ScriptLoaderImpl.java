@@ -6,7 +6,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import org.auriferous.bot.Bot;
-import org.auriferous.bot.config.Configurable;
 import org.auriferous.bot.config.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;

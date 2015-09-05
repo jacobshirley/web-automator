@@ -15,8 +15,6 @@ import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.TabCallback;
-
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 

@@ -285,7 +285,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	        	methods.mouse(p.x, p.y);
 	        	
 	        	System.out.println("Waiting 10 seconds + random time (0 - 4 seconds)");
-	        	Utils.wait((int)((SUB_CLICK_TIME*1000)+Utils.random(0, SUB_CLICK_RANDOM_TIME*1000)));
+	        	Utils.wait((SUB_CLICK_TIME*1000)+Utils.random(0, SUB_CLICK_RANDOM_TIME*1000));
 	        	
 	        	System.out.println("Going back to ad");
 	        	botTab.loadURL(saveURL);

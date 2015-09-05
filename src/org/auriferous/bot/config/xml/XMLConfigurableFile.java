@@ -4,11 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -174,6 +170,7 @@ public class XMLConfigurableFile extends ConfigurableFile{
 		}
 	}
 	
+	@Override
 	public boolean save(File path) throws IOException {
 		if (!path.exists()) {
 			path.getParentFile().mkdirs();

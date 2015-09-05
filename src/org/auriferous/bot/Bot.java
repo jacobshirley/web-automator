@@ -23,8 +23,6 @@ import org.auriferous.bot.script.executor.ScriptExecutionListener;
 import org.auriferous.bot.script.executor.ScriptExecutor;
 import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.script.loader.ScriptLoaderImpl;
-import org.auriferous.bot.scripts.TestAdClicking;
-
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.LoggerProvider;
 

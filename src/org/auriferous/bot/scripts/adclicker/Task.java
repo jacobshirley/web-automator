@@ -1,7 +1,5 @@
 package org.auriferous.bot.scripts.adclicker;
 
-import java.util.List;
-
 import org.auriferous.bot.config.ConfigurableEntry;
 
 public class Task {

@@ -2,14 +2,10 @@ package org.auriferous.bot.script.input;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-
-import org.auriferous.bot.Utils;
 import org.auriferous.bot.tabs.view.TabPaintListener;
 import org.auriferous.bot.tabs.view.TabView;
 

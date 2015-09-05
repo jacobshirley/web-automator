@@ -13,7 +13,6 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 public class JPasteTable extends JTable implements ActionListener{
 	public JPasteTable() {
@@ -49,10 +48,19 @@ public class JPasteTable extends JTable implements ActionListener{
 	}
 	
 	private void pasteIn(String[] parts) throws UnsupportedFlavorException {
-		if (parts.length == getColumnCount()) {
+		if (parts.length <= getColumnCount()) {
+			String[] dest = new String[6];
+
+			System.arraycopy(parts, 0, dest, 0, parts.length);
+			
+			for (int i = 0; i < dest.length; i++) {
+				if (dest[i] == null)
+					dest[i] = "";
+			}
+			
 			DefaultTableModel model = (DefaultTableModel) getModel();
 			
-	        model.addRow(parts);
+	        model.addRow(dest);
 		} else throw new UnsupportedFlavorException(DataFlavor.stringFlavor);
 	}
 

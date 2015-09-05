@@ -54,8 +54,6 @@ public class TaskTableModel extends DefaultTableModel{
 	
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		super.setValueAt(aValue, rowIndex, columnIndex);
-		
 		Task task = tasks.get(rowIndex);
 		switch (columnIndex) {
 			case 0: task.url = (String) aValue;

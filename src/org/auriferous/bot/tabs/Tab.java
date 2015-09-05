@@ -3,23 +3,17 @@ package org.auriferous.bot.tabs;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.Stack;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import org.auriferous.bot.ResourceLoader;
-import org.auriferous.bot.gui.swing.tabs.JTabView;
 import org.auriferous.bot.tabs.view.TabView;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
 import com.teamdev.jxbrowser.chromium.BrowserFunction;
-import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
+import com.teamdev.jxbrowser.chromium.PopupContainer;
+import com.teamdev.jxbrowser.chromium.PopupHandler;
+import com.teamdev.jxbrowser.chromium.PopupParams;
 import com.teamdev.jxbrowser.chromium.events.TitleEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleListener;
-import com.teamdev.jxbrowser.chromium.swing.DefaultDialogHandler;
 
 public class Tab {
 	private static final List<Browser> BROWSER_INSTANCES = new ArrayList<Browser>();
@@ -35,9 +29,11 @@ public class Tab {
 	private List<TabCallback> tabCallbacks = new ArrayList<TabCallback>();
 
 	private TabView tabView;
+	private Tabs parent;
 	
-	public Tab(Tabs parent, String url) {
+	public Tab(final Tabs parent, String url) {
 		this.id = -1;
+		this.parent = parent;
 		
 		this.browser = new Browser(DEFAULT_CONTEXT);
 		this.browser.getPreferences().setLocalStorageEnabled(true);
@@ -88,12 +84,26 @@ public class Tab {
 		    	return JSValue.createNull();
 	    	}
 		});
+		
 		this.browser.registerFunction("println", new BrowserFunction() {
 			@Override
 		    public JSValue invoke(JSValue... args) {
 		    	System.out.println("JAVASCRIPT: "+args[0].getString());
 		    	return JSValue.createNull();
 	    	}
+		});
+		
+		browser.setPopupHandler(new PopupHandler() {
+		    @Override
+			public PopupContainer handlePopup(final PopupParams params) {
+		        return new PopupContainer() {
+					@Override
+					public void insertBrowser(Browser arg0,
+							java.awt.Rectangle arg1) {
+						parent.openTab(params.getURL());
+					}
+		        };
+		    }
 		});
 	}
 	

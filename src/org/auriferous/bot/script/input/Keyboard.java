@@ -1,8 +1,5 @@
 package org.auriferous.bot.script.input;
 
-import java.awt.Component;
-import java.awt.event.KeyEvent;
-import org.auriferous.bot.Utils;
 import org.auriferous.bot.tabs.view.TabView;
 
 public class Keyboard extends Input {
