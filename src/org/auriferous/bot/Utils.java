@@ -51,6 +51,8 @@ public class Utils {
 	}
 	
 	public static Object getRandomObject(Object[] arr) {
+		if (arr == null)
+			return null;
 		return arr[(int) Math.floor(Math.random()*arr.length)];
 	}
 	
