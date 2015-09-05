@@ -44,6 +44,7 @@ public class JPasteTable extends JTable implements ActionListener{
 		} catch (UnsupportedFlavorException e) {
 			System.out.println("Non pastable object.");
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -52,11 +53,6 @@ public class JPasteTable extends JTable implements ActionListener{
 			String[] dest = new String[6];
 
 			System.arraycopy(parts, 0, dest, 0, parts.length);
-			
-			for (int i = 0; i < dest.length; i++) {
-				if (dest[i] == null)
-					dest[i] = "";
-			}
 			
 			DefaultTableModel model = (DefaultTableModel) getModel();
 			

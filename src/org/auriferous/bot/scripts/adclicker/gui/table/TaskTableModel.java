@@ -17,15 +17,23 @@ public class TaskTableModel extends DefaultTableModel{
 	
 	@Override
 	public void addRow(Object[] rowData) {
-		int shuffles = Integer.parseInt(rowData[1].toString());
-		int interval = Integer.parseInt(rowData[2].toString());
-		int timeOnAd = Integer.parseInt(rowData[3].toString());
-		int clicksInAd = Integer.parseInt(rowData[4].toString());
+		int shuffles = parseInt(rowData[1]);
+		int interval = parseInt(rowData[2]);
+		int timeOnAd = parseInt(rowData[3]);
+		int clicksInAd = parseInt(rowData[4]);
 		
 		tasks.add(new Task((String)rowData[0], shuffles, interval, timeOnAd, clicksInAd, (String)rowData[5]));
 		this.fireTableDataChanged();
 	}
 
+	private int parseInt(Object o) {
+		try {
+			return Integer.parseInt(o.toString());
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+	
 	@Override
 	public int getRowCount() {
 		if (tasks == null)
