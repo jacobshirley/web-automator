@@ -288,7 +288,7 @@ public class ScriptMethods {
 		if (includeButtons)
 			el = getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");", "getJSClickables();");
 		else {
-			el = getRandomElement("$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');", "getJSClickables();");
+			el = getRandomElement("$(document).findVisibles('a[href*=\"http\"], a[href*=\"/\"]');", "getJSClickables();");
 		}
 		return el;
 	}
@@ -298,7 +298,7 @@ public class ScriptMethods {
 		if (includeButtons)
 			el = getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");", "getJSClickables();");
 		else {
-			el = getRandomElement(frameID, "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');", "getJSClickables();");
+			el = getRandomElement(frameID, "$(document).findVisibles('a[href*=\"http\"], a[href*=\"/\"]');", "getJSClickables();");
 		}
 		return el;
 	}

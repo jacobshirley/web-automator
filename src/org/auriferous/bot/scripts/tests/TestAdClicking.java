@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts;
+package org.auriferous.bot.scripts.tests;
 
 import java.awt.Color;
 import java.awt.Graphics;

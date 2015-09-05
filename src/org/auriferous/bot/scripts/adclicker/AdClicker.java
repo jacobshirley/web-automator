@@ -124,8 +124,6 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()");
 		foundID = 0;
 		if (adsbygoogle != null) {
-			System.out.println("Found basic ad");
-			
 			ElementBounds bounds = adsbygoogle[0];
 			ElementBounds[] iframe1 = methods.getElements("$('#google_ads_frame1')");
 			if (iframe1 != null) {
@@ -134,9 +132,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 				ElementBounds[] result = null;
 				for (String s : jqueryStrings) {
 					foundID++;
-					
-					System.out.println("Trying "+s);
-					
+
 					result = methods.getElements(s);
 					if (result != null) {
 						System.out.println("Found "+s);
@@ -214,6 +210,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
     		return false;
     	} else {
     		currentTaskURL = url;
+    		System.out.println("got "+methods.getElements("$('a[href*=\"&adurl=\"]')"));
+    		
         	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
 
         	if (adElement != null) {
