@@ -41,7 +41,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			e.printStackTrace();
 		}
 		
-		LoggerProvider.setLevel(Level.OFF);
+		LoggerProvider.setLevel(Level.SEVERE);
 		
 		BrowserPreferences.setUserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
 		BrowserPreferences.setChromiumSwitches("--remote-debugging-port=9222");
@@ -54,7 +54,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		XMLScriptManifest manifest2 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.adclicker.AdClicker", "4", "Ad Clicker", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest2, true);
 		
-		XMLScriptManifest manifest3 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.TestAdClicking", "4", "Test Script", "1.0", "RAARR", "bin");
+		XMLScriptManifest manifest3 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.tests.TestAdClicking", "4", "Test Script", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest3, true);
 		
 		scriptLoader = new ScriptLoaderImpl(this, new ScriptContext(this));
@@ -81,7 +81,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 
 		//Script c = new TestAdClicking(manifest3, new ScriptContext(this));
 		try {
-			scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
+			scriptExecutor.runScript(scriptLoader.loadScript(manifest3));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/

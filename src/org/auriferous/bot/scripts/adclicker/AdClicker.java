@@ -72,6 +72,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	private SetSignatureFrame setSigFrame = new SetSignatureFrame(this);
 	
 	private ConfigurableEntry<String,String> taskConfig = new WritableEntry<String,String>("tasks");
+	private ConfigurableEntry<String,String> historyConfig = new WritableEntry<String,String>("history");
+	private ConfigurableEntry<String,String> taskHistoryConfig = new WritableEntry<String,String>("task-history");
 	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -140,6 +142,9 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 						bounds.add(result[0]);
 						bounds.width = result[0].width;
 						bounds.height = result[0].height;
+						
+						bounds.setDOMElement(result[0].getDOMElement());
+						
 						break;
 					}
 				}
@@ -210,10 +215,18 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
     		return false;
     	} else {
     		currentTaskURL = url;
-    		System.out.println("got "+methods.getElements("$('a[href*=\"&adurl=\"]')"));
     		
         	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
 
+        	if (foundID == 1) {
+        		ElementBounds adLink = methods.getRandomElement("$('a[href*=\"adurl=\"]')");
+        		if (adLink != null) {
+        			
+        			String adhref = adLink.getDOMElement().get("href").getString().split("adurl=")[1];
+        			System.out.println("found "+adhref);
+        		}
+        	}
+        	
         	if (adElement != null) {
         		blogURL = botTab.getURL();
         		
@@ -221,7 +234,12 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
         		
         		debugElement = adElement;
 	        	
-        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
+        		Point p = null;
+        		if (foundID == 1) {
+        			System.out.println("Got text ad");
+        			p = new Point(adElement.x+Utils.random(10, 20), adElement.y+Utils.random(10, 20));
+        		} else 
+        			p = adElement.getRandomPointFromCentre(0.5, 0.5);
         		searchAdTries = 0;
         		
         		System.out.println("Clicking at "+p.x+", "+p.y);
@@ -285,13 +303,13 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 	        	System.out.println("Waiting 10 seconds + random time (0 - 4 seconds)");
 	        	Utils.wait((SUB_CLICK_TIME*1000)+Utils.random(0, SUB_CLICK_RANDOM_TIME*1000));
 	        	
-	        	System.out.println("Going back to ad");
+	        	System.out.println("Going back to ad "+saveURL);
 	        	botTab.loadURL(saveURL);
 	        	
 	        	curSubClick++;
-			} else if (searchAdTries < 5){
+			} else if (searchAdTries < 2){
 				searchAdTries++;
-        		System.out.println("Couldn't find link on try "+searchAdTries+"/5. Returning to ad to try again.");
+        		System.out.println("Couldn't find link on try "+searchAdTries+"/2. Returning to ad to try again.");
         		
         		botTab.loadURL(saveURL);
 			}
@@ -338,7 +356,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		
 		taskStage = STAGE_DONE;
 		
-		return true;
+		return false;
 	}
 	
 	public boolean tickTaskDone() {
@@ -396,19 +414,17 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 			}
 			
 			boolean loading = botTab.getBrowserWindow().isLoading();
-			if (!loading) {
+			if (!loading || forceExec) {
 				if (startExec || forceExec) {
 					startExec = false;
 					
 					curURL = botTab.getBrowserWindow().getURL();
 					
 					String title = botTab.getTitle();
-					if (title.equals("Not found.")) {
+					if (title.contains("Not found.")) {
 						System.out.println("Page not found. Next task...");
 						taskStage = STAGE_NEXT_TASK;
 					}
-					
-					curURL = botTab.getBrowserWindow().getURL();
 					
 					try {
 						switch (taskStage){
@@ -443,7 +459,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 						System.out.println("There was an error. Skipping task "+currentTask.url);
 						taskStage = STAGE_NEXT_TASK;
 						forceExec = true;
-						
+						timer = System.currentTimeMillis();
 						return super.tick();
 					}
 					

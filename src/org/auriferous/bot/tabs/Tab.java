@@ -8,6 +8,7 @@ import org.auriferous.bot.tabs.view.TabView;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
 import com.teamdev.jxbrowser.chromium.BrowserFunction;
+import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.PopupContainer;
 import com.teamdev.jxbrowser.chromium.PopupHandler;
@@ -68,6 +69,8 @@ public class Tab {
 			            	oArgs[c] = arg.getString();
 			            else if (arg.isNull())
 			            	oArgs[c] = null;
+			            else 
+			            	oArgs[c] = (JSObject)arg;
 			            c++;
 			        }
 			        Object returned = callback.onInvoke(oArgs);

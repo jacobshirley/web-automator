@@ -2,6 +2,8 @@ package org.auriferous.bot.scripts.tests;
 
 import java.awt.Color;
 import java.awt.Graphics;
+
+import org.auriferous.bot.Utils;
 import org.auriferous.bot.config.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
@@ -76,13 +78,19 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 			
 			methods.mouse(p, ClickType.NO_CLICK);*/
 			
-			System.out.println("started scrolling");
 			//System.out.println("offset "+methods.getPageYOffset()+", height "+methods.getPageHeight());
-
-			System.out.println("finished scrolling");
-			methods.mouse((int)Math.round(Math.random()*methods.getWindowWidth()), (int)Math.round(Math.random()*methods.getPageHeight()), ClickType.NO_CLICK);
+			Utils.wait(3000);
 			
-			System.out.println("finished mousing");
+			//ElementBounds[] elems = methods.getElements("$(document).findVisibles('a[href*=\"/\"')");
+			ElementBounds bounds = methods.getRandomClickable(false);
+			methods.hoverElement(bounds);
+			
+			r = bounds;
+			r.x -= methods.getPageXOffset();
+			r.y -= methods.getPageYOffset();
+			
+			//status = STATE_EXIT_SUCCESS;
+			startExec = false;
 		}
 		
 		return super.tick();
@@ -93,6 +101,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 	}
 	
 	ElementBounds r2 = null;
+	private long mainFrame;
 	@Override
 	public void onDocumentLoadedInFrame(FrameLoadEvent event) {
 		
@@ -136,6 +145,9 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		long frame = event.getFrameId();
 		
 		if (event.isMainFrame()) {
+			
+			System.out.println("loading");
+			mainFrame = event.getFrameId();
 			startExec = true;
 		}
 	}
@@ -154,7 +166,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 	public void onStart() {
 		System.out.println("Starting");
 		//openTab("naht.tk/random");//
-		currentTab = openTab("http://stackoverflow.com/questions/1145850/how-to-get-height-of-entire-document-with-javascript");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		currentTab = openTab("www.argos.co.uk");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
 		//currentTab.getTabView().addTabPaintListener(this);
 		getTabs().addTabControlListener(new TabControlAdapter() {

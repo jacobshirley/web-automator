@@ -1,6 +1,7 @@
 package org.auriferous.bot.gui.swing.tabs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 
 import javax.swing.JPanel;
 
@@ -57,7 +58,9 @@ public class JTab extends JPanel implements TabListener {
 		int id = tabBar.indexOfComponent(this);
 		
 		tabBar.setTitleAt(id, newTitle);
-		tabBar.getTabComponentAt(id).revalidate();
+		Component comp = tabBar.getTabComponentAt(id);
+		if (comp != null)
+			comp.revalidate();
 	}
 
 	@Override

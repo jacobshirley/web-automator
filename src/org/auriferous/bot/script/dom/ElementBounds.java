@@ -5,11 +5,15 @@ import java.awt.Rectangle;
 
 import org.auriferous.bot.Utils;
 
+import com.teamdev.jxbrowser.chromium.JSObject;
+
 public class ElementBounds extends Rectangle{
 	private ElementBounds iframe;
+	private JSObject domElement;
 	
-	public ElementBounds(int x, int y, int width, int height) {
+	public ElementBounds(JSObject domElement, int x, int y, int width, int height) {
 		super(x, y, width, height);
+		this.domElement = domElement;
 	}
 	
 	public Point getRandomPoint() {
@@ -37,5 +41,13 @@ public class ElementBounds extends Rectangle{
 	
 	public ElementBounds getIframe() {
 		return iframe;
+	}
+	
+	public void setDOMElement(JSObject domElement) {
+		this.domElement = domElement;
+	}
+	
+	public JSObject getDOMElement() {
+		return domElement;
 	}
 }

@@ -26,6 +26,10 @@ $.fn.findVisibles = function(sel) {
 	return findVisibleElements(this, sel);
 }
 
+function getAdURL() {
+	return $("a[href*='&adurl=']").get(0).href;
+}
+
 function sendBackResults(results) {
 	results.each(function (i) {
 		var el = $(this);
@@ -37,7 +41,7 @@ function sendBackResults(results) {
 		var width = getElementWidth(el);
 		var height = getElementHeight(el);
 		
-		tabCallback(i, x, y, width, height);
+		tabCallback(i, x, y, width, height, this);
 	});
 	return null;
 }
@@ -111,6 +115,9 @@ function getElements(parent, jquerySelector) {
 function findVisibleElements(parent, jquerySelector) {
 	var pageOffX = window.pageXOffset;
 	var pageOffY = window.pageYOffset;
+	
+	var pageWidth = $(window).width();
+	var pageHeight = $(window).height();
 
 	return findElementsInIFrames(parent, jquerySelector).filter(function(index) {
 		var $this = $(this);
@@ -121,19 +128,22 @@ function findVisibleElements(parent, jquerySelector) {
 		var width = getElementWidth($this);
 		var height = getElementHeight($this);
 		
-		var x = offset2.left + (width/2) - pageOffX;
-		var y = offset2.top + (height/2) - pageOffY;
+		var x = offset2.left + 1 - pageOffX;
+		var y = offset2.top + 1 - pageOffY;
 		
-		var el = elementFromPointIFrames(x, y, offset.left, offset.top);
-		
-		if (el == this) {
-			return true;
-		} else {
-			var elems = elementsFromPointIFrames(x, y, offset.left, offset.top);
+		if (x < pageWidth && y < pageHeight) {
+			var el = elementFromPointIFrames(x, y, offset.left, offset.top);
+			//println("x "+x+", y "+y+", "+document.elementFromPoint(x, y));
 			
-			for (var i = 0; i < elems.length; i++) {
-				if (elems[i] == this) {
-					return true;
+			if (el == this) {
+				return true;
+			} else {
+				var elems = elementsFromPointIFrames(x, y, offset.left, offset.top);
+				
+				for (var i = 0; i < elems.length; i++) {
+					if (elems[i] == this) {
+						return true;
+					}
 				}
 			}
 		}

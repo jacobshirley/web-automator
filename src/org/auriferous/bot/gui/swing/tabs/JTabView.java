@@ -49,6 +49,8 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 			listener.onPaint(g);
 	}
 	
+	
+	
 	@Override
 	public void addTabPaintListener(TabPaintListener listener) {
 		this.paintListeners.add(listener);

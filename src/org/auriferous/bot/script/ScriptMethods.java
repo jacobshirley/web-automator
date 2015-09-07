@@ -17,6 +17,7 @@ import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabCallback;
 
 import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.events.StatusEvent;
 import com.teamdev.jxbrowser.chromium.events.StatusListener;
 
@@ -100,6 +101,20 @@ public class ScriptMethods {
 	}
 	
 	public ElementBounds[] getElements(String jqueryString) {
+		List<ElementBounds> elems = new ArrayList<ElementBounds>();
+		
+		for (Long frame : browser.getFramesIds()) {
+			ElementBounds[] elems2 = getElements(frame, jqueryString);
+			elems.addAll(Arrays.asList(elems2));
+		}
+		
+		ElementBounds[] result = new ElementBounds[elems.size()];
+		elems.toArray(result);
+		
+		return result;
+	}
+	
+	/*public ElementBounds[] getElements(String jqueryString) {
 		ElementBounds testEl = null;
 		ElementBounds[] foundEls = null;
 		
@@ -119,7 +134,7 @@ public class ScriptMethods {
 		}
 		
 		return foundEls;
-	}
+	}*/
 	
 	public ElementBounds[] getElementsInIFrames(String jqueryString) {
 		String mainHref = browser.executeJavaScriptAndReturnValue("window.location.href;").getString();
@@ -199,7 +214,9 @@ public class ScriptMethods {
     				double width = Double.parseDouble(args[3].toString());
     				double height = Double.parseDouble(args[4].toString());
     				
-    				rects.add(new ElementBounds((int)x, (int)y, (int)width, (int)height));
+    				JSObject object = (JSObject)args[5];
+    				
+    				rects.add(new ElementBounds(object, (int)x, (int)y, (int)width, (int)height));
 
     				return null;
     			}
@@ -246,8 +263,7 @@ public class ScriptMethods {
 	public ElementBounds getRandomElement(String... selector) {
 		List<ElementBounds> elemsList = new ArrayList<ElementBounds>();
 		for (String s : selector) {
-			
-			ElementBounds[] elems = getElementsInIFrames(s);
+			ElementBounds[] elems = getElements(s);
 	
 			if (elems == null)
 				continue;
@@ -258,7 +274,9 @@ public class ScriptMethods {
 		if (elemsList.isEmpty())
 			return null;
 	
-		return elemsList.get((int) Math.floor(Math.random()*elemsList.size()));
+		int random = (int) Math.floor(Math.random()*elemsList.size());
+		System.out.println("got random "+random + " out of "+elemsList.size());
+		return elemsList.get(random);
 	}
 	
 	public ElementBounds getRandomElement(long frameID, String... selector) {
@@ -288,7 +306,7 @@ public class ScriptMethods {
 		if (includeButtons)
 			el = getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");", "getJSClickables();");
 		else {
-			el = getRandomElement("$(document).findVisibles('a[href*=\"http\"], a[href*=\"/\"]');", "getJSClickables();");
+			el = getRandomElement("$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');", "getJSClickables();");
 		}
 		return el;
 	}
@@ -298,7 +316,7 @@ public class ScriptMethods {
 		if (includeButtons)
 			el = getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");", "getJSClickables();");
 		else {
-			el = getRandomElement(frameID, "$(document).findVisibles('a[href*=\"http\"], a[href*=\"/\"]');", "getJSClickables();");
+			el = getRandomElement(frameID, "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');", "getJSClickables();");
 		}
 		return el;
 	}
@@ -330,12 +348,12 @@ public class ScriptMethods {
 	}
 	
 	public void scrollTo(int y, int timeWait, int randomTime) {
-		while (y - getPageYOffset() >= target.getTabView().getHeight()) {
+		while (y - getPageYOffset() > target.getTabView().getHeight()) {
 			Utils.wait(timeWait+Utils.random(randomTime));
 			scrollMouse(false, 3);
 		}
 		
-		while (y - getPageYOffset() <= 0) {
+		while (y - getPageYOffset() < 0) {
 			Utils.wait(timeWait+Utils.random(randomTime));
 			scrollMouse(true, 3);
 		}
@@ -354,8 +372,10 @@ public class ScriptMethods {
 	public void mouse(int x, int y, ClickType clickType) {
 		scrollTo(y);
 		
-		x -= getPageXOffset();
-		y -= getPageYOffset();
+		if (y > getWindowHeight()) {
+			x -= getPageXOffset();
+			y -= getPageYOffset();
+		}
 		
 		if (x <= target.getTabView().getWidth()) {
 			double x1 = mouse.getMouseX();
