@@ -6,6 +6,7 @@ import java.awt.Component;
 import javax.swing.JPanel;
 
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.gui.swing.JOverlayComponent;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabListener;
 import com.teamdev.jxbrowser.chromium.DialogParams;
@@ -17,7 +18,7 @@ public class JTab extends JPanel implements TabListener {
 	private JTabBar tabBar;
 	private JTabView tabView;
 	
-	public JTab(JTabBar tabBar, Tab tab) {
+	public JTab(JOverlayComponent paintComp, JTabBar tabBar, Tab tab) {
 		super(new BorderLayout());
 		
 		this.tabBar = tabBar;
@@ -26,7 +27,7 @@ public class JTab extends JPanel implements TabListener {
 		this.tab = tab;
 		this.tab.addTabListener(this);
 		
-		this.tabView = new JTabView(this.tab);
+		this.tabView = new JTabView(paintComp, this.tab);
 		this.tab.setTabView(tabView);
 		
 		this.tab.getBrowserWindow().setDialogHandler(new DefaultDialogHandler(tabView) {

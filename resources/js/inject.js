@@ -1,5 +1,8 @@
 window.injectionLoaded = true;
 
+if (!$)
+	$ = jQuery;
+
 function Offset() {
 	this.left = 0;
 	this.top = 0;

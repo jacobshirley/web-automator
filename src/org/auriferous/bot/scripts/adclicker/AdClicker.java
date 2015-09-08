@@ -26,12 +26,12 @@ import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.scripts.adclicker.gui.SetSignatureFrame;
 import org.auriferous.bot.scripts.adclicker.gui.TaskManager;
 import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.view.TabPaintListener;
+import org.auriferous.bot.tabs.view.PaintListener;
 
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
-public class AdClicker extends Script implements TabPaintListener, JScriptGuiListener, Configurable{
+public class AdClicker extends Script implements PaintListener, JScriptGuiListener, Configurable{
 	private static final int STAGE_SHUFFLES = 0;
 	private static final int STAGE_URL = 1;
 	private static final int STAGE_WAIT_ON_AD = 2;
@@ -115,7 +115,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 			}
 		});
 		
-		botTab.getTabView().addTabPaintListener(this);
+		botTab.getTabView().addPaintListener(this);
 		
 		methods = new ScriptMethods(botTab);
 	}
@@ -456,7 +456,7 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
-						System.out.println("There was an error. Skipping task "+currentTask.url);
+						System.out.println("There was an error. Skipping task");
 						taskStage = STAGE_NEXT_TASK;
 						forceExec = true;
 						timer = System.currentTimeMillis();
@@ -576,6 +576,8 @@ public class AdClicker extends Script implements TabPaintListener, JScriptGuiLis
 		}
 		
 		root.getChildren().add(taskConfig);
+		root.getChildren().add(historyConfig);
+		root.getChildren().add(taskHistoryConfig);
 		
 		return root;
 	}

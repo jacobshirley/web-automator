@@ -1,8 +1,8 @@
 package org.auriferous.bot.tabs.view;
 
 public interface TabView {
-	public void addTabPaintListener(TabPaintListener listener);
-	public void removeTabPaintListener(TabPaintListener listener);
+	public void addPaintListener(PaintListener listener);
+	public void removePaintListener(PaintListener listener);
 	
 	public int getMouseX();
 	public int getMouseY();

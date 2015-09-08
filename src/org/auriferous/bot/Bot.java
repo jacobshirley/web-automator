@@ -23,6 +23,8 @@ import org.auriferous.bot.script.executor.ScriptExecutionListener;
 import org.auriferous.bot.script.executor.ScriptExecutor;
 import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.script.loader.ScriptLoaderImpl;
+import org.auriferous.bot.tabs.Tabs;
+
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.LoggerProvider;
 
@@ -33,6 +35,8 @@ public class Bot implements ScriptExecutionListener, Configurable {
 	private ScriptExecutor scriptExecutor;
 	
 	private ConfigurableFile config;
+	
+	private Tabs userTabs;
 	
 	public Bot(String args[], boolean createGUI) {
 		try {
@@ -63,6 +67,8 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		scriptExecutor = new ScriptExecutor();
 		scriptExecutor.addScriptExecutionListener(this);
 		
+		userTabs = new Tabs();
+		
 		if (createGUI) {
 			botGUI = new JBotFrame(this);
 			botGUI.addWindowListener(new WindowAdapter() {
@@ -80,7 +86,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		}
 
 		//Script c = new TestAdClicking(manifest3, new ScriptContext(this));
-		/*try {
+		try {
 			scriptExecutor.runScript(scriptLoader.loadScript(manifest3));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -93,6 +99,10 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
+	}
+	
+	public Tabs getUserTabs() {
+		return userTabs;
 	}
 	
 	public ConfigurableFile getConfig() {

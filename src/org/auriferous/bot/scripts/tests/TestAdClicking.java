@@ -12,7 +12,7 @@ import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlAdapter;
-import org.auriferous.bot.tabs.view.TabPaintListener;
+import org.auriferous.bot.tabs.view.PaintListener;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.events.FailLoadingEvent;
@@ -23,7 +23,7 @@ import com.teamdev.jxbrowser.chromium.events.LoadListener;
 import com.teamdev.jxbrowser.chromium.events.ProvisionalLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.StartLoadingEvent;
 
-public class TestAdClicking extends Script implements TabPaintListener, LoadListener{
+public class TestAdClicking extends Script implements PaintListener, LoadListener{
 	private ScriptMethods methods;
 	private Browser browser;
 	private int successCode = -1;
@@ -79,7 +79,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 			methods.mouse(p, ClickType.NO_CLICK);*/
 			
 			//System.out.println("offset "+methods.getPageYOffset()+", height "+methods.getPageHeight());
-			Utils.wait(3000);
+			Utils.wait(1000);
 			
 			//ElementBounds[] elems = methods.getElements("$(document).findVisibles('a[href*=\"/\"')");
 			ElementBounds bounds = methods.getRandomClickable(false);
@@ -166,7 +166,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 	public void onStart() {
 		System.out.println("Starting");
 		//openTab("naht.tk/random");//
-		currentTab = openTab("www.argos.co.uk");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		currentTab = openTab("http://www.littlebay.co.uk/");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
 		//currentTab.getTabView().addTabPaintListener(this);
 		getTabs().addTabControlListener(new TabControlAdapter() {
@@ -184,7 +184,7 @@ public class TestAdClicking extends Script implements TabPaintListener, LoadList
 		browser = this.methods.getBrowser();
 		browser.addLoadListener(this);
 		
-		currentTab.getTabView().addTabPaintListener(this);
+		currentTab.getTabView().addPaintListener(this);
 	}
 
 	@Override

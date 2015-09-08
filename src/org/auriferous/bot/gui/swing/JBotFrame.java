@@ -1,6 +1,7 @@
 package org.auriferous.bot.gui.swing;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -53,24 +54,23 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private static final int ACTION_RESUME_SCRIPT = 6;
 	private static final int ACTION_TAB_GO_BACK = 7;
 	private static final int ACTION_TAB_GO_FORWARD = 8;
+	private static final int ACTION_BLOCK_INPUT = 9;
 	
-	
-	private static final int REFRESH_RATE = 30;
-	private static final int UPDATE_INTERVAL = 1000/REFRESH_RATE;
-	
+	public static boolean mouseBlocked = false;
+	public static boolean keyboardBlocked = false;
 	
 	private Bot bot;
 	
 	public JTabBar tabBar;
-	private Tabs userTabs;
 	
 	private JDebugFrame debugger;
 	
 	private JMenu scriptsMenu;
 	
 	private Map<Script, JMenu> scriptMenuMap = new HashMap<Script, JMenu>();
-	
-	private Window window = new Window(this);
+
+	private JOverlayComponent paintableComponent = new JOverlayComponent();
+	private Tabs userTabs;
 	
 	public JBotFrame(final Bot bot) {
 		super("Web Automator");
@@ -89,9 +89,9 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		
 		setJMenuBar(menuBar);
 		
-		userTabs = new Tabs();
+		userTabs = bot.getUserTabs();
 		
-		tabBar = new JTabBar(userTabs);
+		tabBar = new JTabBar(paintableComponent, userTabs);
 		tabBar.addChangeListener(this);
 		add(tabBar);
 		
@@ -99,24 +99,6 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		
 		debugger = new JDebugFrame(this);
 		debugger.setVisible(false);
-	
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (true) {
-					int index = tabBar.getSelectedIndex();
-					if (index >= 0) {
-						JTabView view = ((JTab)tabBar.getSelectedComponent()).getJTabView();
-						
-						if (System.currentTimeMillis() - view.getLastTimePainted() >= UPDATE_INTERVAL) {
-							view.repaint(UPDATE_INTERVAL);
-						}
-					}
-					Thread.yield();
-					Utils.wait(UPDATE_INTERVAL);
-				}
-			}
-		}).start();
 		
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -126,10 +108,19 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		});
 		
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setSize(WIDTH, HEIGHT);
-		
+		//setSize(WIDTH, HEIGHT);
+		setMinimumSize(new Dimension(WIDTH, HEIGHT));
 		setLocationRelativeTo(null);
+		
+		pack();
 		setVisible(true);
+		
+		setGlassPane(paintableComponent);
+		paintableComponent.setVisible(true);
+	}
+	
+	public JOverlayComponent getPaintComponent() {
+		return paintableComponent;
 	}
 	
 	@Override
@@ -170,6 +161,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		JMenu debugMenu = new JMenu("Debug");
 		
 		debugMenu.add(new MenuActionItem("Show", ACTION_ENABLE_DEBUG));
+		debugMenu.add(new MenuActionItem("Block input", ACTION_BLOCK_INPUT));
 		
 		return debugMenu;
 	}
@@ -287,6 +279,10 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 				break;
 			case ACTION_ENABLE_DEBUG:
 				debugger.setVisible(true);
+				break;
+			case ACTION_BLOCK_INPUT:
+				JBotFrame.mouseBlocked = !JBotFrame.mouseBlocked;
+				JBotFrame.keyboardBlocked = !JBotFrame.keyboardBlocked;
 				break;
 			case ACTION_TERMINATE_SCRIPT:
 				bot.getScriptExecutor().terminateScript(script);

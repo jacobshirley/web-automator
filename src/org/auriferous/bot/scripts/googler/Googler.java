@@ -69,7 +69,7 @@ public class Googler extends Script implements JScriptGuiListener{
 	
 	private boolean tickGoogle() {
 		if (!searches.isEmpty()) {
-			Utils.wait(1000);
+			Utils.wait(5000);
 			
 			System.out.println("Started typing");
 			int random = (int)Math.floor(searches.size()*Math.random());

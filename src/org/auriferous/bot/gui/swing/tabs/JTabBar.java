@@ -4,10 +4,13 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.swing.JInternalFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.auriferous.bot.gui.swing.JOverlayComponent;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlListener;
 import org.auriferous.bot.tabs.Tabs;
@@ -15,8 +18,10 @@ import org.auriferous.bot.tabs.Tabs;
 public class JTabBar extends JTabbedPane implements TabControlListener, ChangeListener {
 	private static final long serialVersionUID = 1L;
 	private List<Tabs> scriptTabs;
+	private JOverlayComponent paintableComponent;
 
-	public JTabBar(Tabs... scriptTabs) {
+	public JTabBar(JOverlayComponent paintComp, Tabs... scriptTabs) {
+		this.paintableComponent = paintComp;
 		this.scriptTabs = new ArrayList(Arrays.asList(scriptTabs));
 		
 		for (Tabs tabs : scriptTabs)
@@ -29,7 +34,7 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 		this.scriptTabs.add(tabs);
 		
 		for (Tab tab : tabs.getTabList()) {
-			addTab(new JTab(this, tab));
+			addTab(new JTab(paintableComponent, this, tab));
 		}
 		
 		tabs.addTabControlListener(this);
@@ -47,7 +52,7 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 
 	@Override
 	public void onTabAdded(Tab tab) {
-		addTab("New Tab", new JTab(this, tab));
+		addTab("New Tab", new JTab(paintableComponent, this, tab));
 	}
 
 	@Override
@@ -72,8 +77,9 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 	
 	public void addTab(String title, JTab tab) {
 		int index = this.getTabCount();
-
+		
 		super.addTab(title, tab);
+		
 		setTabComponentAt(index, tab.getTabComponent());
 		setSelectedIndex(index);
 	}

@@ -34,7 +34,7 @@ public class Tabs {
 	}
 	
 	public Tab getCurrentTab() {
-		if (currentTabIndex == -1) 
+		if (tabsList.isEmpty()) 
 			return null;
 		
 		return tabsList.get(currentTabIndex);

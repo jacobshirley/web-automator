@@ -50,7 +50,7 @@ public class ScriptMethods {
 		this.mouse = new Mouse(this.target.getTabView());
 		this.keyboard = new Keyboard(this.target.getTabView());
 		
-		this.target.getTabView().addTabPaintListener(this.mouse);
+		this.target.getTabView().addPaintListener(this.mouse);
 		
 		this.browser.addStatusListener(new StatusListener() {
 			@Override
@@ -66,9 +66,8 @@ public class ScriptMethods {
 
 	private void injectJQuery(long frameID) {
 		try {
-			if (!isJQueryInjected(frameID)) {
+			if (!isJQueryInjected(frameID))
 				browser.executeJavaScript(frameID, ResourceLoader.loadResourceAsString("resources/js/jquery.min.js", true));
-			}
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}
