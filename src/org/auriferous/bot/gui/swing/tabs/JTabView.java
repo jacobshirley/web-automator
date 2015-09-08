@@ -25,7 +25,7 @@ import com.teamdev.jxbrowser.chromium.events.DisposeEvent;
 import com.teamdev.jxbrowser.chromium.events.DisposeListener;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 
-public class JTabView extends BrowserView implements DisposeListener<Browser>, TabView, PaintListener, MouseListener {
+public class JTabView extends BrowserView implements DisposeListener<Browser>, TabView, PaintListener{
 	private int mouseX;
 	private int mouseY;
 	
@@ -43,8 +43,6 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 		browser.addDisposeListener(this);
 		
 		paintComponent.addPaintListener(this);
-		
-		//addMouseListener(this);
 	}
 	
 	@Override
@@ -155,30 +153,5 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 	public void setMousePos(int x, int y) {
 		this.mouseX = x;
 		this.mouseY = y;
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		arg0.consume();
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		arg0.consume();
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		arg0.consume();
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		arg0.consume();
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		arg0.consume();
 	}
 }
