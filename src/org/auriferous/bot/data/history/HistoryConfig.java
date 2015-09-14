@@ -30,7 +30,9 @@ public class HistoryConfig implements Configurable{
 
 	@Override
 	public void save(DataEntry configuration) {
-		// TODO Auto-generated method stub
-		
+		configuration.clear();
+		for (DataEntry entry : entries) {
+			configuration.add(entry);
+		}
 	}
 }

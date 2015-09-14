@@ -36,7 +36,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 	private ScriptExecutor scriptExecutor;
 	
 	private ClassDataStore mainConfig;
-	private DataStore historyConfigFile;
+	private ClassDataStore historyConfigFile;
 	
 	private HistoryConfig historyConfig = new HistoryConfig();
 	
@@ -45,7 +45,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 	public Bot(String args[], boolean createGUI) {
 		try {
 			mainConfig = new ClassDataStore(new File("config/config.xml"));
-			historyConfigFile = new XMLDataStore(new File("config/history.xml"));
+			historyConfigFile = new ClassDataStore(new File("config/history.xml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -74,8 +74,8 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		
 		userTabs = new Tabs(historyConfig);
 		
-		//mainConfig.addConfigurable(this);
-		//historyConfigFile.addConfigurable(historyConfig);
+		mainConfig.addConfigurable(this);
+		historyConfigFile.addConfigurable(historyConfig);
 		
 		if (createGUI) {
 			botGUI = new JBotFrame(this);

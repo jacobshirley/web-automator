@@ -67,6 +67,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	private static final int SUB_CLICK_RANDOM_TIME = 4;
 	
 	private static final int MAX_WAIT_TIME = 20;
+	private static final int MAX_CLICKS = 4;
 	
 	private Tab botTab;
 	private ScriptMethods methods;
@@ -163,19 +164,22 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 					url = url.substring(0, id);
 				
 				DataEntry entry = historyConfig.getSingle("//*[@value='"+url+"']");
-				if (entry != null)
-					historyConfig.add(new HistoryEntry("", "", url));
-				else {
-					long timeStamp = new HistoryEntry(entry).getTimeStamp();
+				if (entry == null) {
+					entry = new HistoryEntry("", "", url);
+					entry.add(new DataEntry("clicks", 1));
+					historyConfig.add(entry);
+				} else {
+					int clicks = Integer.parseInt(entry.get("//clicks").toString())+1;
+					entry.set("//clicks", clicks);
 					
-					if (System.currentTimeMillis()-timeStamp <= DAYS_3_MS) {
+					if (clicks <= MAX_CLICKS) {
 						System.out.println("Already clicked this.");
 						botTab.stop();
 
 						taskStage = STAGE_TEST_CLICK;
 						startExec = true;
 					} else {
-						System.out.println("Not already clicked this "+timeStamp);
+						System.out.println("This has been clicked "+clicks+" times");
 					}
 				}
 			} catch (Exception e) {
