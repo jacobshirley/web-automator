@@ -115,8 +115,10 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		pack();
 		setVisible(true);
 		
-		setGlassPane(paintableComponent);
-		paintableComponent.setVisible(true);
+		//setGlassPane(paintableComponent);
+		//paintableComponent.setVisible(true);
+		
+		userTabs.openTab("www.google.co.uk/news");
 	}
 	
 	public JOverlayComponent getPaintComponent() {

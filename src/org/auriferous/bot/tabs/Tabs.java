@@ -20,11 +20,15 @@ public class Tabs {
 	public Tab openTab(String url) {
 		Tab tab = new Tab(this, url, history);
 		
+		
 		tabsList.add(tab);
 
 		tab.setID(tabsList.indexOf(tab));
 		
+		
 		setCurrentTab(tab);
+		
+		
 
 		for (TabControlListener listener : tabListeners) {
 			listener.onTabAdded(tab);

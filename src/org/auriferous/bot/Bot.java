@@ -30,6 +30,14 @@ import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.LoggerProvider;
 
 public class Bot implements ScriptExecutionListener, Configurable {
+	static {
+		System.setProperty("JExplorer.runInIsolatedProcess", "false");
+		LoggerProvider.setLevel(Level.SEVERE);
+		
+		BrowserPreferences.setUserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+		BrowserPreferences.setChromiumSwitches("--remote-debugging-port=9222");
+	}
+	
 	private JBotFrame botGUI;
 	private ScriptLibrary scriptLibrary;
 	private ScriptLoader scriptLoader;
@@ -49,11 +57,6 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		LoggerProvider.setLevel(Level.SEVERE);
-		
-		BrowserPreferences.setUserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-		BrowserPreferences.setChromiumSwitches("--remote-debugging-port=9222");
 		
 		scriptLibrary = new XMLScriptLibrary("Local Script Library", "1.0", "Local script library that contains the scripts on the local machine.");
 		
@@ -94,7 +97,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			});
 		}
 		try {
-			scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
+			//scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/

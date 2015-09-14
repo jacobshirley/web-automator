@@ -1,5 +1,6 @@
 package org.auriferous.bot.tabs;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,8 +66,12 @@ public class Tab {
 		this.parent = parent;
 		this.history = history;
 		
-		this.browser = new Browser(DEFAULT_CONTEXT);
+		this.browser = new Browser(new BrowserContext("test"+(10*Math.random())));
+		
+		System.out.println("Finished");
 		this.browser.getPreferences().setLocalStorageEnabled(true);
+		
+		
 		
 		BROWSER_INSTANCES.add(browser);
 		
@@ -128,11 +133,18 @@ public class Tab {
 		this.browser.setPopupHandler(new PopupHandler() {
 		    @Override
 			public PopupContainer handlePopup(final PopupParams params) {
+		    	
 		        return new PopupContainer() {
 					@Override
 					public void insertBrowser(Browser arg0,
 							java.awt.Rectangle arg1) {
-						parent.openTab(params.getURL());
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								Utils.wait(100);
+								loadURL(params.getURL());
+							}
+						}).start();
 					}
 		        };
 		    }
