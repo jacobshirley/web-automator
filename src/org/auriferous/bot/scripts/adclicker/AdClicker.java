@@ -62,7 +62,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	private static final int SUB_CLICK_TIME = 10;
 	private static final int SUB_CLICK_RANDOM_TIME = 4;
 	
-	private static final int MAX_WAIT_TIME = 10;
+	private static final int MAX_WAIT_TIME = 20;
 	
 	private Tab botTab;
 	private ScriptMethods methods;
@@ -121,9 +121,10 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	private void resetTab() {
 		System.out.println("Opening tab");
 		
-		if (botTab != null)
+		if (botTab != null) {
+			System.out.println("Loading URL "+curURL);
 			botTab = openTab(curURL);
-		else
+		} else
 			botTab = openTab();
 		
 		botTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
@@ -157,13 +158,13 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 				if (id > 0)
 					url = url.substring(0, id);
 				
-				if (!historyConfig.contains("//*[text()[contains(.,'"+url+"')]]"))
+				if (!historyConfig.contains("//*[@value='https://www.zoosk.com/mkt']"))
 					historyConfig.add(new HistoryEntry("", "", url));
 				else {
-					System.out.println("Already have used this.");
+					System.out.println("Already clicked this.");
 					botTab.stop();
-					startExec = false;
-					//browser.loadURL(saveURL);
+
+					botTab.loadURL(saveURL);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -176,7 +177,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
     
     private String testAdURL(String testURL) throws Exception {
-		String url = "http://127.0.0.1/test_url.php";
+		String url = "http://212.56.108.16/jacob/test_url.php";
 		
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -320,14 +321,14 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
         			System.out.println("found "+adhref);
         		}
         	}
-        	
+        	searchAdTries++;
         	if (adElement != null) {
         		blogURL = botTab.getURL();
         		
         		adElement.width -= 35;
         		
         		debugElement = adElement;
-        		searchAdTries = 0;
+        		
         		
         		for (int i = 0; i < 10; i++) {
 	        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
@@ -509,64 +510,59 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 			}
 			
 			boolean loading = botTab.getBrowserWindow().isLoading();
-			if (!loading || forceExec) {
-				if (startExec || forceExec) {
-					startExec = false;
-					
-					curURL = botTab.getBrowserWindow().getURL();
-					
-					String title = botTab.getTitle();
-					if (title.contains("Not found.")) {
-						System.out.println("Page not found. Next task...");
-						taskStage = STAGE_NEXT_TASK;
-					}
-					
-					try {
-						switch (taskStage){
-						case STAGE_SHUFFLES:
-							if (tickShuffles())
-								break;
-						case STAGE_URL:
-							if (forceExec) {
-								loadURL();
-								break;
-							} else
-								if (tickAdClicking())
-									break;
-						case STAGE_WAIT_ON_AD:
-							if (tickWaitOnAd())
-								break;
-						case STAGE_SUB_CLICKS:
-							if (tickSubClicks())
-								break;
-						case STAGE_FACEBOOK:
-							if (tickFBPostComment())
-								break;
-						case STAGE_DONE:
-							if (tickTaskDone())
-								break;
-						case STAGE_NEXT_TASK:
-							if (tickNextTask())
-								break;
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						System.out.println("There was an error. Skipping task");
-						taskStage = STAGE_NEXT_TASK;
-						forceExec = true;
-						timer = System.currentTimeMillis();
-						return super.tick();
-					}
-					
-					forceExec = false;
-					
-					timer = System.currentTimeMillis();
-				} else {
-					if (currentTask != null && System.currentTimeMillis()-timer >= MAX_WAIT_TIME*10000) {
-						System.out.println("It's been "+MAX_WAIT_TIME+" seconds. Forcing execution.");
-						forceExec = true;
-					}
+			//if (!loading || forceExec) {
+			if (startExec || forceExec) {
+				startExec = false;
+				
+				curURL = botTab.getBrowserWindow().getURL();
+				
+				String title = botTab.getTitle();
+				if (title.contains("Not found.")) {
+					System.out.println("Page not found. Next task...");
+					taskStage = STAGE_NEXT_TASK;
 				}
+				
+				try {
+					switch (taskStage){
+					case STAGE_SHUFFLES:
+						if (tickShuffles())
+							break;
+					case STAGE_URL:
+						if (tickAdClicking())
+							break;
+					case STAGE_WAIT_ON_AD:
+						if (tickWaitOnAd())
+							break;
+					case STAGE_SUB_CLICKS:
+						if (tickSubClicks())
+							break;
+					case STAGE_FACEBOOK:
+						if (tickFBPostComment())
+							break;
+					case STAGE_DONE:
+						if (tickTaskDone())
+							break;
+					case STAGE_NEXT_TASK:
+						if (tickNextTask())
+							break;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println("There was an error. Skipping task");
+					taskStage = STAGE_NEXT_TASK;
+					forceExec = true;
+					timer = System.currentTimeMillis();
+					return super.tick();
+				}
+				
+				forceExec = false;
+				
+				timer = System.currentTimeMillis();
+			} else if (currentTask != null && System.currentTimeMillis()-timer >= MAX_WAIT_TIME*1000) {
+				System.out.println("It's been "+MAX_WAIT_TIME+" seconds. Forcing execution.");
+				forceExec = true;
+				taskStage++;
+				timer = System.currentTimeMillis();
 			}
 		}
 		return super.tick();
@@ -666,6 +662,9 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		}
 
 		setSigFrame.setText(signatureConfig.getValue().toString());
+		
+		System.out.println(historyConfig.contains("//*[@value='https://www.zoosk.com/mkt']"));
+		System.out.println(historyConfig.get("//*[@value='https://www.zoosk.com/mkt']"));
 	}
 
 	@Override

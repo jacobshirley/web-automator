@@ -76,8 +76,7 @@ public class Googler extends Script implements JScriptGuiListener{
 			String search = searches.remove(random);
 			
 			System.out.println("Looking for input element");
-			
-			methods.clickElement(methods.getRandomElement(mainFrame, "$('#lst-ib');"));
+			methods.clickElement(methods.getRandomElement("$(\"*[maxlength='2048']\");"));
 			System.out.println("Found input element");
 			
 			methods.type(search);

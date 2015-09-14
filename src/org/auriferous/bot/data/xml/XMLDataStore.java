@@ -19,11 +19,13 @@ import javax.xml.transform.stream.StreamResult;
 import org.auriferous.bot.data.DataEntry;
 import org.auriferous.bot.data.DataStore;
 import org.auriferous.bot.data.RootEntry;
+import org.auriferous.bot.data.TextDataEntry;
 import org.auriferous.bot.data.config.Configurable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -108,10 +110,12 @@ public class XMLDataStore extends DataStore{
 			if (n instanceof Element) {
 				Element e = (Element)n;
 
-				DataEntry temp = new DataEntry(e.getTagName(), XMLUtils.getElementValue(e));
+				DataEntry temp = new DataEntry(e.getTagName(), XMLUtils.getNodeValue(e));
 				load(temp, e);
 				
 				parent.add(temp);
+			} else if (n instanceof Text) {
+				//parent.add(new TextDataEntry(XMLUtils.getNodeValue(n).toString()));
 			}
 		}
 	}

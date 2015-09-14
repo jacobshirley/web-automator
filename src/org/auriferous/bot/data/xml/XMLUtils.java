@@ -56,7 +56,7 @@ public class XMLUtils {
 		}
 	}
 	
-	public static final Object getElementValue(Element n) {
+	public static final Object getNodeValue(Node n) {
 		Node n2 = n.getFirstChild();
 		if (n2 instanceof Text) {
 			return n2.getTextContent();
