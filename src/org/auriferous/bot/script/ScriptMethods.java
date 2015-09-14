@@ -384,6 +384,8 @@ public class ScriptMethods {
 			
 			humanWindMouse(x1, y1, x, y, 7, 5, 10.0 / randSpeed, 15.0 / randSpeed, 10.0 * randSpeed);
 			
+			Utils.wait(200);
+			
 			if (clickType == ClickType.LCLICK) {
 				mouse.clickMouse(x, y, MouseEvent.BUTTON1);
 			} else if (clickType == ClickType.RCLICK) {

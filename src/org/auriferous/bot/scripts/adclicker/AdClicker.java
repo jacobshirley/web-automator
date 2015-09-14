@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,13 +52,16 @@ import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class AdClicker extends Script implements PaintListener, JScriptGuiListener, Configurable{
+	private static final int DAYS_3_MS = 3*3600*24;
+	
 	private static final int STAGE_SHUFFLES = 0;
 	private static final int STAGE_URL = 1;
-	private static final int STAGE_WAIT_ON_AD = 2;
-	private static final int STAGE_SUB_CLICKS = 3;
-	private static final int STAGE_FACEBOOK = 4;
-	private static final int STAGE_DONE = 5;
-	private static final int STAGE_NEXT_TASK = 6;
+	private static final int STAGE_TEST_CLICK = 2;
+	private static final int STAGE_WAIT_ON_AD = 3;
+	private static final int STAGE_SUB_CLICKS = 4;
+	private static final int STAGE_FACEBOOK = 5;
+	private static final int STAGE_DONE = 6;
+	private static final int STAGE_NEXT_TASK = 7;
 	
 	private static final int SUB_CLICK_TIME = 10;
 	private static final int SUB_CLICK_RANDOM_TIME = 4;
@@ -153,18 +157,26 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		if (clickedAd) {
 			clickedAd = false;
 			try {
-				url = testAdURL(url);
+				url = testAdURL(url).replace("https://", "http://");
 				int id = url.lastIndexOf("?");
 				if (id > 0)
 					url = url.substring(0, id);
 				
-				if (!historyConfig.contains("//*[@value='https://www.zoosk.com/mkt']"))
+				DataEntry entry = historyConfig.getSingle("//*[@value='"+url+"']");
+				if (entry != null)
 					historyConfig.add(new HistoryEntry("", "", url));
 				else {
-					System.out.println("Already clicked this.");
-					botTab.stop();
+					long timeStamp = new HistoryEntry(entry).getTimeStamp();
+					
+					if (System.currentTimeMillis()-timeStamp <= DAYS_3_MS) {
+						System.out.println("Already clicked this.");
+						botTab.stop();
 
-					botTab.loadURL(saveURL);
+						taskStage = STAGE_TEST_CLICK;
+						startExec = true;
+					} else {
+						System.out.println("Not already clicked this "+timeStamp);
+					}
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -211,7 +223,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		}
 		in.close();
 		
-		return response.toString();
+		return URLDecoder.decode(response.toString(), "UTF-8");
 	}	
 	
 	private int foundID = 0;
@@ -297,6 +309,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	}
 	
 	private boolean clickedAd = false;
+	private boolean clickedAdSuccess = false;
 	
 	private boolean tickAdClicking() {
 		System.out.println("Started ad clicking");
@@ -307,6 +320,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
     	if (blogURL != null && !url.contains(getBaseURL(currentTaskURL))) {
     		System.out.println("Clicked ad successfully.");
     		taskStage = STAGE_WAIT_ON_AD;
+    		clickedAdSuccess = true;
     		
     		return false;
     	} else {
@@ -365,6 +379,20 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
     	}
     	
     	return true;
+	}
+	
+	private boolean tickTestClick() {
+		if (!clickedAdSuccess) {
+			blogURL = null;
+			clickedAdSuccess = false;
+			Utils.wait(2000);
+			System.out.println("Loading url");
+			loadURL();
+			
+			taskStage = STAGE_URL;
+			return true;
+		}
+		return false;
 	}
 	
 	private boolean tickWaitOnAd() {
@@ -530,6 +558,9 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 					case STAGE_URL:
 						if (tickAdClicking())
 							break;
+					case STAGE_TEST_CLICK:
+						if (tickTestClick())
+							break;
 					case STAGE_WAIT_ON_AD:
 						if (tickWaitOnAd())
 							break;
@@ -662,9 +693,8 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		}
 
 		setSigFrame.setText(signatureConfig.getValue().toString());
-		
-		System.out.println(historyConfig.contains("//*[@value='https://www.zoosk.com/mkt']"));
-		System.out.println(historyConfig.get("//*[@value='https://www.zoosk.com/mkt']"));
+		System.out.println(historyConfig.contains("//*[@value='http://www.manageengine.com/products/applications_manager/applications-monitoring-features.html']"));
+		System.out.println(historyConfig.get("//*[@value='"+"http://www.manageengine.com/products/applications_manager/applications-monitoring-features.html".replace("https://", "http://")+"']"));
 	}
 
 	@Override
