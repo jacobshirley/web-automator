@@ -164,13 +164,9 @@ public class Bot implements ScriptExecutionListener, Configurable {
 
 	@Override
 	public void load(DataEntry configuration) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void save(DataEntry configuration) {
-		// TODO Auto-generated method stub
-		
 	}
 }

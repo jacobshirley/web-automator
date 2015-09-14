@@ -66,99 +66,9 @@ public class Tab {
 		this.parent = parent;
 		this.history = history;
 		
-		this.browser = new Browser(new BrowserContext("test"+(10*Math.random())));
-		
-		System.out.println("Finished");
-		this.browser.getPreferences().setLocalStorageEnabled(true);
-		
-		
-		
-		BROWSER_INSTANCES.add(browser);
-		
-		browser.addTitleListener(new TitleListener() {
-            @Override
-			public void onTitleChange(TitleEvent event) {
-            	for (TabListener listener : tabListeners) 
-					listener.onTitleChange(event.getTitle());
-            }
-        });
+		setBrowserWindow(new Browser(DEFAULT_CONTEXT), false);
 		
 		loadURL(url);
-		
-		this.browser.registerFunction("tabCallback", new BrowserFunction() {
-			@Override
-		    public JSValue invoke(JSValue... args) {
-		    	TabCallback callback = tabCallbacks.get(0);
-		    	
-		    	if (callback != null) {
-			    	Object[] oArgs = new Object[args.length];
-			    	
-			    	int c = 0;
-			        for (JSValue arg : args) {
-			            if (arg.isBoolean())
-			            	oArgs[c] = arg.getBoolean();
-			            else if (arg.isNumber())
-			            	oArgs[c] = arg.getNumber();
-			            else if (arg.isString())
-			            	oArgs[c] = arg.getString();
-			            else if (arg.isNull() || arg.isUndefined())
-			            	oArgs[c] = null;
-			            else 
-			            	oArgs[c] = (JSObject)arg;
-			            c++;
-			        }
-			        Object returned = callback.onInvoke(oArgs);
-			       
-			        if (returned instanceof Number)
-			        	return JSValue.create(Double.parseDouble(returned.toString()));
-			        else if (returned instanceof Boolean)
-			        	return JSValue.create((Boolean)returned);
-			        else if (returned instanceof String)
-			        	return JSValue.create((String)returned);
-			        
-			        return JSValue.createNull();
-		    	}
-		    	return JSValue.createNull();
-	    	}
-		});
-		
-		this.browser.registerFunction("println", new BrowserFunction() {
-			@Override
-		    public JSValue invoke(JSValue... args) {
-		    	System.out.println("JAVASCRIPT: "+args[0].getString());
-		    	return JSValue.createNull();
-	    	}
-		});
-		
-		this.browser.setPopupHandler(new PopupHandler() {
-		    @Override
-			public PopupContainer handlePopup(final PopupParams params) {
-		    	
-		        return new PopupContainer() {
-					@Override
-					public void insertBrowser(Browser arg0,
-							java.awt.Rectangle arg1) {
-						new Thread(new Runnable() {
-							@Override
-							public void run() {
-								Utils.wait(100);
-								loadURL(params.getURL());
-							}
-						}).start();
-					}
-		        };
-		    }
-		});
-		
-		this.browser.addLoadListener(new LoadAdapter() {
-			@Override
-			public void onDocumentLoadedInMainFrame(LoadEvent arg0) {
-				super.onDocumentLoadedInMainFrame(arg0);
-				
-				Browser b = arg0.getBrowser();
-				history.addEntry(new HistoryEntry(System.currentTimeMillis(), "", b.getTitle(), b.getURL()));
-			}
-		});
 	}
 	
 	public void goBack() {
@@ -227,6 +137,94 @@ public class Tab {
 	
 	public void setID(int id) {
 		this.id = id;
+	}
+	
+	public void setBrowserWindow(Browser browser, boolean callListeners) {
+		this.browser = browser;
+		//this.browser.getPreferences().setLocalStorageEnabled(true);
+		
+		BROWSER_INSTANCES.add(browser);
+		
+		this.browser.addTitleListener(new TitleListener() {
+            @Override
+			public void onTitleChange(TitleEvent event) {
+            	for (TabListener listener : tabListeners) 
+					listener.onTitleChange(event.getTitle());
+            }
+        });
+		
+		this.browser.registerFunction("tabCallback", new BrowserFunction() {
+			@Override
+		    public JSValue invoke(JSValue... args) {
+		    	TabCallback callback = tabCallbacks.get(0);
+		    	
+		    	if (callback != null) {
+			    	Object[] oArgs = new Object[args.length];
+			    	
+			    	int c = 0;
+			        for (JSValue arg : args) {
+			            if (arg.isBoolean())
+			            	oArgs[c] = arg.getBoolean();
+			            else if (arg.isNumber())
+			            	oArgs[c] = arg.getNumber();
+			            else if (arg.isString())
+			            	oArgs[c] = arg.getString();
+			            else if (arg.isNull() || arg.isUndefined())
+			            	oArgs[c] = null;
+			            else 
+			            	oArgs[c] = (JSObject)arg;
+			            c++;
+			        }
+			        Object returned = callback.onInvoke(oArgs);
+			       
+			        if (returned instanceof Number)
+			        	return JSValue.create(Double.parseDouble(returned.toString()));
+			        else if (returned instanceof Boolean)
+			        	return JSValue.create((Boolean)returned);
+			        else if (returned instanceof String)
+			        	return JSValue.create((String)returned);
+			        
+			        return JSValue.createNull();
+		    	}
+		    	return JSValue.createNull();
+	    	}
+		});
+		
+		this.browser.registerFunction("println", new BrowserFunction() {
+			@Override
+		    public JSValue invoke(JSValue... args) {
+		    	System.out.println("JAVASCRIPT: "+args[0].getString());
+		    	return JSValue.createNull();
+	    	}
+		});
+		
+		this.browser.setPopupHandler(new PopupHandler() {
+		    @Override
+			public PopupContainer handlePopup(final PopupParams params) {
+		    	
+		        return new PopupContainer() {
+					@Override
+					public void insertBrowser(final Browser browser,
+							java.awt.Rectangle dimensions) {
+						setBrowserWindow(browser, true);
+					}
+		        };
+		    }
+		});
+		
+		this.browser.addLoadListener(new LoadAdapter() {
+			@Override
+			public void onDocumentLoadedInMainFrame(LoadEvent arg0) {
+				super.onDocumentLoadedInMainFrame(arg0);
+				
+				Browser b = arg0.getBrowser();
+				history.addEntry(new HistoryEntry(System.currentTimeMillis(), "", b.getTitle(), b.getURL()));
+			}
+		});
+		
+		if (callListeners)
+			for (TabListener listener : tabListeners) 
+				listener.onTabBrowserChanged(browser);
 	}
 	
 	public Browser getBrowserWindow() {

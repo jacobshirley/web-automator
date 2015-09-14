@@ -29,7 +29,7 @@ public class JOverlayComponent extends JComponent implements Runnable{
 	
 	public JOverlayComponent() {
 		start();
-		//new Thread(this).start();
+		new Thread(this).start();
 	}
 	
 	@Override

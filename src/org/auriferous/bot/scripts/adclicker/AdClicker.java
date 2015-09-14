@@ -136,6 +136,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 			@Override
 			public void onFinishLoadingFrame(FinishLoadingEvent event) {
 				if (event.isMainFrame()) {
+					System.out.println("page loaded");
 					startExec = true;
 				}
 			}

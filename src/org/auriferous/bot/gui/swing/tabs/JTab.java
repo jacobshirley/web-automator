@@ -6,28 +6,34 @@ import java.awt.Component;
 import javax.swing.JPanel;
 
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.gui.swing.Constants;
 import org.auriferous.bot.gui.swing.JOverlayComponent;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabListener;
+
+import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.DialogParams;
 import com.teamdev.jxbrowser.chromium.swing.DefaultDialogHandler;
 
 public class JTab extends JPanel implements TabListener {
+	
 	private JTabComponent tabComponent;
 	private Tab tab;
 	private JTabBar tabBar;
 	private JTabView tabView;
+	private JOverlayComponent overlayComp;
 	
-	public JTab(JOverlayComponent paintComp, JTabBar tabBar, Tab tab) {
+	public JTab(JOverlayComponent overlayComp, JTabBar tabBar, Tab tab) {
 		super(new BorderLayout());
 		
+		this.overlayComp = overlayComp;
 		this.tabBar = tabBar;
 		this.tabComponent = new JTabComponent(tabBar);
 		
 		this.tab = tab;
 		this.tab.addTabListener(this);
 		
-		this.tabView = new JTabView(paintComp, this.tab);
+		this.tabView = new JTabView(overlayComp, this.tab);
 		this.tab.setTabView(tabView);
 		
 		this.tab.getBrowserWindow().setDialogHandler(new DefaultDialogHandler(tabView) {
@@ -58,6 +64,9 @@ public class JTab extends JPanel implements TabListener {
 	public void onTitleChange(String newTitle) {
 		int id = tabBar.indexOfComponent(this);
 		
+		if (newTitle.length() > Constants.MAX_TAB_TITLE_LENGTH)
+			newTitle = newTitle.substring(0, Constants.MAX_TAB_TITLE_LENGTH).trim()+"...";
+		
 		tabBar.setTitleAt(id, newTitle);
 		Component comp = tabBar.getTabComponentAt(id);
 		if (comp != null)
@@ -70,5 +79,14 @@ public class JTab extends JPanel implements TabListener {
 
 	@Override
 	public void onTabReloaded() {
+	}
+
+	@Override
+	public void onTabBrowserChanged(Browser browser) {
+		this.tabView = new JTabView(overlayComp, this.tab);
+		this.tab.setTabView(tabView);
+		
+		this.removeAll();
+		this.add(tabView);
 	}
 }

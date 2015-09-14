@@ -1,5 +1,7 @@
 package org.auriferous.bot.tabs;
 
+import com.teamdev.jxbrowser.chromium.Browser;
+
 public class TabAdapter implements TabListener {
 
 	@Override
@@ -12,5 +14,11 @@ public class TabAdapter implements TabListener {
 
 	@Override
 	public void onTabReloaded() {
+	}
+
+	@Override
+	public void onTabBrowserChanged(Browser browser) {
+		// TODO Auto-generated method stub
+		
 	}
 }
