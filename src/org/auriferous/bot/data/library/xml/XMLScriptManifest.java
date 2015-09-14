@@ -1,12 +1,12 @@
-package org.auriferous.bot.config.library.xml;
+package org.auriferous.bot.data.library.xml;
 
 import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.auriferous.bot.config.library.ScriptManifest;
-import org.auriferous.bot.config.xml.XMLUtils;
+import org.auriferous.bot.data.library.ScriptManifest;
+import org.auriferous.bot.data.xml.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;

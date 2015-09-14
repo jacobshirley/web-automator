@@ -4,7 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,10 +18,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.config.WritableEntry;
-import org.auriferous.bot.config.Configurable;
-import org.auriferous.bot.config.ConfigurableEntry;
-import org.auriferous.bot.config.library.ScriptManifest;
+import org.auriferous.bot.data.DataEntry;
+import org.auriferous.bot.data.config.Configurable;
+import org.auriferous.bot.data.history.HistoryEntry;
+import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
@@ -28,8 +33,22 @@ import org.auriferous.bot.scripts.adclicker.gui.TaskManager;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.view.PaintListener;
 
+import com.teamdev.jxbrowser.chromium.AuthRequiredParams;
+import com.teamdev.jxbrowser.chromium.BeforeRedirectParams;
+import com.teamdev.jxbrowser.chromium.BeforeSendHeadersParams;
+import com.teamdev.jxbrowser.chromium.BeforeSendProxyHeadersParams;
+import com.teamdev.jxbrowser.chromium.BeforeURLRequestParams;
+import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.Cookie;
+import com.teamdev.jxbrowser.chromium.HeadersReceivedParams;
+import com.teamdev.jxbrowser.chromium.NetworkDelegate;
+import com.teamdev.jxbrowser.chromium.RequestCompletedParams;
+import com.teamdev.jxbrowser.chromium.RequestParams;
+import com.teamdev.jxbrowser.chromium.ResponseStartedParams;
+import com.teamdev.jxbrowser.chromium.SendHeadersParams;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
+import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class AdClicker extends Script implements PaintListener, JScriptGuiListener, Configurable{
 	private static final int STAGE_SHUFFLES = 0;
@@ -66,14 +85,15 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	private String blogURL = null;
 
 	private long timer = 0;
-	public String currentSignature = "";
 	public String currentTaskURL = "";
 	
 	private SetSignatureFrame setSigFrame = new SetSignatureFrame(this);
 	
-	private ConfigurableEntry<String,String> taskConfig = new WritableEntry<String,String>("tasks");
-	private ConfigurableEntry<String,String> historyConfig = new WritableEntry<String,String>("history");
-	private ConfigurableEntry<String,String> taskHistoryConfig = new WritableEntry<String,String>("task-history");
+	private DataEntry taskConfig = new DataEntry("tasks");
+	private DataEntry historyConfig = new DataEntry("click-history");
+	private DataEntry taskHistoryConfig = new DataEntry("task-history");
+	
+	public DataEntry signatureConfig = new DataEntry("signature", "");
 	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -117,18 +137,91 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		
 		botTab.getTabView().addPaintListener(this);
 		
+		final Browser browser = botTab.getBrowserWindow();
+		browser.getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate() {
+			@Override
+			public void onBeforeURLRequest(BeforeURLRequestParams arg0) {
+				handleAdTest(arg0.getURL());
+			}
+		});
+		
 		methods = new ScriptMethods(botTab);
 	}
+	
+	private void handleAdTest(String url) {
+		if (clickedAd) {
+			clickedAd = false;
+			try {
+				url = testAdURL(url);
+				int id = url.lastIndexOf("?");
+				if (id > 0)
+					url = url.substring(0, id);
+				
+				if (!historyConfig.contains("//*[text()[contains(.,'"+url+"')]]"))
+					historyConfig.add(new HistoryEntry("", "", url));
+				else {
+					System.out.println("Already have used this.");
+					botTab.stop();
+					startExec = false;
+					//browser.loadURL(saveURL);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+	}
+	
+	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
+    
+    private String testAdURL(String testURL) throws Exception {
+		String url = "http://127.0.0.1/test_url.php";
+		
+		URL obj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+		//add reuqest header
+		con.setRequestMethod("POST");
+		con.setRequestProperty("User-Agent", USER_AGENT);
+		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+		String urlParameters = "url="+URLEncoder.encode(testURL, "UTF-8");
+		
+		// Send post request
+		con.setDoOutput(true);
+		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+		wr.writeBytes(urlParameters);
+		wr.flush();
+		wr.close();
+
+		int responseCode = con.getResponseCode();
+		//System.out.println("\nSending 'POST' request to URL : " + url);
+		//System.out.println("Post parameters : " + urlParameters);
+		//System.out.println("Response Code : " + responseCode);
+
+		BufferedReader in = new BufferedReader(
+		        new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+		
+		return response.toString();
+	}	
 	
 	private int foundID = 0;
 	
 	private ElementBounds findAds(String... jqueryStrings) {
 		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()");
 		foundID = 0;
-		if (adsbygoogle != null) {
+		if (adsbygoogle.length > 0) {
 			ElementBounds bounds = adsbygoogle[0];
 			ElementBounds[] iframe1 = methods.getElements("$('#google_ads_frame1')");
-			if (iframe1 != null) {
+			if (iframe1.length > 0) {
 				bounds.add(iframe1[0]);
 				
 				ElementBounds[] result = null;
@@ -136,7 +229,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 					foundID++;
 
 					result = methods.getElements(s);
-					if (result != null) {
+					if (result.length > 0) {
 						System.out.println("Found "+s);
 						
 						bounds.add(result[0]);
@@ -183,7 +276,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		String base = getBaseURL(urlString);
 		String title = base.split("\\.")[1];
 		
-		return currentSignature.replace("$title", title).replace("$base", base);
+		return signatureConfig.getValue().toString().replace("$title", title).replace("$base", base);
 	}
 	
 	private boolean tickShuffles() {
@@ -201,6 +294,8 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		
 		return true;
 	}
+	
+	private boolean clickedAd = false;
 	
 	private boolean tickAdClicking() {
 		System.out.println("Started ad clicking");
@@ -221,7 +316,6 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
         	if (foundID == 1) {
         		ElementBounds adLink = methods.getRandomElement("$('a[href*=\"adurl=\"]')");
         		if (adLink != null) {
-        			
         			String adhref = adLink.getDOMElement().get("href").getString().split("adurl=")[1];
         			System.out.println("found "+adhref);
         		}
@@ -233,29 +327,29 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
         		adElement.width -= 35;
         		
         		debugElement = adElement;
-	        	
-        		Point p = null;
-        		if (foundID == 1) {
-        			System.out.println("Got text ad");
-        			p = new Point(adElement.x+Utils.random(10, 20), adElement.y+Utils.random(10, 20));
-        		} else 
-        			p = adElement.getRandomPointFromCentre(0.5, 0.5);
         		searchAdTries = 0;
         		
-        		System.out.println("Clicking at "+p.x+", "+p.y);
-        		if (foundID != 5) {
-        			System.out.println("Moving mouse");
-        			
-        			methods.moveMouse(p);
-        			Utils.wait(500);
-        			if (!methods.getStatus().equals("")) {
-        				System.out.println("Status checked");
-                		methods.mouse(p.x, p.y);
-        			}
-        		} else {
-        			System.out.println("Clicking here");
-        			
-        			methods.mouse(p);
+        		for (int i = 0; i < 10; i++) {
+	        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
+	        		
+	        		System.out.println("Clicking at "+p.x+", "+p.y);
+	        		if (foundID != 5) {
+	        			System.out.println("Moving mouse");
+	        			
+	        			methods.moveMouse(p);
+	        			Utils.wait(500);
+	        			if (!methods.getStatus().equals("")) {
+	        				clickedAd = true;
+	        				System.out.println("Status checked");
+	                		methods.mouse(p.x, p.y);
+	                		break;
+	        			}
+	        		} else {
+	        			clickedAd = true;
+	        			
+	        			methods.mouse(p);
+	        			break;
+	        		}
         		}
         	} else if (searchAdTries < 10) {
         		searchAdTries++;
@@ -379,6 +473,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		
 		if (currentTask == null) {
 			System.out.println("Finished all tasks");
+			botTab.alert("Finished!");
 			status = STATE_EXIT_SUCCESS;
 		} else {
 			startExec = true;
@@ -542,44 +637,49 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	}
 
 	@Override
-	public void loadDefault() {
-	}
-
-	@Override
-	public void load(ConfigurableEntry configEntries) {
-		Object s = configEntries.get("//signature", "");
+	public void load(DataEntry configEntries) {
+		List<DataEntry> l = configEntries.get("//tasks");
 		
-		currentSignature = (String) s;
-		setSigFrame.setText(currentSignature);
-		
-		List<ConfigurableEntry> l = configEntries.get("//tasks");
-		for (ConfigurableEntry tasks : l) {
+		for (DataEntry tasks : l) {
 			taskConfig = tasks;
-			for (ConfigurableEntry<Object,Object> taskEntry : taskConfig.getChildren()) {
+			
+			for (DataEntry taskEntry : taskConfig.getChildren()) {
 				Task t = new Task(taskEntry);
 				
 				this.tasks.add(t);
 			}
 		}
+		
+		l = configEntries.get("//"+historyConfig.getKey());
+		for (DataEntry history : l) {
+			historyConfig = history;
+		}
+		
+		l = configEntries.get("//"+taskHistoryConfig.getKey());
+		for (DataEntry history : l) {
+			taskHistoryConfig = history;
+		}
+		
+		l = configEntries.get("//"+signatureConfig.getKey());
+		for (DataEntry signature : l) {
+			signatureConfig = signature;
+		}
+
+		setSigFrame.setText(signatureConfig.getValue().toString());
 	}
 
 	@Override
-	public ConfigurableEntry<String,String> getConfiguration() {
-		ConfigurableEntry<String,String> root = new WritableEntry("config");
-		
-		root.getChildren().add(new WritableEntry<String,String>("signature", currentSignature));
-		
-		taskConfig = new WritableEntry<String,String>("tasks");
+	public void save(DataEntry root) {
+		taskConfig.clear();
 		
 		for (Task t : tasks) {
-			taskConfig.getChildren().add(new TaskConfigEntry(t));
+			taskConfig.add(new TaskConfigEntry(t));
 		}
 		
-		root.getChildren().add(taskConfig);
-		root.getChildren().add(historyConfig);
-		root.getChildren().add(taskHistoryConfig);
-		
-		return root;
+		root.add(signatureConfig, true);
+		root.add(taskConfig, true);
+		root.add(historyConfig, true);
+		root.add(taskHistoryConfig, true);
 	}
 
 	@Override

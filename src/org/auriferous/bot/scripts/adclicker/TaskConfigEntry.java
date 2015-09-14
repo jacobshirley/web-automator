@@ -3,10 +3,9 @@ package org.auriferous.bot.scripts.adclicker;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.auriferous.bot.config.ConfigurableEntry;
-import org.auriferous.bot.config.WritableEntry;
+import org.auriferous.bot.data.DataEntry;
 
-public class TaskConfigEntry extends WritableEntry<String,String>{
+public class TaskConfigEntry extends DataEntry{
 	private Task task;
 
 	public TaskConfigEntry(Task t) {
@@ -16,16 +15,16 @@ public class TaskConfigEntry extends WritableEntry<String,String>{
 	}
 	
 	@Override
-	public List<ConfigurableEntry> getChildren() {
-		List<ConfigurableEntry> attrs = new ArrayList<ConfigurableEntry>();
+	public List<DataEntry> getChildren() {
+		List<DataEntry> children = new ArrayList<DataEntry>();
 		
-		attrs.add(new WritableEntry<String,String>("url", task.url));
-		attrs.add(new WritableEntry<String,Integer>("shuffles", task.shuffles));
-		attrs.add(new WritableEntry<String,Integer>("interval", task.timeInterval));
-		attrs.add(new WritableEntry<String,Integer>("time-on-ad", task.timeOnAd));
-		attrs.add(new WritableEntry<String,Integer>("sub-clicks", task.subClicks));
-		attrs.add(new WritableEntry<String,String>("fb-link", task.fbLink));
+		children.add(new DataEntry("url", task.url));
+		children.add(new DataEntry("shuffles", task.shuffles));
+		children.add(new DataEntry("interval", task.timeInterval));
+		children.add(new DataEntry("time-on-ad", task.timeOnAd));
+		children.add(new DataEntry("sub-clicks", task.subClicks));
+		children.add(new DataEntry("fb-link", task.fbLink));
 		
-		return attrs;
+		return children;
 	}
 }

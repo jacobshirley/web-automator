@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.config.library.ScriptManifest;
+import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;

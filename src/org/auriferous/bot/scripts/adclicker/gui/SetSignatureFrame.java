@@ -36,8 +36,6 @@ public class SetSignatureFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				
-				adClicker.currentSignature = textArea.getText();
 			}
 		});
 		
@@ -58,7 +56,7 @@ public class SetSignatureFrame extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				super.windowClosing(e);
 				
-				adClicker.currentSignature = textArea.getText();
+				adClicker.signatureConfig.setValue(textArea.getText());
 			}
 		});
 	}

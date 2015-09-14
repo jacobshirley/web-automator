@@ -3,17 +3,22 @@ package org.auriferous.bot.tabs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.auriferous.bot.data.history.HistoryConfig;
+
 public class Tabs {
 	private List<Tab> tabsList = new ArrayList<Tab>();
 
 	private List<TabControlListener> tabListeners = new ArrayList<TabControlListener>();
 	private int currentTabIndex = -1;
 
-	public Tabs() {
+	private HistoryConfig history;
+
+	public Tabs(HistoryConfig history) {
+		this.history = history;
 	}
 	
 	public Tab openTab(String url) {
-		Tab tab = new Tab(this, url);
+		Tab tab = new Tab(this, url, history);
 		
 		tabsList.add(tab);
 

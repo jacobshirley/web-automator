@@ -1,6 +1,6 @@
 package org.auriferous.bot.scripts.adclicker;
 
-import org.auriferous.bot.config.ConfigurableEntry;
+import org.auriferous.bot.data.DataEntry;
 
 public class Task {
 	public String url;
@@ -11,7 +11,7 @@ public class Task {
 	
 	public String fbLink;
 	
-	public Task(ConfigurableEntry entry) {
+	public Task(DataEntry entry) {
 		load(entry);
 	}
 	
@@ -24,14 +24,15 @@ public class Task {
 		this.fbLink = fbLink;
 	}
 	
-	public void load(ConfigurableEntry config) {
-		this.url = ""+config.get("url", "");
-		this.shuffles = Integer.parseInt(""+config.get("shuffles", "0"));
-		this.timeInterval = Integer.parseInt(""+config.get("interval", "0"));
-		this.timeOnAd = Integer.parseInt(""+config.get("time-on-ad", "0"));
-		this.subClicks = Integer.parseInt(""+""+config.get("sub-clicks", "0"));
+	public void load(DataEntry config) {
+		//System.out.println(config.getValue("shuffles", ""));
 		
-		this.fbLink = ""+""+config.get("fb-link", "");
+		this.url = ""+config.getValue("url", "");
+		this.shuffles = Integer.parseInt(""+config.getValue("shuffles", "0"));
+		this.timeInterval = Integer.parseInt(""+config.getValue("interval", "0"));
+		this.timeOnAd = Integer.parseInt(""+config.getValue("time-on-ad", "0"));
+		this.subClicks = Integer.parseInt(""+""+config.getValue("sub-clicks", "0"));
+		this.fbLink = ""+""+config.getValue("fb-link", "");
 	}
 	
 	public Task copy() {

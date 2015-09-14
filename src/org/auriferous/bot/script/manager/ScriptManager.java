@@ -1,6 +1,6 @@
 package org.auriferous.bot.script.manager;
 
-import org.auriferous.bot.config.library.ScriptLibrary;
+import org.auriferous.bot.data.library.ScriptLibrary;
 
 public class ScriptManager {
 	

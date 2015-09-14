@@ -8,7 +8,7 @@ import java.util.List;
 import javax.swing.JMenu;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.config.library.ScriptManifest;
+import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;

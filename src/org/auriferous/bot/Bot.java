@@ -8,14 +8,15 @@ import java.util.logging.Level;
 
 import javax.swing.JFrame;
 
-import org.auriferous.bot.config.WritableEntry;
-import org.auriferous.bot.config.Configurable;
-import org.auriferous.bot.config.ConfigurableEntry;
-import org.auriferous.bot.config.ConfigurableFile;
-import org.auriferous.bot.config.library.ScriptLibrary;
-import org.auriferous.bot.config.library.xml.XMLScriptLibrary;
-import org.auriferous.bot.config.library.xml.XMLScriptManifest;
-import org.auriferous.bot.config.xml.XMLConfigurableFile;
+import org.auriferous.bot.data.DataEntry;
+import org.auriferous.bot.data.DataStore;
+import org.auriferous.bot.data.config.ClassDataStore;
+import org.auriferous.bot.data.config.Configurable;
+import org.auriferous.bot.data.history.HistoryConfig;
+import org.auriferous.bot.data.library.ScriptLibrary;
+import org.auriferous.bot.data.library.xml.XMLScriptLibrary;
+import org.auriferous.bot.data.library.xml.XMLScriptManifest;
+import org.auriferous.bot.data.xml.XMLDataStore;
 import org.auriferous.bot.gui.swing.JBotFrame;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
@@ -34,13 +35,17 @@ public class Bot implements ScriptExecutionListener, Configurable {
 	private ScriptLoader scriptLoader;
 	private ScriptExecutor scriptExecutor;
 	
-	private ConfigurableFile config;
+	private ClassDataStore mainConfig;
+	private DataStore historyConfigFile;
+	
+	private HistoryConfig historyConfig = new HistoryConfig();
 	
 	private Tabs userTabs;
 	
 	public Bot(String args[], boolean createGUI) {
 		try {
-			config = new XMLConfigurableFile(new File("config/config.xml"));
+			mainConfig = new ClassDataStore(new File("config/config.xml"));
+			historyConfigFile = new XMLDataStore(new File("config/history.xml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -58,7 +63,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		XMLScriptManifest manifest2 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.adclicker.AdClicker", "4", "Ad Clicker", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest2, true);
 		
-		XMLScriptManifest manifest3 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.tests.TestAdClicking", "4", "Test Script", "1.0", "RAARR", "bin");
+		XMLScriptManifest manifest3 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.tests.TestAdClicking", "5", "Test Script", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest3, true);
 		
 		scriptLoader = new ScriptLoaderImpl(this, new ScriptContext(this));
@@ -67,7 +72,10 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		scriptExecutor = new ScriptExecutor();
 		scriptExecutor.addScriptExecutionListener(this);
 		
-		userTabs = new Tabs();
+		userTabs = new Tabs(historyConfig);
+		
+		//mainConfig.addConfigurable(this);
+		//historyConfigFile.addConfigurable(historyConfig);
 		
 		if (createGUI) {
 			botGUI = new JBotFrame(this);
@@ -77,7 +85,8 @@ public class Bot implements ScriptExecutionListener, Configurable {
 					super.windowClosing(e);
 					
 					try {
-						config.save();
+						mainConfig.save();
+						historyConfigFile.save();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -86,8 +95,8 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		}
 
 		//Script c = new TestAdClicking(manifest3, new ScriptContext(this));
-		/*try {
-			scriptExecutor.runScript(scriptLoader.loadScript(manifest3));
+		try {
+			scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/
@@ -105,8 +114,8 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		return userTabs;
 	}
 	
-	public ConfigurableFile getConfig() {
-		return config;
+	public DataStore getConfig() {
+		return mainConfig;
 	}
 	
 	public ScriptLibrary getScriptLibrary() {
@@ -121,6 +130,10 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		return scriptExecutor;
 	}
 	
+	public HistoryConfig getHistoryConfig() {
+		return historyConfig;
+	}
+	
 	public JFrame getBotGUI() {
 		return botGUI;
 	}
@@ -128,7 +141,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 	@Override
 	public void onRunScript(Script script) {
 		if (script instanceof Configurable) {
-			config.addConfigurable((Configurable)script);
+			mainConfig.addConfigurable((Configurable)script);
 		}
 	}
 
@@ -149,22 +162,14 @@ public class Bot implements ScriptExecutionListener, Configurable {
 	}
 
 	@Override
-	public void loadDefault() {
-		System.out.println("Loading default");
+	public void load(DataEntry configuration) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void load(ConfigurableEntry<?, ?> configuation) {
-		System.out.println(configuation.get("//hello", "def"));
-	}
-
-	@Override
-	public ConfigurableEntry<?, ?> getConfiguration() {
-		WritableEntry entry = new WritableEntry<String, String>("test");
+	public void save(DataEntry configuration) {
+		// TODO Auto-generated method stub
 		
-		entry.getChildren().add(new WritableEntry("hello", "what"));
-		entry.getChildren().add(new WritableEntry("hello", "what2"));
-		
-		return entry;
 	}
 }

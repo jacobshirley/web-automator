@@ -1,6 +1,6 @@
 package org.auriferous.bot.script;
 
-import org.auriferous.bot.config.library.ScriptManifest;
+import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.Tabs;
 
@@ -19,7 +19,7 @@ public abstract class Script {
 	public Script(ScriptManifest manifest, ScriptContext context) {
 		this.context = context;
 		this.manifest = manifest;
-		this.tabs = new Tabs();
+		this.tabs = new Tabs(context.getHistory());
 	}
 	
 	public ScriptManifest getManifest() {

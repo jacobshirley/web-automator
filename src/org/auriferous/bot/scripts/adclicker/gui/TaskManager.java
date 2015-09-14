@@ -13,7 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
-import org.auriferous.bot.config.ConfigurableEntry;
+
+import org.auriferous.bot.data.DataEntry;
 import org.auriferous.bot.scripts.adclicker.Task;
 import org.auriferous.bot.scripts.adclicker.TaskConfigEntry;
 import org.auriferous.bot.scripts.adclicker.gui.table.JPasteTable;
@@ -22,9 +23,9 @@ import org.auriferous.bot.scripts.adclicker.gui.table.TaskTableModel;
 public class TaskManager extends JFrame{
 	private JTable taskTable;
 	private List<Task> tasks;
-	private ConfigurableEntry taskConfig;
+	private DataEntry taskConfig;
 	
-	public TaskManager(List<Task> tasks, ConfigurableEntry taskConfig) {
+	public TaskManager(List<Task> tasks, DataEntry taskConfig) {
 		super("Task Manager");
 		
 		this.tasks = tasks;
@@ -85,7 +86,7 @@ public class TaskManager extends JFrame{
 				case 0: Task t = new Task("http://suijin.tk/", 1, 0, 0, 2, "");
 						tasks.add(t);
 						
-						taskConfig.getChildren().add(new TaskConfigEntry(t));
+						taskConfig.add(new TaskConfigEntry(t));
 						
 						break;
 				case 1: tasks.remove(taskTable.getSelectedRow());
