@@ -6,16 +6,34 @@ import java.util.Stack;
 
 public class FSM {
 	private Stack<State> states = new Stack<State>();
+	private List<Integer> events = new ArrayList<Integer>();
 	
-	public void pushState(State state) {
+	public boolean isFinished() {
+		return states.peek() == null;
+	}
+	
+	public FSM clearStates() {
+		states.clear();
+		return this;
+	}
+	
+	public FSM pushState(State state) {
 		states.push(state);
+		return this;
 	}
 	
-	public State popState() {
-		return states.pop();
+	public FSM pushEvent(int event) {
+		events.add(event);
+		return this;
 	}
 	
-	public void tick() {
-		State first = popState();
+	public synchronized FSM tick() {
+		State curState = states.pop();
+		State newState = curState.process(events);
+		if (newState != null)
+			pushState(newState);
+		events.clear();
+		
+		return this;
 	}
 }

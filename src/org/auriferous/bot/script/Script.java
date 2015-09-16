@@ -42,11 +42,11 @@ public abstract class Script {
 		return status;
 	}
 	
-	public abstract void onStart();
-	public abstract void onPause();
-	public abstract void onResume();
-	public abstract void onTerminate();
-	public abstract void onFinished();
+	public void onStart() {}
+	public void onPause() {}
+	public void onResume() {}
+	public void onTerminate() {}
+	public void onFinished() {}
 	
 	public final Tab openTab() {
 		return tabs.openTab();

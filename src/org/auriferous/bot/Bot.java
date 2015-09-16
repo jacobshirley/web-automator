@@ -57,7 +57,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		scriptLibrary = new XMLScriptLibrary("Local Script Library", "1.0", "Local script library that contains the scripts on the local machine.");
 		
 		XMLScriptManifest manifest = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.googler.Googler", "3", "Googler", "1.0", "RAARR", "bin");
@@ -101,6 +101,8 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/
+		
+		userTabs.openTab("http://qwoteable.tk/");
 		
 		/*config.addConfigurable(this);
 		try {

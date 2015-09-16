@@ -34,6 +34,20 @@ public class Utils {
         return response.toString();
     }
 	
+	public static String getBaseURL(String urlString) {
+		try {
+			URL url = new URL(urlString);
+			
+			String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
+			String base = url.getProtocol() + "://" + url.getHost() + path;
+			
+			return base;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
 	public static int random(int min, int max) {
 		return (int)(min+(Math.random()*(max-min)));
 	}
