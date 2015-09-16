@@ -10,11 +10,16 @@ import org.auriferous.bot.script.fsm.FSM;
 import org.auriferous.bot.script.fsm.State;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
 import org.auriferous.bot.scripts.adclicker.Task;
+import org.auriferous.bot.scripts.adclicker.states.events.Events;
 import org.auriferous.bot.tabs.Tab;
 
 public class ClickLinksState extends AdClickerState{
-	private int curSubClick = 0;
+	private static final int MAX_CLICK_TRIES = 2;
+	
+	private int curLinkClick = 0;
 	private int curClickTry = 0;
+	
+	private boolean waitForLoad = false;
 	
 	private String adURL;
 	
@@ -22,21 +27,31 @@ public class ClickLinksState extends AdClickerState{
 		super(fsm, adClicker);
 		this.adURL = adURL;
 	}
+	
+	public ClickLinksState(FSM fsm, AdClicker adClicker, String adURL, int curLinkClick) {
+		this(fsm, adClicker, adURL);
+		this.curLinkClick = curLinkClick;
+	}
 
 	@Override
 	public State process(List<Integer> events) {
+		if (waitForLoad && !events.contains(Events.EVENT_PAGE_LOADED))
+			return this;
+		
 		Task currentTask = adClicker.getCurrentTask();
 		ScriptMethods methods = adClicker.getScriptMethods();
 		Tab botTab = adClicker.getBotTab();
 		
-		if (curSubClick < currentTask.subClicks) {
-			curSubClick++;
+		if (curLinkClick < currentTask.subClicks) {
+			System.out.println("Sub clicked done: "+curLinkClick);
+			
 			Utils.wait(2000);
 			System.out.println("Clicking link in ad");
 
 			ElementBounds randomLink = methods.getRandomClickable(false);
 			
 			if (randomLink != null) {
+				curLinkClick++;
 				adClicker.setDebugElement(randomLink);
 				Point p = randomLink.getRandomPointFromCentre(0.5, 0.5);
 	        	
@@ -44,15 +59,19 @@ public class ClickLinksState extends AdClickerState{
 	        	
 	        	methods.mouse(p.x, p.y);
 	        	
-	        	return new WaitOnLinkState(fsm, adClicker, adURL);
-			} else if (curClickTry < 2){
+	        	return new WaitOnLinkState(fsm, adClicker, adURL, curLinkClick);
+			} else if (curClickTry < MAX_CLICK_TRIES){
 				curClickTry++;
-        		System.out.println("Couldn't find link on try "+curClickTry+"/2. Returning to ad to try again.");
+        		System.out.println("Couldn't find link on try "+curClickTry+"/"+MAX_CLICK_TRIES+". Returning to ad to try again.");
         		
         		botTab.loadURL(adURL);
+        		
+        		waitForLoad = true;
+			} else if (curClickTry == MAX_CLICK_TRIES) {
+				return new TaskDoneState(fsm, adClicker, adURL);
 			}
 		} else {
-			if (currentTask.fbLink != null && !currentTask.fbLink.equals(""))
+			if (!currentTask.fbLink.equals(""))
 				return new PostFacebookState(fsm, adClicker, adURL);
 			else
 				return new TaskDoneState(fsm, adClicker, adURL);

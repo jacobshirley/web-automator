@@ -31,7 +31,7 @@ public class PostFacebookState extends AdClickerState{
 		if (!currentTask.fbLink.equals("")) {
 			final Tab fbTab = adClicker.openTab(currentTask.fbLink);
 			
-			fbTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
+			fbTab.getBrowserInstance().addLoadListener(new LoadAdapter() {
 				@Override
 				public void onFinishLoadingFrame(FinishLoadingEvent arg0) {
 					if (arg0.isMainFrame()) {

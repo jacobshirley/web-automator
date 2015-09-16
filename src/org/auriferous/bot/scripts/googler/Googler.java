@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.data.library.ScriptManifest;
@@ -51,7 +52,7 @@ public class Googler extends Script implements JScriptGuiListener{
 	public void onStart() {
 		googleTab = openTab("www.google.co.uk");
 		
-		googleTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
+		googleTab.getBrowserInstance().addLoadListener(new LoadAdapter() {
 			@Override
 			public void onFinishLoadingFrame(FinishLoadingEvent event) {
 				exec = true;
@@ -167,7 +168,7 @@ public class Googler extends Script implements JScriptGuiListener{
 		
 		methods.moveMouseRandom();
 		
-		System.out.println("Returing to original link");
+		System.out.println("Returning to original link");
 		googleTab.loadURL(saveURL);
 		
 		stage = STAGE_CLICK_SUB_LINKS;
@@ -200,22 +201,7 @@ public class Googler extends Script implements JScriptGuiListener{
 	}
 
 	@Override
-	public void onPause() {
-	}
-
-	@Override
-	public void onTerminate() {
-	}
-
-	@Override
 	public void onJMenuCreated(JMenu menu) {
-	}
-
-	@Override
-	public void onResume() {
-	}
-
-	@Override
-	public void onFinished() {
+		menu.add(new JMenuItem("Add Search"));
 	}
 }

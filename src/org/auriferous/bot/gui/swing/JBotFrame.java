@@ -241,7 +241,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	public void stateChanged(ChangeEvent cE) {
 		Component comp = tabBar.getSelectedComponent();
 		if (comp != null)
-			debugger.debug(((JTab)comp).getTab().getBrowserWindow());
+			debugger.debug(((JTab)comp).getTab().getBrowserInstance());
 	}
 	
 	class MenuActionItem extends AbstractAction {

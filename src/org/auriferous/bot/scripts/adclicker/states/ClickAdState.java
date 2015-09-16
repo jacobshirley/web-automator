@@ -40,7 +40,7 @@ public class ClickAdState extends AdClickerState {
 	public ClickAdState(FSM fsm, AdClicker adClicker) {
 		super(fsm, adClicker);
 		
-		final Browser browser = adClicker.getBotTab().getBrowserWindow();
+		final Browser browser = adClicker.getBotTab().getBrowserInstance();
 		browser.getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate() {
 			@Override
 			public void onBeforeURLRequest(BeforeURLRequestParams arg0) {
@@ -75,7 +75,7 @@ public class ClickAdState extends AdClickerState {
 	        			System.out.println("found "+adhref);
 	        		}
 	        	}
-	        	searchAdTries++;
+
 	        	if (adElement != null) {
 	        		blogURL = botTab.getURL();
 	        		

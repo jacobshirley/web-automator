@@ -30,8 +30,14 @@ public class DataEntry {
 	public DataEntry(Object key, Object value) {
 		this.key = key;
 		this.value = value;
-		this.context = JXPathContext.newContext(this);
-		this.context.setLenient(true);
+		
+	}
+	
+	private void createContext() {
+		if (this.context == null) {
+			this.context = JXPathContext.newContext(this);
+			this.context.setLenient(true);
+		}
 	}
 
 	public Object getKey() {
@@ -59,6 +65,8 @@ public class DataEntry {
 	}
 	
 	public void add(String xpath, DataEntry subEntry, boolean overwrite) {
+		createContext();
+		
 		Iterator<DataEntry> it = context.iterate(xpath);
 		
 		while (it.hasNext()) {
@@ -93,6 +101,8 @@ public class DataEntry {
 	}
 	
 	public void remove(String xpath) {
+		createContext();
+		
 		Iterator<DataEntry> it = context.iterate(xpath);
 		
 		while (it.hasNext()) {
@@ -105,6 +115,8 @@ public class DataEntry {
 	}
 	
 	public List<DataEntry> get(String xpath) {
+		createContext();
+		
 		return (List<DataEntry>)context.selectNodes(xpath);
 	}
 	

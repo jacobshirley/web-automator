@@ -33,7 +33,7 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 	private JOverlayComponent paintableComponent;
 	
 	public JTabView(JOverlayComponent paintComponent, Tab tab) {
-		this(paintComponent, tab.getBrowserWindow());
+		this(paintComponent, tab.getBrowserInstance());
 	}
 	
 	public JTabView(JOverlayComponent paintComponent, Browser browser) {

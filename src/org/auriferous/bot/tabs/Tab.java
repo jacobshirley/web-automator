@@ -39,6 +39,7 @@ import com.teamdev.jxbrowser.chromium.ResponseStartedParams;
 import com.teamdev.jxbrowser.chromium.SendHeadersParams;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 import com.teamdev.jxbrowser.chromium.events.LoadEvent;
+import com.teamdev.jxbrowser.chromium.events.LoadListener;
 import com.teamdev.jxbrowser.chromium.events.TitleEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleListener;
 import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
@@ -66,84 +67,10 @@ public class Tab {
 		this.parent = parent;
 		this.history = history;
 		
-		setBrowserWindow(new Browser(DEFAULT_CONTEXT), false);
+		this.browser = new Browser(DEFAULT_CONTEXT);
+		this.browser.getPreferences().setLocalStorageEnabled(true);
 		
-		loadURL(url);
-	}
-	
-	public void goBack() {
-		this.browser.goBack();
-	}
-	
-	public void goForward() {
-		this.browser.goForward();
-	}
-	
-	public void stop() {
-		this.browser.stop();
-	}
-	
-	public void alert(String message) {
-		browser.executeJavaScript("alert('"+message+"');");
-	}
-	
-	public void pushCallback(TabCallback callback) {
-		tabCallbacks.push(callback);
-	}
-	
-	public void popCallback() {
-		tabCallbacks.pop();
-	}
-	
-	public void loadURL(String url) {
-		if (!this.browser.isDisposed()) {
-			this.originalURL = url;
-		
-			this.browser.loadURL(url);
-		
-			for (TabListener listener : tabListeners) 
-				listener.onTabUpdating();
-		}
-	}
-	
-	public void reload() {
-		if (!this.browser.isDisposed()) {
-			this.browser.reload();
-		
-			for (TabListener listener : tabListeners) 
-				listener.onTabReloaded();
-		}
-	}
-	
-	public String getTitle() {
-		if (!browser.isDisposed())
-			return browser.getTitle();
-		return "";
-	}
-	
-	public String getURL() {
-		if (!browser.isDisposed())
-			return browser.getURL();
-		return "";
-	}
-	
-	public String getOriginalURL() {
-		return originalURL;
-	}
-	
-	public int getID() {
-		return id;
-	}
-	
-	public void setID(int id) {
-		this.id = id;
-	}
-	
-	public void setBrowserWindow(Browser browser, boolean callListeners) {
-		this.browser = browser;
-		//this.browser.getPreferences().setLocalStorageEnabled(true);
-		
-		BROWSER_INSTANCES.add(browser);
+		BROWSER_INSTANCES.add(this.browser);
 		
 		this.browser.addTitleListener(new TitleListener() {
             @Override
@@ -206,13 +133,13 @@ public class Tab {
 					@Override
 					public void insertBrowser(final Browser browser,
 							java.awt.Rectangle dimensions) {
-						setBrowserWindow(browser, true);
+						setBrowser(browser);
 					}
 		        };
 		    }
 		});
 		
-		this.browser.addLoadListener(new LoadAdapter() {
+		/*this.browser.addLoadListener(new LoadAdapter() {
 			@Override
 			public void onDocumentLoadedInMainFrame(LoadEvent arg0) {
 				super.onDocumentLoadedInMainFrame(arg0);
@@ -220,14 +147,106 @@ public class Tab {
 				Browser b = arg0.getBrowser();
 				history.addEntry(new HistoryEntry(System.currentTimeMillis(), "", b.getTitle(), b.getURL()));
 			}
-		});
+		});*/
 		
-		if (callListeners)
-			for (TabListener listener : tabListeners) 
-				listener.onTabBrowserChanged(browser);
+		loadURL(url);
 	}
 	
-	public Browser getBrowserWindow() {
+	public void goBack() {
+		this.browser.goBack();
+	}
+	
+	public void goForward() {
+		this.browser.goForward();
+	}
+	
+	public void stop() {
+		this.browser.stop();
+	}
+	
+	public void alert(String message) {
+		browser.executeJavaScript("alert('"+message+"');");
+	}
+	
+	public void pushCallback(TabCallback callback) {
+		tabCallbacks.push(callback);
+	}
+	
+	public void popCallback() {
+		tabCallbacks.pop();
+	}
+	
+	public void loadURL(String url) {
+		if (!this.browser.isDisposed()) {
+			this.originalURL = url;
+		
+			this.browser.loadURL(url);
+		
+			for (TabListener listener : tabListeners) 
+				listener.onTabUpdating();
+		}
+	}
+	
+	public void reload() {
+		if (!this.browser.isDisposed()) {
+			this.browser.reload();
+		
+			for (TabListener listener : tabListeners) 
+				listener.onTabReloaded();
+		}
+	}
+	
+	public String getTitle() {
+		if (!browser.isDisposed())
+			return browser.getTitle();
+		
+		return "";
+	}
+	
+	public String getURL() {
+		if (!browser.isDisposed())
+			return browser.getURL();
+		return "";
+	}
+	
+	public String getOriginalURL() {
+		return originalURL;
+	}
+	
+	public int getID() {
+		return id;
+	}
+	
+	public void setID(int id) {
+		this.id = id;
+	}
+	
+	private void setBrowser(Browser browser) {
+		for (TitleListener l : this.browser.getTitleListeners())
+			browser.addTitleListener(l);
+		
+		for (LoadListener l : this.browser.getLoadListeners())
+			browser.addLoadListener(l);
+
+		for (String s : this.browser.getBrowserFunctionNames())
+			browser.registerFunction(s, this.browser.getBrowserFunction(s));
+		
+		browser.setPreferences(this.browser.getPreferences());
+		browser.setPopupHandler(this.browser.getPopupHandler());
+		browser.setLoadHandler(this.browser.getLoadHandler());
+		browser.getContext().getNetworkService().setNetworkDelegate(this.browser.getContext().getNetworkService().getNetworkDelegate());
+		browser.getContext().getNetworkService().setResourceHandler(this.browser.getContext().getNetworkService().getResourceHandler());
+		
+		//this.browser.dispose();
+		this.browser = browser;
+		
+		BROWSER_INSTANCES.add(this.browser);
+		
+		for (TabListener listener : tabListeners) 
+			listener.onTabBrowserChanged(browser);
+	}
+	
+	public Browser getBrowserInstance() {
 		return browser;
 	}
 	

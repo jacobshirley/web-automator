@@ -22,17 +22,7 @@ import com.teamdev.jxbrowser.chromium.events.StatusEvent;
 import com.teamdev.jxbrowser.chromium.events.StatusListener;
 
 public class ScriptMethods {
-	protected Browser browser;
-	
-	private Mouse mouse;
-	private Keyboard keyboard;
-	
-	private Tab target;
-	
 	public static final int DEFAULT_MOUSE_SPEED = 25;
-	
-	private int mouseSpeed = DEFAULT_MOUSE_SPEED;
-	
 	public static final String SHIFT_KEYS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ¬!\"£$%^&*()_+{}:@~<>?|€";
 	public static final int DEFAULT_KEY_TIME = 100;
 	
@@ -41,11 +31,19 @@ public class ScriptMethods {
 	}
 	
 	private String status = "";
+	private int mouseSpeed = DEFAULT_MOUSE_SPEED;
+	
+	protected Browser browser;
+	
+	private Mouse mouse;
+	private Keyboard keyboard;
+	
+	private Tab target;
 
 	public ScriptMethods(Tab target) {
 		this.target = target;
 		
-		this.browser = this.target.getBrowserWindow();
+		this.browser = this.target.getBrowserInstance();
 		
 		this.mouse = new Mouse(this.target.getTabView());
 		this.keyboard = new Keyboard(this.target.getTabView());

@@ -67,7 +67,6 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	private LinkedList<Task> tasks = new LinkedList<Task>();
 	
 	private ElementBounds debugElement = null;
-	public String currentTaskURL = "";
 	
 	private SetSignatureFrame setSigFrame = new SetSignatureFrame(this);
 	
@@ -89,6 +88,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		stateMachine.pushState(new TaskNextState(stateMachine, this)).tick();
 		
 		handleTab();
+		loadTimer = System.currentTimeMillis();
 	}
 	
 	public void handleTab() {
@@ -100,7 +100,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		} else
 			botTab = openTab();
 		
-		botTab.getBrowserWindow().addLoadListener(new LoadAdapter() {
+		botTab.getBrowserInstance().addLoadListener(new LoadAdapter() {
 			@Override
 			public void onFinishLoadingFrame(FinishLoadingEvent event) {
 				if (event.isMainFrame()) {
@@ -179,13 +179,17 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 				stateMachine.clearStates().pushState(new TaskNextState(stateMachine, this));
 			}
 			
-			boolean disposed = botTab.getBrowserWindow().isDisposed();
+			boolean disposed = botTab.getBrowserInstance().isDisposed();
 			if (disposed) {
 				getTabs().closeTab(botTab);
 				System.out.println("Apparently disposed. Opening new tab.");
 				handleTab();
 				
 				return super.tick();
+			}
+			
+			if (stateMachine.isFinished()) {
+				return STATE_EXIT_SUCCESS;
 			}
 
 			stateMachine.tick();
