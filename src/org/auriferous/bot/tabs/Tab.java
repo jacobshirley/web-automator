@@ -62,6 +62,8 @@ public class Tab {
 	
 	private HistoryConfig history;
 	
+	private boolean openPopupsInNewTab = false;
+	
 	public Tab(final Tabs parent, String url, final HistoryConfig history) {
 		this.id = -1;
 		this.parent = parent;
@@ -133,7 +135,21 @@ public class Tab {
 					@Override
 					public void insertBrowser(final Browser browser,
 							java.awt.Rectangle dimensions) {
-						setBrowser(browser);
+						System.out.println("Potential popup");
+						final String url = browser.getURL();
+						browser.stop();
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								Utils.wait(1000);
+								synchronized (Tab.this.browser) {
+									if (openPopupsInNewTab)
+										parent.openTab(url);
+									else
+										loadURL(url);
+								}
+							}
+						}).start();
 					}
 		        };
 		    }
@@ -150,6 +166,10 @@ public class Tab {
 		});*/
 		
 		loadURL(url);
+	}
+	
+	public void setOpenPopupsInNewTab(boolean openPopupsInNewTab) {
+		this.openPopupsInNewTab = openPopupsInNewTab;
 	}
 	
 	public void goBack() {
@@ -221,7 +241,7 @@ public class Tab {
 		this.id = id;
 	}
 	
-	private void setBrowser(Browser browser) {
+	/*private void setBrowser(Browser browser) {
 		for (TitleListener l : this.browser.getTitleListeners())
 			browser.addTitleListener(l);
 		
@@ -244,7 +264,7 @@ public class Tab {
 		
 		for (TabListener listener : tabListeners) 
 			listener.onTabBrowserChanged(browser);
-	}
+	}*/
 	
 	public Browser getBrowserInstance() {
 		return browser;

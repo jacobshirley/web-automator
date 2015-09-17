@@ -36,6 +36,8 @@ public class SetSignatureFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
+				
+				adClicker.signatureConfig.setValue(textArea.getText());
 			}
 		});
 		

@@ -12,8 +12,8 @@ import org.auriferous.bot.scripts.adclicker.states.events.Events;
 public class WaitOnAdState extends AdClickerState {
 	private String adURL;
 	
-	public WaitOnAdState(FSM fsm, AdClicker adClicker) {
-		super(fsm, adClicker);
+	public WaitOnAdState(AdClicker adClicker) {
+		super(adClicker);
 		this.adURL = "";
 	}
 
@@ -28,7 +28,7 @@ public class WaitOnAdState extends AdClickerState {
 			System.out.println("Now waiting on ad with random 5 seconds");
 			Utils.wait((currentTask.timeOnAd*1000) + Utils.random(5000));
 	
-			return new ClickLinksState(fsm, adClicker, adURL);
+			return new ClickLinksState(adClicker, adURL);
 		}
 		return this;
 	}

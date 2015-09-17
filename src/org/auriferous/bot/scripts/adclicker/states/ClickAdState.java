@@ -37,8 +37,8 @@ public class ClickAdState extends AdClickerState {
 	private int foundID = 0;
 	private boolean clickedAd = false;
 
-	public ClickAdState(FSM fsm, AdClicker adClicker) {
-		super(fsm, adClicker);
+	public ClickAdState(AdClicker adClicker) {
+		super(adClicker);
 		
 		final Browser browser = adClicker.getBotTab().getBrowserInstance();
 		browser.getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate() {
@@ -51,73 +51,67 @@ public class ClickAdState extends AdClickerState {
 	
 	@Override
 	public State process(List<Integer> events) {
-		if (events.contains(Events.EVENT_PAGE_LOADED)) {
-			System.out.println("Started ad clicking");
-	    	Utils.wait(2000);
-	    	
-	    	ScriptMethods methods = adClicker.getScriptMethods();
-	    	Tab botTab = adClicker.getBotTab();
-	    	String url = botTab.getURL();
-	    	
-	    	if (blogURL != null && !url.contains(Utils.getBaseURL(currentTaskURL))) {
-	    		System.out.println("Clicked ad successfully.");
-	    		
-	    		return new WaitOnAdState(fsm, adClicker);
-	    	} else {
-	    		currentTaskURL = url;
-	    		
-	        	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
-	
-	        	if (foundID == 1) {
-	        		ElementBounds adLink = methods.getRandomElement("$('a[href*=\"adurl=\"]')");
-	        		if (adLink != null) {
-	        			String adhref = adLink.getDOMElement().get("href").getString().split("adurl=")[1];
-	        			System.out.println("found "+adhref);
-	        		}
-	        	}
+		System.out.println("Started ad clicking");
+    	Utils.wait(2000);
+    	
+    	ScriptMethods methods = adClicker.getScriptMethods();
+    	Tab botTab = adClicker.getBotTab();
+    	String url = botTab.getURL();
+    	
+    	if (blogURL != null && !url.contains(Utils.getBaseURL(currentTaskURL))) {
+    		System.out.println("Clicked ad successfully.");
+    		
+    		return new WaitOnAdState(adClicker);
+    	} else {
+    		currentTaskURL = url;
+    		
+        	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
 
-	        	if (adElement != null) {
-	        		blogURL = botTab.getURL();
+        	if (adElement != null) {
+        		blogURL = botTab.getURL();
+        		
+        		adElement.width -= 35;
+        		
+        		adClicker.setDebugElement(adElement);
+        		
+        		for (int i = 0; i < 10; i++) {
+        			if (!botTab.getURL().contains(Utils.getBaseURL(currentTaskURL)))
+        				return new WaitOnAdState(adClicker);
+        			
+	        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
 	        		
-	        		adElement.width -= 35;
-	        		
-	        		adClicker.setDebugElement(adElement);
-	        		
-	        		for (int i = 0; i < 10; i++) {
-		        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
-		        		
-		        		System.out.println("Clicking at "+p.x+", "+p.y);
-		        		if (foundID != 5) {
-		        			System.out.println("Moving mouse");
-		        			
-		        			methods.moveMouse(p);
-		        			Utils.wait(500);
-		        			if (!methods.getStatus().equals("")) {
-		        				clickedAd = true;
-		        				System.out.println("Status checked");
-		                		methods.mouse(p.x, p.y);
-		                		break;
-		        			}
-		        		} else {
-		        			clickedAd = true;
-		        			methods.mouse(p);
-		        			break;
-		        		}
+	        		System.out.println("Clicking at "+p.x+", "+p.y);
+	        		if (foundID != 5) {
+	        			System.out.println("Moving mouse");
+	        			
+	        			methods.moveMouse(p);
+	        			Utils.wait(500);
+	        			if (!methods.getStatus().equals("")) {
+	        				clickedAd = true;
+	        				System.out.println("Status checked");
+	                		methods.mouse(p.x, p.y);
+	                		break;
+	        			}
+	        		} else {
+	        			clickedAd = true;
+	        			methods.mouse(p);
+	        			break;
 	        		}
-	        	} else if (searchAdTries < 10) {
-	        		searchAdTries++;
-	        		System.out.println("Couldn't find ad on try "+searchAdTries+"/10. Reloading page.");
 	        		
-	        		botTab.reload();
-	        		
-	        		return this;
-	        	} else if (searchAdTries == 10){
-	        		System.out.println("Couldn't find ad. Next task...");
-	        		
-	        		return new TaskNextState(fsm, adClicker);
-	        	}
-	    	}
-		}
+        		}
+        	} else if (searchAdTries < 10) {
+        		searchAdTries++;
+        		System.out.println("Couldn't find ad on try "+searchAdTries+"/10. Reloading page.");
+        		
+        		botTab.reload();
+        		
+        		return this;
+        	} else if (searchAdTries == 10){
+        		System.out.println("Couldn't find ad. Next task...");
+        		
+        		return new TaskNextState(adClicker);
+        	}
+    	}
     	
     	return this;
 	}
@@ -125,7 +119,7 @@ public class ClickAdState extends AdClickerState {
 	private ElementBounds findAds(String... jqueryStrings) {
 		ScriptMethods methods = adClicker.getScriptMethods();
 		
-		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()");
+		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle').first().css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()");
 		foundID = 0;
 		if (adsbygoogle.length > 0) {
 			ElementBounds bounds = adsbygoogle[0];
@@ -174,7 +168,7 @@ public class ClickAdState extends AdClickerState {
 					entry.add(new DataEntry("clicks", 1));
 					historyConfig.add(entry);
 				} else {
-					int clicks = Integer.parseInt(entry.get("//clicks").toString())+1;
+					int clicks = Integer.parseInt(entry.getSingle("//clicks").toString())+1;
 					entry.set("//clicks", clicks);
 					
 					if (clicks <= MAX_CLICKS) {
@@ -182,7 +176,6 @@ public class ClickAdState extends AdClickerState {
 						adClicker.getBotTab().stop();
 
 						new Thread(new Runnable() {
-
 							@Override
 							public void run() {
 								Utils.wait(2000);

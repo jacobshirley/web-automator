@@ -10,8 +10,8 @@ import org.auriferous.bot.scripts.adclicker.Task;
 public class TaskDoneState extends AdClickerState {
 	private String adURL;
 
-	public TaskDoneState(FSM fsm, AdClicker adClicker, String adURL) {
-		super(fsm, adClicker);
+	public TaskDoneState(AdClicker adClicker, String adURL) {
+		super(adClicker);
 		this.adURL = adURL;
 	}
 
@@ -21,6 +21,6 @@ public class TaskDoneState extends AdClickerState {
 		
 		System.out.println(adClicker.compileSignature(adURL));
 		
-		return new TaskNextState(fsm, adClicker);
+		return new TaskNextState(adClicker);
 	}
 }

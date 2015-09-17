@@ -30,7 +30,7 @@ public class HistoryEntry extends DataEntry{
 
 	@Override
 	public List<DataEntry> getChildren() {
-		List<DataEntry> children = new ArrayList<DataEntry>();
+		List<DataEntry> children = super.getChildren();
 		
 		children.add(new DataEntry("time-stamp", timeStamp));
 		children.add(new DataEntry("favicon-path", faviconPath));

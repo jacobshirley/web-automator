@@ -85,7 +85,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	}
 	
 	private void executeTasks() {
-		stateMachine.pushState(new TaskNextState(stateMachine, this)).tick();
+		stateMachine.pushState(new TaskNextState(this)).tick();
 		
 		handleTab();
 		loadTimer = System.currentTimeMillis();
@@ -176,7 +176,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 			if (skipTask) {
 				System.out.println("Skipping task...");
 				skipTask = false;
-				stateMachine.clearStates().pushState(new TaskNextState(stateMachine, this));
+				stateMachine.clearStates().pushState(new TaskNextState(this));
 			}
 			
 			boolean disposed = botTab.getBrowserInstance().isDisposed();
@@ -192,7 +192,13 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 				return STATE_EXIT_SUCCESS;
 			}
 
-			stateMachine.tick();
+			try {
+				stateMachine.tick();
+			} catch (Exception e) {
+				System.out.println("There was an error. Next task.");
+				e.printStackTrace();
+				stateMachine.clearStates().pushState(new TaskNextState(this)).tick();
+			}
 			
 			if (System.currentTimeMillis()-loadTimer >= MAX_WAIT_TIME*1000) {
 				System.out.println("Been "+MAX_WAIT_TIME+" seconds. Forcing execution.");

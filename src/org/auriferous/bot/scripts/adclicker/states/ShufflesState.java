@@ -12,8 +12,8 @@ import org.auriferous.bot.scripts.adclicker.states.events.Events;
 public class ShufflesState extends AdClickerState {
 	private int curShuffles;
 	
-	public ShufflesState(FSM fsm, AdClicker adClicker) {
-		super(fsm, adClicker);
+	public ShufflesState(AdClicker adClicker) {
+		super(adClicker);
 	}
 	
 	@Override
@@ -28,8 +28,8 @@ public class ShufflesState extends AdClickerState {
 				
 				adClicker.loadBlog();
 			} else {
-				
-				return new ClickAdState(fsm, adClicker);
+				System.out.println("Going to clicker");
+				return new ClickAdState(adClicker);
 			}
 		}
 		

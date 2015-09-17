@@ -9,8 +9,8 @@ import org.auriferous.bot.scripts.adclicker.Task;
 
 public class TaskNextState extends AdClickerState{
 
-	public TaskNextState(FSM fsm, AdClicker adClicker) {
-		super(fsm, adClicker);
+	public TaskNextState(AdClicker adClicker) {
+		super(adClicker);
 	}
 
 	@Override
@@ -27,6 +27,6 @@ public class TaskNextState extends AdClickerState{
 			return null;
 		}
 		
-		return new ShufflesState(fsm, adClicker);
+		return new ShufflesState(adClicker);
 	}
 }

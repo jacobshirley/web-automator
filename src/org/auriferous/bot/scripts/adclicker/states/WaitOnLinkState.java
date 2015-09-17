@@ -15,8 +15,8 @@ public class WaitOnLinkState extends AdClickerState {
 	private String adURL;
 	private int linkClicks;
 
-	public WaitOnLinkState(FSM fsm, AdClicker adClicker, String adURL, int linkClicks) {
-		super(fsm, adClicker);
+	public WaitOnLinkState(AdClicker adClicker, String adURL, int linkClicks) {
+		super(adClicker);
 		this.adURL = adURL;
 		this.linkClicks = linkClicks;
 	}
@@ -30,7 +30,7 @@ public class WaitOnLinkState extends AdClickerState {
     	System.out.println("Going back to ad "+adURL);
     	adClicker.getBotTab().loadURL(adURL);
 		
-		return new ClickLinksState(fsm, adClicker, adURL, linkClicks);
+		return new ClickLinksState(adClicker, adURL, linkClicks);
 	}
 
 }

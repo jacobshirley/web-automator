@@ -9,7 +9,7 @@ public class FSM {
 	private List<Integer> events = new ArrayList<Integer>();
 	
 	public boolean isFinished() {
-		return states.peek() == null;
+		return states.isEmpty() || states.peek() == null;
 	}
 	
 	public FSM clearStates() {

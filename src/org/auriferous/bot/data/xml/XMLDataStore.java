@@ -122,6 +122,7 @@ public class XMLDataStore extends DataStore{
 
 	private void writeEntry(Element parent, DataEntry entry) {
 		for (DataEntry entry2 : entry.getChildren()) {
+			System.out.println("Saving entry "+entry2);
 			Object val = entry2.getValue();
 			Element elem = XMLUtils.createElement(document, ""+entry2.getKey(), ""+(val == null ? "" : val));
 
@@ -141,13 +142,18 @@ public class XMLDataStore extends DataStore{
 	
 	@Override
 	public boolean save(File path) throws IOException {
+		System.out.println("Saving ");
 		if (!path.exists()) {
 			if (path.getParentFile() != null)
 				path.getParentFile().mkdirs();
 			path.createNewFile();
 		}
 		
+		System.out.println("Compiling ");
+		
 		compile();
+		
+		System.out.println("Finished ");
 		
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();

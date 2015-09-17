@@ -85,24 +85,24 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			botGUI.addWindowListener(new WindowAdapter() {
 				@Override
 				public void windowClosing(WindowEvent e) {
-					super.windowClosing(e);
-					
+					//super.windowClosing(e);
+					System.out.println("SDFSDF");
 					try {
 						mainConfig.save();
-						historyConfigFile.save();
-					} catch (IOException e1) {
-						e1.printStackTrace();
+						//historyConfigFile.save();
+					} catch (Exception e2) {
+						e2.printStackTrace();
 					}
 				}
 			});
 		}
 		try {
-			//scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
+			scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/
 		
-		userTabs.openTab("http://qwoteable.tk/");
+		//userTabs.openTab("www.google.co.uk/news");
 		
 		/*config.addConfigurable(this);
 		try {

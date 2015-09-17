@@ -23,13 +23,13 @@ public class ClickLinksState extends AdClickerState{
 	
 	private String adURL;
 	
-	public ClickLinksState(FSM fsm, AdClicker adClicker, String adURL) {
-		super(fsm, adClicker);
+	public ClickLinksState(AdClicker adClicker, String adURL) {
+		super(adClicker);
 		this.adURL = adURL;
 	}
 	
-	public ClickLinksState(FSM fsm, AdClicker adClicker, String adURL, int curLinkClick) {
-		this(fsm, adClicker, adURL);
+	public ClickLinksState(AdClicker adClicker, String adURL, int curLinkClick) {
+		this(adClicker, adURL);
 		this.curLinkClick = curLinkClick;
 	}
 
@@ -59,7 +59,7 @@ public class ClickLinksState extends AdClickerState{
 	        	
 	        	methods.mouse(p.x, p.y);
 	        	
-	        	return new WaitOnLinkState(fsm, adClicker, adURL, curLinkClick);
+	        	return new WaitOnLinkState(adClicker, adURL, curLinkClick);
 			} else if (curClickTry < MAX_CLICK_TRIES){
 				curClickTry++;
         		System.out.println("Couldn't find link on try "+curClickTry+"/"+MAX_CLICK_TRIES+". Returning to ad to try again.");
@@ -68,13 +68,13 @@ public class ClickLinksState extends AdClickerState{
         		
         		waitForLoad = true;
 			} else if (curClickTry == MAX_CLICK_TRIES) {
-				return new TaskDoneState(fsm, adClicker, adURL);
+				return new TaskDoneState(adClicker, adURL);
 			}
 		} else {
 			if (!currentTask.fbLink.equals(""))
-				return new PostFacebookState(fsm, adClicker, adURL);
+				return new PostFacebookState(adClicker, adURL);
 			else
-				return new TaskDoneState(fsm, adClicker, adURL);
+				return new TaskDoneState(adClicker, adURL);
 		}
 		
 		return this;
