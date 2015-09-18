@@ -82,22 +82,24 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 			
 			//System.out.println("offset "+methods.getPageYOffset()+", height "+methods.getPageHeight());
 			System.out.println("Waiting");
-			Utils.wait(5000);
+			Utils.wait(3000);
 			
 			System.out.println("On Facebook page!!!!");
 			
 			ScriptMethods fbMethods = new ScriptMethods(currentTab);
 			
-			ElementBounds fbFoto = fbMethods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
+			ElementBounds fbFoto = fbMethods.getRandomElement("$('.UFICommentPhotoIcon')");// fbMethods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
 			
 			if (fbFoto != null) {
-				System.out.println("Found Facebook photo");
-				
 				Point p = fbFoto.getRandomPointFromCentre(0.5, 0.5);
+				
+				r = fbFoto;
+				
+				System.out.println("Found Facebook photo "+p.y);
 				
 				fbMethods.scrollTo(p.y, 40, 20);
 				
-				p.x += 150;
+				p.x -= 150;
 				
 				fbMethods.mouse(p, ClickType.LCLICK);
 				Utils.wait(500);
