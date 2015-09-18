@@ -90,8 +90,8 @@ public class ClickAdState extends AdClickerState {
         		adClicker.setDebugElement(adElement);
         		
         		for (int i = 0; i < 10; i++) {
-        			if (!botTab.getURL().contains(Utils.getBaseURL(currentTaskURL)))
-        				return new CheckAdState(adClicker, this);
+        			//if (!botTab.getURL().contains(Utils.getBaseURL(currentTaskURL)))
+        			//	return new CheckAdState(adClicker, this);
         			
         			clickedAd = true;
 	        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
@@ -179,10 +179,9 @@ public class ClickAdState extends AdClickerState {
 					System.out.println("Already clicked this.");
 					
 					int clicks = Integer.parseInt(entry.getValue("//clicks", 1).toString())+1;
+					System.out.println("This has been clicked "+clicks+" times.");
 					
 					if (clicks > MAX_CLICKS) {
-						System.out.println("This has been clicked "+clicks+" times.");
-						
 						adClicker.getBotTab().stop();
 
 						new Thread(new Runnable() {
@@ -242,5 +241,9 @@ public class ClickAdState extends AdClickerState {
 
 	public String getCurrentTaskURL() {
 		return currentTaskURL;
+	}
+	
+	public void incSearchAdTries() {
+		searchAdTries++;
 	}
 }

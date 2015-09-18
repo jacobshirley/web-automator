@@ -23,16 +23,19 @@ public class CheckAdState extends AdClickerState {
 	@Override
 	public State process(List<Integer> events) {
 		if (events.contains(Events.EVENT_PAGE_LOADED)) {
-			adClicker.getBotTab().getBrowserInstance().getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate());
 			
 			adURL = adClicker.getBotTab().getURL();
 			
 			Task currentTask = adClicker.getCurrentTask();
 			
 			if (adURL.contains(Utils.getBaseURL(lastState.getCurrentTaskURL()))) {
+				lastState.incSearchAdTries();
 				System.out.println("Gone back to blog. Setting appropriate state.");
 				return lastState;
 			}
+			
+			adClicker.getBotTab().getBrowserInstance().getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate());
+			
 			
 			System.out.println("Saving URL "+adURL);
 			
