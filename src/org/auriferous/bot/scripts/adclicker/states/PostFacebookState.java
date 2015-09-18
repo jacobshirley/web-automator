@@ -44,12 +44,14 @@ public class PostFacebookState extends AdClickerState{
 						
 						Point p = fbFoto.getRandomPointFromCentre(0.5, 0.5);
 						
+						fbMethods.scrollTo(p.y, 40, 20);
+						
 						p.x += 150;
 						
 						fbMethods.mouse(p, ClickType.LCLICK);
 						Utils.wait(500);
 						fbMethods.mouse(p, ClickType.LCLICK);
-						
+						Utils.wait(500);
 						System.out.println("Writing signature of "+adURL);
 						
 						fbMethods.type(adClicker.compileSignature(adURL));

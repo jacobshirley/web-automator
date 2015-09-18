@@ -2,12 +2,14 @@ package org.auriferous.bot.scripts.tests;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
+import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabControlAdapter;
@@ -17,6 +19,7 @@ import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.events.FailLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.FrameLoadEvent;
+import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 import com.teamdev.jxbrowser.chromium.events.LoadEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadListener;
 import com.teamdev.jxbrowser.chromium.events.ProvisionalLoadingEvent;
@@ -81,20 +84,28 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 			System.out.println("Waiting");
 			Utils.wait(5000);
 			
-			//ElementBounds[] elems = methods.getElements("$(document).findVisibles('a[href*=\"/\"')");
-			//ElementBounds bounds = methods.getRandomClickable(false);
-			//methods.hoverElement(bounds);
+			System.out.println("On Facebook page!!!!");
 			
-			ElementBounds[] elems = methods.getElements("$(document).find(\"a[href^='clkn']\");");
+			ScriptMethods fbMethods = new ScriptMethods(currentTab);
 			
-			System.out.println("Length: "+elems.length);
+			ElementBounds fbFoto = fbMethods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
 			
-			if (elems.length > 0) {
-				r = methods.getRandomClickable(false);
-				System.out.println(r);
+			if (fbFoto != null) {
+				System.out.println("Found Facebook photo");
 				
-			
-			//status = STATE_EXIT_SUCCESS;
+				Point p = fbFoto.getRandomPointFromCentre(0.5, 0.5);
+				
+				fbMethods.scrollTo(p.y, 40, 20);
+				
+				p.x += 150;
+				
+				fbMethods.mouse(p, ClickType.LCLICK);
+				Utils.wait(500);
+				fbMethods.mouse(p, ClickType.LCLICK);
+				Utils.wait(500);
+				System.out.println("Writing signature of ");
+				
+				fbMethods.type("Testing");
 			}
 			startExec = false;
 		}
@@ -172,7 +183,7 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 	public void onStart() {
 		System.out.println("Starting");
 		//openTab("naht.tk/random");//
-		currentTab = openTab("http://m.audibene.de/hoerstudie/?act=1078&utm_source=Display&utm_medium=Banner&utm_term=SHoerstudie_Criteo_B37versionB_V008_728x90&utm_campaign=Criteo_09_statisch_hoerstudie&t=0079");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		currentTab = openTab("https://www.facebook.com/groups/381168852071038/permalink/465231853664737/?__mref=message_bubble");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
 		//currentTab.getTabView().addTabPaintListener(this);
 		getTabs().addTabControlListener(new TabControlAdapter() {
