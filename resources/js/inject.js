@@ -1,7 +1,6 @@
 window.injectionLoaded = true;
 
-if (!$)
-	$ = jQuery;
+$ = jQuery;
 
 function Offset() {
 	this.left = 0;
@@ -54,6 +53,14 @@ function getJSClickables() {
 		if (this.onclick != null) 
 			return true;
 		}).findVisibles("*");
+}
+
+function removeAllButOneAd() {
+	$('.adsbygoogle').each(function (i) {
+		if (i > 0)
+			$(this).remove();
+	});
+	return null;
 }
 
 function _findElementsInIFrames(parent, sel, offset) {

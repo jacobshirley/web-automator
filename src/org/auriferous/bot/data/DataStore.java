@@ -32,9 +32,9 @@ public abstract class DataStore {
 	}
 	
 	public boolean save() throws IOException {
-		if (file != null)
+		if (file != null) {
 			return save(file);
-		else throw new IOException("Please make sure you have set an output path. Use setFile.");
+		} else throw new IOException("Please make sure you have set an output path. Use setFile.");
 	}
 	
 	public abstract boolean save(File file) throws IOException;

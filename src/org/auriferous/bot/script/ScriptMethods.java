@@ -45,8 +45,8 @@ public class ScriptMethods {
 		
 		this.browser = this.target.getBrowserInstance();
 		
-		this.mouse = new Mouse(this.target.getTabView());
-		this.keyboard = new Keyboard(this.target.getTabView());
+		this.mouse = new Mouse(this.target);
+		this.keyboard = new Keyboard(this.target);
 		
 		this.target.getTabView().addPaintListener(this.mouse);
 		
@@ -62,7 +62,7 @@ public class ScriptMethods {
 		return target;
 	}
 
-	private void injectJQuery(long frameID) {
+	public void injectJQuery(long frameID) {
 		try {
 			if (!isJQueryInjected(frameID))
 				browser.executeJavaScript(frameID, ResourceLoader.loadResourceAsString("resources/js/jquery.min.js", true));
@@ -71,7 +71,7 @@ public class ScriptMethods {
 		}
 	}
 	
-	private void injectCode(long frameID) {
+	public void injectCode(long frameID) {
 		try {
 			if (!isCodeInjected(frameID)) {
 				browser.executeJavaScript(frameID,  ResourceLoader.loadResourceAsString("resources/js/inject.js", true));

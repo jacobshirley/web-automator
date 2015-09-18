@@ -6,20 +6,22 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+
+import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.view.PaintListener;
 import org.auriferous.bot.tabs.view.TabView;
 
 public class Mouse extends Input implements PaintListener {
-	public Mouse(TabView target) {
+	public Mouse(Tab target) {
 		super(target);
 	}
 	
 	public final void moveMouse(int x, int y) {
-		target.dispatchMoveMouse(x, y);
+		target.getTabView().dispatchMoveMouse(x, y);
 	}
 	
 	public final void clickMouse(int x, int y, int button) {
-		target.dispatchClickMouse(x, y, button);
+		target.getTabView().dispatchClickMouse(x, y, button);
 	}
 	
 	public final void clickMouse(int x, int y) {
@@ -27,7 +29,7 @@ public class Mouse extends Input implements PaintListener {
 	}
 	
 	public final void scrollMouse(boolean up, int rotation) {
-		target.dispatchScrollMouse(up, rotation);
+		target.getTabView().dispatchScrollMouse(up, rotation);
 	}
 	
 	public final int getScrollIncrement() {
@@ -35,15 +37,15 @@ public class Mouse extends Input implements PaintListener {
 	}
 	
 	public int getMouseX() {
-		return target.getMouseX();
+		return target.getTabView().getMouseX();
 	}
 	
 	public int getMouseY() {
-		return target.getMouseY();
+		return target.getTabView().getMouseY();
 	}
 	
 	public void setMousePos(int x, int y) {
-		target.setMousePos(x, y);
+		target.getTabView().setMousePos(x, y);
 	}
 	
 	public void setMousePos(Point p) {

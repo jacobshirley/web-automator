@@ -24,26 +24,28 @@ public class ClassDataStore extends XMLDataStore{
 	}
 	
 	public void addConfigurable(Configurable configurable) {
-		String cName = configurable.getClass().getName();
-		
-		if (!this.configurables.containsKey(cName)) {
-			DataEntry entry = getEntry(cName, configurable);
-			if (entry == null) {
-				entry = new RootEntry(cName);
-				getRootEntry().add(entry);
+		synchronized (configurable) {
+			String cName = configurable.getClass().getName();
+			
+			if (!this.configurables.containsKey(cName)) {
+				DataEntry entry = getEntry(cName, configurable);
+				if (entry == null) {
+					entry = new RootEntry(cName);
+					getRootEntry().add(entry);
+				}
+				
+				configurable.load(entry);
+			} else {
+				Configurable configurable2 = this.configurables.get(cName);
+				
+				DataEntry root = getEntry(cName, configurable2);
+				configurable2.save(root);
+				
+				configurable.load(root);
 			}
 			
-			configurable.load(entry);
-		} else {
-			Configurable configurable2 = this.configurables.get(cName);
-			
-			DataEntry root = getEntry(cName, configurable2);
-			configurable2.save(root);
-			
-			configurable.load(root);
+			this.configurables.put(cName, configurable);
 		}
-		
-		this.configurables.put(cName, configurable);
 	}
 	
 	private DataEntry getEntry(Configurable configurable) {

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -53,6 +54,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private static final int ACTION_TAB_GO_BACK = 7;
 	private static final int ACTION_TAB_GO_FORWARD = 8;
 	private static final int ACTION_BLOCK_INPUT = 9;
+	private static final int ACTION_TAB_REFRESH = 10;
 	
 	public static boolean mouseBlocked = false;
 	public static boolean keyboardBlocked = false;
@@ -146,6 +148,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	
 	private JMenu createTabsMenu() {
 		JMenu tabsMenu = new JMenu("Tabs");
+		tabsMenu.add(new MenuActionItem("Refresh", ACTION_TAB_REFRESH));
 		tabsMenu.add(new MenuActionItem("Go back", ACTION_TAB_GO_BACK));
 		tabsMenu.add(new MenuActionItem("Go forward", ACTION_TAB_GO_FORWARD));
 		
@@ -317,6 +320,13 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 				
 				if ((s != null) && (s.length() > 0)) {
 					userTabs.openTab(s);
+				}
+				break;
+			case ACTION_TAB_REFRESH:
+				if (current != null) {
+					current.reload();
+				} else {
+					Utils.alert("Cannot access tab.");
 				}
 				break;
 			case ACTION_EXIT_BOT:

@@ -30,12 +30,16 @@ public class HistoryEntry extends DataEntry{
 
 	@Override
 	public List<DataEntry> getChildren() {
-		List<DataEntry> children = super.getChildren();
-		
+		List<DataEntry> children = new ArrayList<DataEntry>();
+
 		children.add(new DataEntry("time-stamp", timeStamp));
 		children.add(new DataEntry("favicon-path", faviconPath));
 		children.add(new DataEntry("title", title));
 		children.add(new DataEntry("url", url));
+		
+		for (DataEntry e : super.getChildren())
+			children.add(e);
+		
 		
 		return children;
 	}

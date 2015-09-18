@@ -1,22 +1,23 @@
 package org.auriferous.bot.script.input;
 
+import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.view.TabView;
 
 public class Keyboard extends Input {
 	
-	public Keyboard(TabView target) {
+	public Keyboard(Tab target) {
 		super(target);
 	}
 	
 	public void typeKey(int c, int time, int mods) {
-		target.dispatchTypeKey(c, time, mods);
+		target.getTabView().dispatchTypeKey(c, time, mods);
 	}
 	
 	public void pressKey(int c, int mods) {
-		target.dispatchPressKey(c, mods);
+		target.getTabView().dispatchPressKey(c, mods);
 	}
 	
 	public void releaseKey(int c, int mods) {
-		target.dispatchReleaseKey(c, mods);
+		target.getTabView().dispatchReleaseKey(c, mods);
 	}
 }

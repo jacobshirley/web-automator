@@ -35,6 +35,7 @@ public class ClickAdState extends AdClickerState {
 	private int searchAdTries = 0;
 	private int foundID = 0;
 	private boolean clickedAd = false;
+	private boolean pageLoading = false;
 
 	public ClickAdState(AdClicker adClicker) {
 		super(adClicker);
@@ -43,9 +44,24 @@ public class ClickAdState extends AdClickerState {
 		browser.getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate() {
 			@Override
 			public void onBeforeURLRequest(BeforeURLRequestParams arg0) {
-				handleAdTest(arg0.getURL());
+				pageLoading = true;
+
+				if (arg0.getURL().contains("gclid")) {
+					//System.out.println("Contains gclid!!");
+					handleAdTest(arg0.getURL());
+				}
 			}
 		});
+	}
+	
+	private void removeAllAdsButOne(Browser browser, ScriptMethods methods) {
+		for (long id : browser.getFramesIds()) {
+			methods.injectJQuery(id);
+			methods.injectCode(id);
+			try {
+				browser.executeJavaScriptAndReturnValue(id, "removeAllButOneAd();");
+			} catch (Exception e) {}
+		}
 	}
 	
 	@Override
@@ -60,12 +76,13 @@ public class ClickAdState extends AdClickerState {
     	if (blogURL != null && !url.contains(Utils.getBaseURL(currentTaskURL))) {
     		System.out.println("Clicked ad successfully.");
     		
-    		return new WaitOnAdState(adClicker);
+    		return new CheckAdState(adClicker, this);
     	} else {
     		currentTaskURL = url;
+    		removeAllAdsButOne(botTab.getBrowserInstance(), methods);
     		
         	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
-
+        	pageLoading = false;
         	if (adElement != null) {
         		blogURL = botTab.getURL();
         		
@@ -75,28 +92,19 @@ public class ClickAdState extends AdClickerState {
         		
         		for (int i = 0; i < 10; i++) {
         			if (!botTab.getURL().contains(Utils.getBaseURL(currentTaskURL)))
-        				return new WaitOnAdState(adClicker);
+        				return new CheckAdState(adClicker, this);
         			
+        			clickedAd = true;
 	        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
-	        		
-	        		System.out.println("Clicking at "+p.x+", "+p.y);
-	        		if (foundID != 5) {
-	        			System.out.println("Moving mouse");
-	        			
-	        			methods.moveMouse(p);
-	        			Utils.wait(500);
-	        			if (!methods.getStatus().equals("")) {
-	        				clickedAd = true;
-	        				System.out.println("Status checked");
-	                		methods.mouse(p.x, p.y);
-	                		break;
-	        			}
-	        		} else {
-	        			clickedAd = true;
-	        			methods.mouse(p);
-	        			break;
-	        		}
-	        		
+
+            		methods.mouse(p.x, p.y);
+            		
+            		Utils.wait(1000);
+            		
+            		if (pageLoading) {
+            			System.out.println("Page loading!!!");
+            			return new CheckAdState(adClicker, this);
+            		}
         		}
         	} else if (searchAdTries < 10) {
         		searchAdTries++;
@@ -156,22 +164,29 @@ public class ClickAdState extends AdClickerState {
 		
 			clickedAd = false;
 			try {
+				System.out.println("Testing url");
 				url = testAdURL(url).replace("https://", "http://");
 				int id = url.lastIndexOf("?");
 				if (id > 0)
 					url = url.substring(0, id);
 				
-				DataEntry entry = historyConfig.getSingle("//*[@value='"+url+"']");
+				url = Utils.getBaseURL(url);
+				
+				System.out.println("Getting url of "+url);
+				DataEntry entry = historyConfig.getSingle("//history-entry[url/@value='"+url+"']");
+				
 				if (entry == null) {
 					entry = new HistoryEntry("", "", url);
 					entry.add(new DataEntry("clicks", 1));
 					historyConfig.add(entry);
 				} else {
-					int clicks = Integer.parseInt(entry.getSingle("//clicks").toString())+1;
-					entry.set("//clicks", clicks);
+					System.out.println("Already clicked this.");
 					
-					if (clicks <= MAX_CLICKS) {
-						System.out.println("Already clicked this.");
+					int clicks = Integer.parseInt(entry.getValue("//clicks", 1).toString())+1;
+					
+					if (clicks > MAX_CLICKS) {
+						System.out.println("This has been clicked "+clicks+" times.");
+						
 						adClicker.getBotTab().stop();
 
 						new Thread(new Runnable() {
@@ -180,10 +195,9 @@ public class ClickAdState extends AdClickerState {
 								Utils.wait(2000);
 								adClicker.loadBlog();
 							}
-							
 						}).start();
 					} else {
-						System.out.println("This has been clicked "+clicks+" times");
+						entry.set("//clicks", clicks);
 					}
 				}
 			} catch (Exception e) {
@@ -229,4 +243,8 @@ public class ClickAdState extends AdClickerState {
 		
 		return URLDecoder.decode(response.toString(), "UTF-8");
     }
+
+	public String getCurrentTaskURL() {
+		return currentTaskURL;
+	}
 }

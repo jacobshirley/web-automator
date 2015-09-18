@@ -13,6 +13,7 @@ import javax.swing.JMenuItem;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.data.DataEntry;
 import org.auriferous.bot.data.config.Configurable;
+import org.auriferous.bot.data.history.HistoryEntry;
 import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.script.Script;
@@ -189,6 +190,8 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	@Override
 	public void onStart() {
 		new TaskManager(tasks, taskConfig);
+		//tasks.add(new Task("florats.tk", 1, 0, 0, 1, ""));
+		//executeTasks();
 	}
 
 	@Override
@@ -260,6 +263,8 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 			historyConfig = history;
 		}
 		
+		//System.out.println(historyConfig.get("//history-entry[url/@value='http://global2.cmdolb.com/ops/akamai/images/r20.gif']").get(0).getValue("//clicks", 1));
+		
 		l = configEntries.get("//"+taskHistoryConfig.getKey());
 		for (DataEntry history : l) {
 			taskHistoryConfig = history;
@@ -269,7 +274,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		for (DataEntry signature : l) {
 			signatureConfig = signature;
 		}
-
+		
 		setSigFrame.setText(signatureConfig.getValue().toString());
 		//System.out.println(historyConfig.contains("//*[@value='http://www.manageengine.com/products/applications_manager/applications-monitoring-features.html']"));
 		//System.out.println(historyConfig.get("//*[@value='"+"http://www.manageengine.com/products/applications_manager/applications-monitoring-features.html".replace("https://", "http://")+"']"));

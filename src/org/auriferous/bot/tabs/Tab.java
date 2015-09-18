@@ -43,12 +43,15 @@ public class Tab {
 	private HistoryConfig history;
 	
 	private boolean openPopupsInNewTab = false;
+	private boolean blockJSMessages = false;
 	
 	public Tab(final Tabs parent, String url, final HistoryConfig history) {
 		this.id = -1;
 		this.parent = parent;
 		this.history = history;
 		this.originalURL = url;
+		
+		setBlockJSMessages(true);
 		
 		this.browser = new Browser(DEFAULT_CONTEXT);
 		this.browser.getPreferences().setLocalStorageEnabled(true);
@@ -103,7 +106,8 @@ public class Tab {
 		this.browser.registerFunction("println", new BrowserFunction() {
 			@Override
 		    public JSValue invoke(JSValue... args) {
-		    	System.out.println("JAVASCRIPT: "+args[0].getString());
+				if (!blockJSMessages)
+					System.out.println("JAVASCRIPT: "+args[0].getString());
 		    	return JSValue.createNull();
 	    	}
 		});
@@ -118,7 +122,7 @@ public class Tab {
 							java.awt.Rectangle dimensions) {
 						
 						System.out.println("Potential popup");
-						final String url = browser.getURL();
+						/*final String url = browser.getURL();
 						browser.stop();
 						new Thread(new Runnable() {
 							@Override
@@ -131,10 +135,10 @@ public class Tab {
 										loadURL(url);
 								}
 							}
-						}).start();
+						}).start();*/
 
 						
-						//setBrowser(browser);
+						setBrowser(browser);
 					}
 		        };
 		    }
@@ -154,6 +158,10 @@ public class Tab {
 	
 	public void setOpenPopupsInNewTab(boolean openPopupsInNewTab) {
 		this.openPopupsInNewTab = openPopupsInNewTab;
+	}
+	
+	public void setBlockJSMessages(boolean blockJSMessages) {
+		this.blockJSMessages = blockJSMessages;
 	}
 	
 	public void goBack() {
@@ -265,6 +273,7 @@ public class Tab {
 		for (TabListener listener : tabListeners) 
 			listener.onTabBrowserChanged(this.browser);
 	}
+	
 	public Browser getBrowserInstance() {
 		return browser;
 	}

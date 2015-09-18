@@ -76,7 +76,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		
 		userTabs = new Tabs(historyConfig);
 		
-		mainConfig.addConfigurable(this);
+		//mainConfig.addConfigurable(this);
 		//historyConfigFile.addConfigurable(historyConfig);
 		
 		if (createGUI) {
@@ -84,11 +84,10 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			botGUI.addWindowListener(new WindowAdapter() {
 				@Override
 				public void windowClosing(WindowEvent e) {
-					//super.windowClosing(e);
-					System.out.println("SDFSDF");
+					super.windowClosing(e);
 					try {
 						mainConfig.save();
-						//historyConfigFile.save();
+						historyConfigFile.save();
 					} catch (Exception e2) {
 						e2.printStackTrace();
 					}
@@ -101,7 +100,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			e.printStackTrace();
 		}//*/
 		
-		//userTabs.openTab("www.google.co.uk/news");
+		//userTabs.openTab("florats.tk");
 		
 		/*config.addConfigurable(this);
 		try {

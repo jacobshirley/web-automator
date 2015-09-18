@@ -32,7 +32,7 @@ public class DataEntry {
 		
 	}
 	
-	private void createContext() {
+	private synchronized void createContext() {
 		if (this.context == null) {
 			this.context = JXPathContext.newContext(this);
 			this.context.setLenient(true);
@@ -63,7 +63,7 @@ public class DataEntry {
 		add(xpath, subEntry, false);
 	}
 	
-	public void add(String xpath, DataEntry subEntry, boolean overwrite) {
+	public synchronized void add(String xpath, DataEntry subEntry, boolean overwrite) {
 		createContext();
 		
 		Iterator<DataEntry> it = context.iterate(xpath);
@@ -75,12 +75,13 @@ public class DataEntry {
 		}
 	}
 	
-	public void add(DataEntry subEntry) {
+	public synchronized void add(DataEntry subEntry) {
 		add(subEntry, false);
 	}
 	
 	public void add(DataEntry subEntry, boolean overwrite) {
 		boolean write = true;
+		
 		if (children.contains(subEntry)) {
 			write = !overwrite;
 		}
@@ -115,7 +116,6 @@ public class DataEntry {
 	
 	public List<DataEntry> get(String xpath) {
 		createContext();
-		
 		return context.selectNodes(xpath);
 	}
 	
@@ -133,7 +133,7 @@ public class DataEntry {
 		return getSingle(xpath) != null;
 	}
 	
-	public List<DataEntry> getChildren() {
+	public synchronized List<DataEntry> getChildren() {
 		return children;
 	}
 	

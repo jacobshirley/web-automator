@@ -38,7 +38,7 @@ public class Utils {
 		try {
 			URL url = new URL(urlString);
 			
-			String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
+			String path = url.getFile().substring(0, url.getFile().indexOf('/'));
 			String base = url.getProtocol() + "://" + url.getHost() + path;
 			
 			return base;

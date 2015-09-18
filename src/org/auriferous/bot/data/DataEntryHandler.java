@@ -39,7 +39,7 @@ public class DataEntryHandler implements DynamicPropertyHandler{
 		names[1] = "value";
 		
 		for (int i = 2; i < names.length; i++) {
-			names[i] = children.get(i-2).getKey().toString();
+			names[i] = ""+children.get(i-2).getKey();
 		}
 		
 		return names;
