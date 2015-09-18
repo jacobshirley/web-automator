@@ -78,17 +78,24 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 			methods.mouse(p, ClickType.NO_CLICK);*/
 			
 			//System.out.println("offset "+methods.getPageYOffset()+", height "+methods.getPageHeight());
-			Utils.wait(1000);
+			System.out.println("Waiting");
+			Utils.wait(5000);
 			
 			//ElementBounds[] elems = methods.getElements("$(document).findVisibles('a[href*=\"/\"')");
-			ElementBounds bounds = methods.getRandomClickable(false);
-			methods.hoverElement(bounds);
+			//ElementBounds bounds = methods.getRandomClickable(false);
+			//methods.hoverElement(bounds);
 			
-			r = bounds;
-			r.x -= methods.getPageXOffset();
-			r.y -= methods.getPageYOffset();
+			ElementBounds[] elems = methods.getElements("$(document).find(\"a[href^='clkn']\");");
+			
+			System.out.println("Length: "+elems.length);
+			
+			if (elems.length > 0) {
+				r = methods.getRandomClickable(false);
+				System.out.println(r);
+				
 			
 			//status = STATE_EXIT_SUCCESS;
+			}
 			startExec = false;
 		}
 		
@@ -145,7 +152,7 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 		
 		if (event.isMainFrame()) {
 			
-			System.out.println("loading");
+			System.out.println("loaded");
 			mainFrame = event.getFrameId();
 			startExec = true;
 		}
@@ -157,7 +164,7 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 	public void onPaint(Graphics g) {
 		if (r != null) {
 			g.setColor(Color.green);
-			g.drawRect(r.x, r.y, r.width, r.height);
+			g.drawRect((int)(r.x-methods.getPageXOffset()), (int)(r.y-methods.getPageYOffset()), r.width, r.height);
 		}
 	}
 
@@ -165,7 +172,7 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 	public void onStart() {
 		System.out.println("Starting");
 		//openTab("naht.tk/random");//
-		currentTab = openTab("http://www.littlebay.co.uk/");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		currentTab = openTab("http://m.audibene.de/hoerstudie/?act=1078&utm_source=Display&utm_medium=Banner&utm_term=SHoerstudie_Criteo_B37versionB_V008_728x90&utm_campaign=Criteo_09_statisch_hoerstudie&t=0079");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
 		//currentTab.getTabView().addTabPaintListener(this);
 		getTabs().addTabControlListener(new TabControlAdapter() {
@@ -187,15 +194,6 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 	}
 
 	@Override
-	public void onPause() {
-	}
-
-	@Override
-	public void onTerminate() {
-		
-	}
-
-	@Override
 	public void onFailLoadingFrame(FailLoadingEvent event) {
 	}
 
@@ -205,17 +203,5 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 
 	@Override
 	public void onStartLoadingFrame(StartLoadingEvent event) {
-	}
-
-	@Override
-	public void onResume() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onFinished() {
-		// TODO Auto-generated method stub
-		
 	}
 }

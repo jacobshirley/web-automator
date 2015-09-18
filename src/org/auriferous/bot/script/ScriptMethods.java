@@ -26,6 +26,8 @@ public class ScriptMethods {
 	public static final String SHIFT_KEYS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ¬!\"£$%^&*()_+{}:@~<>?|€";
 	public static final int DEFAULT_KEY_TIME = 100;
 	
+	public static final String LINK_JQUERY = "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"], a[href^=\"/\"], a[href^=\"clkn\"], a[href^=\"clkg\"]');";
+	
 	public enum ClickType {
 		LCLICK, RCLICK, NO_CLICK
 	}
@@ -301,9 +303,9 @@ public class ScriptMethods {
 	public ElementBounds getRandomClickable(boolean includeButtons) {
 		ElementBounds el = null;
 		if (includeButtons)
-			el = getRandomElement("$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");", "getJSClickables();");
+			el = getRandomElement(LINK_JQUERY, "$(document).findVisibles(\"button, input[type='button'], input[type='submit']\");", "getJSClickables();");
 		else {
-			el = getRandomElement("$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');", "getJSClickables();");
+			el = getRandomElement(LINK_JQUERY, "getJSClickables();");
 		}
 		return el;
 	}
@@ -311,9 +313,9 @@ public class ScriptMethods {
 	public ElementBounds getRandomClickable(long frameID, boolean includeButtons) {
 		ElementBounds el = null;
 		if (includeButtons)
-			el = getRandomElement(frameID, "$(document).findVisibles(\"a, button, input[type='button'], input[type='submit']\");", "getJSClickables();");
+			el = getRandomElement(frameID, LINK_JQUERY, "$(document).findVisibles(\"button, input[type='button'], input[type='submit']\");", "getJSClickables();");
 		else {
-			el = getRandomElement(frameID, "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');", "getJSClickables();");
+			el = getRandomElement(frameID, LINK_JQUERY, "getJSClickables();");
 		}
 		return el;
 	}

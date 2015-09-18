@@ -33,7 +33,6 @@ public class ClickAdState extends AdClickerState {
 	private String blogURL = null;
 	
 	private int searchAdTries = 0;
-	private int foundID = 0;
 	private boolean clickedAd = false;
 	private boolean pageLoading = false;
 
@@ -127,7 +126,6 @@ public class ClickAdState extends AdClickerState {
 		ScriptMethods methods = adClicker.getScriptMethods();
 		
 		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle').first().css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()");
-		foundID = 0;
 		if (adsbygoogle.length > 0) {
 			ElementBounds bounds = adsbygoogle[0];
 			ElementBounds[] iframe1 = methods.getElements("$('#google_ads_frame1')");
@@ -136,8 +134,6 @@ public class ClickAdState extends AdClickerState {
 				
 				ElementBounds[] result = null;
 				for (String s : jqueryStrings) {
-					foundID++;
-
 					result = methods.getElements(s);
 					if (result.length > 0) {
 						System.out.println("Found "+s);
