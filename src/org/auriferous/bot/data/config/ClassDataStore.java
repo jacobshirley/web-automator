@@ -2,21 +2,12 @@ package org.auriferous.bot.data.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.jxpath.JXPathContext;
 import org.auriferous.bot.data.DataEntry;
-import org.auriferous.bot.data.DataStore;
 import org.auriferous.bot.data.RootEntry;
 import org.auriferous.bot.data.xml.XMLDataStore;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 public class ClassDataStore extends XMLDataStore{
 	protected Map<String, Configurable> configurables = new HashMap<String, Configurable>();

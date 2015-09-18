@@ -2,7 +2,6 @@ package org.auriferous.bot.gui.swing;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -26,7 +25,6 @@ import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorFrame;
 import org.auriferous.bot.gui.swing.tabs.JTab;
 import org.auriferous.bot.gui.swing.tabs.JTabBar;
-import org.auriferous.bot.gui.swing.tabs.JTabView;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.executor.ScriptExecutionListener;
 import org.auriferous.bot.tabs.Tab;

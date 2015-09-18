@@ -12,8 +12,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 public class XMLScriptManifest extends ScriptManifest {
-	private String manifestPath;
-	
 	private String id;
 	private String name;
 	private String version;
@@ -33,8 +31,7 @@ public class XMLScriptManifest extends ScriptManifest {
 
 			document = builder.parse(new File(src));
 			init((Element)document.getElementsByTagName("script").item(0));
-			
-			this.manifestPath = src;
+	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -49,8 +46,6 @@ public class XMLScriptManifest extends ScriptManifest {
 
 			document = builder.parse(source);
 			init((Element)document.getElementsByTagName("script").item(0));
-			
-			this.manifestPath = src;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

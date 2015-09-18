@@ -1,6 +1,5 @@
 package org.auriferous.bot.tabs;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,41 +7,22 @@ import java.util.Stack;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.data.history.HistoryConfig;
-import org.auriferous.bot.data.history.HistoryEntry;
 import org.auriferous.bot.tabs.view.TabView;
 
-import com.teamdev.jxbrowser.chromium.AuthRequiredParams;
-import com.teamdev.jxbrowser.chromium.BeforeRedirectParams;
-import com.teamdev.jxbrowser.chromium.BeforeSendHeadersParams;
-import com.teamdev.jxbrowser.chromium.BeforeSendProxyHeadersParams;
-import com.teamdev.jxbrowser.chromium.BeforeURLRequestParams;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
 import com.teamdev.jxbrowser.chromium.BrowserFunction;
-import com.teamdev.jxbrowser.chromium.Callback;
-import com.teamdev.jxbrowser.chromium.CertificateErrorParams;
-import com.teamdev.jxbrowser.chromium.Cookie;
-import com.teamdev.jxbrowser.chromium.CustomProxyConfig;
-import com.teamdev.jxbrowser.chromium.DefaultLoadHandler;
-import com.teamdev.jxbrowser.chromium.HeadersReceivedParams;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
-import com.teamdev.jxbrowser.chromium.LoadHandler;
-import com.teamdev.jxbrowser.chromium.LoadParams;
-import com.teamdev.jxbrowser.chromium.NetworkDelegate;
 import com.teamdev.jxbrowser.chromium.PopupContainer;
 import com.teamdev.jxbrowser.chromium.PopupHandler;
 import com.teamdev.jxbrowser.chromium.PopupParams;
-import com.teamdev.jxbrowser.chromium.RequestCompletedParams;
-import com.teamdev.jxbrowser.chromium.RequestParams;
-import com.teamdev.jxbrowser.chromium.ResponseStartedParams;
-import com.teamdev.jxbrowser.chromium.SendHeadersParams;
-import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
-import com.teamdev.jxbrowser.chromium.events.LoadEvent;
+import com.teamdev.jxbrowser.chromium.events.ConsoleListener;
 import com.teamdev.jxbrowser.chromium.events.LoadListener;
+import com.teamdev.jxbrowser.chromium.events.RenderListener;
+import com.teamdev.jxbrowser.chromium.events.StatusListener;
 import com.teamdev.jxbrowser.chromium.events.TitleEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleListener;
-import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class Tab {
 	private static final List<Browser> BROWSER_INSTANCES = new ArrayList<Browser>();
@@ -68,6 +48,7 @@ public class Tab {
 		this.id = -1;
 		this.parent = parent;
 		this.history = history;
+		this.originalURL = url;
 		
 		this.browser = new Browser(DEFAULT_CONTEXT);
 		this.browser.getPreferences().setLocalStorageEnabled(true);
@@ -101,7 +82,7 @@ public class Tab {
 			            else if (arg.isNull() || arg.isUndefined())
 			            	oArgs[c] = null;
 			            else 
-			            	oArgs[c] = (JSObject)arg;
+			            	oArgs[c] = arg;
 			            c++;
 			        }
 			        Object returned = callback.onInvoke(oArgs);
@@ -135,6 +116,7 @@ public class Tab {
 					@Override
 					public void insertBrowser(final Browser browser,
 							java.awt.Rectangle dimensions) {
+						
 						System.out.println("Potential popup");
 						final String url = browser.getURL();
 						browser.stop();
@@ -150,6 +132,9 @@ public class Tab {
 								}
 							}
 						}).start();
+
+						
+						//setBrowser(browser);
 					}
 		        };
 		    }
@@ -164,7 +149,6 @@ public class Tab {
 				history.addEntry(new HistoryEntry(System.currentTimeMillis(), "", b.getTitle(), b.getURL()));
 			}
 		});*/
-		
 		loadURL(url);
 	}
 	
@@ -241,12 +225,24 @@ public class Tab {
 		this.id = id;
 	}
 	
-	/*private void setBrowser(Browser browser) {
+	private void setBrowser(Browser browser) {
+		browser.getContext().getNetworkService().setNetworkDelegate(this.browser.getContext().getNetworkService().getNetworkDelegate());
+		browser.getContext().getNetworkService().setResourceHandler(this.browser.getContext().getNetworkService().getResourceHandler());
+
 		for (TitleListener l : this.browser.getTitleListeners())
 			browser.addTitleListener(l);
 		
 		for (LoadListener l : this.browser.getLoadListeners())
 			browser.addLoadListener(l);
+		
+		for (StatusListener l : this.browser.getStatusListeners())
+			browser.addStatusListener(l);
+		
+		for (ConsoleListener l : this.browser.getConsoleListeners())
+			browser.addConsoleListener(l);
+		
+		for (RenderListener l : this.browser.getRenderListeners())
+			browser.addRenderListener(l);
 
 		for (String s : this.browser.getBrowserFunctionNames())
 			browser.registerFunction(s, this.browser.getBrowserFunction(s));
@@ -254,18 +250,21 @@ public class Tab {
 		browser.setPreferences(this.browser.getPreferences());
 		browser.setPopupHandler(this.browser.getPopupHandler());
 		browser.setLoadHandler(this.browser.getLoadHandler());
-		browser.getContext().getNetworkService().setNetworkDelegate(this.browser.getContext().getNetworkService().getNetworkDelegate());
-		browser.getContext().getNetworkService().setResourceHandler(this.browser.getContext().getNetworkService().getResourceHandler());
-		
+		browser.setDialogHandler(this.browser.getDialogHandler());
+		browser.setFullScreenHandler(this.browser.getFullScreenHandler());
+		browser.setDownloadHandler(this.browser.getDownloadHandler());
+		browser.setContextMenuHandler(this.browser.getContextMenuHandler());
+		browser.setPrintHandler(this.browser.getPrintHandler());
+		browser.setDialogHandler(this.browser.getDialogHandler());
+	
 		//this.browser.dispose();
 		this.browser = browser;
 		
 		BROWSER_INSTANCES.add(this.browser);
 		
 		for (TabListener listener : tabListeners) 
-			listener.onTabBrowserChanged(browser);
-	}*/
-	
+			listener.onTabBrowserChanged(this.browser);
+	}
 	public Browser getBrowserInstance() {
 		return browser;
 	}

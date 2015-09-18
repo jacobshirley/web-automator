@@ -1,7 +1,5 @@
 package org.auriferous.bot.data.xml;
 
-import org.auriferous.bot.data.DataEntry;
-import org.auriferous.bot.data.config.Configurable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

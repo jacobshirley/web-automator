@@ -3,11 +3,7 @@ package org.auriferous.bot.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.jxpath.AbstractFactory;
 import org.apache.commons.jxpath.DynamicPropertyHandler;
-import org.apache.commons.jxpath.JXPathContext;
-import org.apache.commons.jxpath.JXPathIntrospector;
-import org.apache.commons.jxpath.Pointer;
 
 public class DataEntryHandler implements DynamicPropertyHandler{
 	

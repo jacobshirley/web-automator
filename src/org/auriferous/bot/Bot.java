@@ -16,7 +16,6 @@ import org.auriferous.bot.data.history.HistoryConfig;
 import org.auriferous.bot.data.library.ScriptLibrary;
 import org.auriferous.bot.data.library.xml.XMLScriptLibrary;
 import org.auriferous.bot.data.library.xml.XMLScriptManifest;
-import org.auriferous.bot.data.xml.XMLDataStore;
 import org.auriferous.bot.gui.swing.JBotFrame;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;

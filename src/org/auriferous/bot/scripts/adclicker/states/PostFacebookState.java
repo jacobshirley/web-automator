@@ -7,7 +7,6 @@ import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.script.fsm.FSM;
 import org.auriferous.bot.script.fsm.State;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
 import org.auriferous.bot.scripts.adclicker.Task;

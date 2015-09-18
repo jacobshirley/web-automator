@@ -2,15 +2,7 @@ package org.auriferous.bot.scripts.adclicker;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,13 +13,11 @@ import javax.swing.JMenuItem;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.data.DataEntry;
 import org.auriferous.bot.data.config.Configurable;
-import org.auriferous.bot.data.history.HistoryEntry;
 import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
-import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.fsm.FSM;
 import org.auriferous.bot.scripts.adclicker.gui.SetSignatureFrame;
@@ -37,22 +27,8 @@ import org.auriferous.bot.scripts.adclicker.states.events.Events;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.view.PaintListener;
 
-import com.teamdev.jxbrowser.chromium.AuthRequiredParams;
-import com.teamdev.jxbrowser.chromium.BeforeRedirectParams;
-import com.teamdev.jxbrowser.chromium.BeforeSendHeadersParams;
-import com.teamdev.jxbrowser.chromium.BeforeSendProxyHeadersParams;
-import com.teamdev.jxbrowser.chromium.BeforeURLRequestParams;
-import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.Cookie;
-import com.teamdev.jxbrowser.chromium.HeadersReceivedParams;
-import com.teamdev.jxbrowser.chromium.NetworkDelegate;
-import com.teamdev.jxbrowser.chromium.RequestCompletedParams;
-import com.teamdev.jxbrowser.chromium.RequestParams;
-import com.teamdev.jxbrowser.chromium.ResponseStartedParams;
-import com.teamdev.jxbrowser.chromium.SendHeadersParams;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
-import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class AdClicker extends Script implements PaintListener, JScriptGuiListener, Configurable{
 	private static final int MAX_WAIT_TIME = 10;

@@ -2,11 +2,6 @@ package org.auriferous.bot.data;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.auriferous.bot.data.config.Configurable;
 
 public abstract class DataStore {
 	protected File file;

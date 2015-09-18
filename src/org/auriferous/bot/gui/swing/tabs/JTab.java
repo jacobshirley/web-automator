@@ -10,6 +10,7 @@ import org.auriferous.bot.gui.swing.Constants;
 import org.auriferous.bot.gui.swing.JOverlayComponent;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.TabListener;
+import org.auriferous.bot.tabs.view.PaintListener;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.DialogParams;
@@ -83,10 +84,16 @@ public class JTab extends JPanel implements TabListener {
 
 	@Override
 	public void onTabBrowserChanged(Browser browser) {
+		JTabView old = this.tabView;
+		
 		this.tabView = new JTabView(overlayComp, this.tab);
+		
+		for (PaintListener l : old.getPaintListeners())
+			this.tabView.addPaintListener(l);
+
 		this.tab.setTabView(tabView);
 		
-		this.removeAll();
+		this.remove(old);
 		this.add(tabView);
 	}
 }

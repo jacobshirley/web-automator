@@ -1,17 +1,11 @@
 package org.auriferous.bot.gui.swing.tabs;
 
 import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.SwingUtilities;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.gui.swing.JBotFrame;
@@ -61,10 +55,16 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 		return true;
 	}
 	
+	@Override
 	public void addPaintListener(PaintListener listener) {
 		this.paintListeners.add(listener);
 	}
 	
+	public List<PaintListener> getPaintListeners() {
+		return paintListeners;
+	}
+	
+	@Override
 	public void removePaintListener(PaintListener listener) {
 		this.paintListeners.remove(listener);
 	}

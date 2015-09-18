@@ -13,4 +13,8 @@ public class Element {
 	public JSObject getDOMElement() {
 		return domElement;
 	}
+	
+	public ElementBounds getBounds() {
+		return bounds;
+	}
 }

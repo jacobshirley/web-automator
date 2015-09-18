@@ -19,7 +19,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.auriferous.bot.data.DataEntry;
 import org.auriferous.bot.data.DataStore;
 import org.auriferous.bot.data.RootEntry;
-import org.auriferous.bot.data.TextDataEntry;
 import org.auriferous.bot.data.config.Configurable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

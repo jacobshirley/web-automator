@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.JXPathIntrospector;
-import org.apache.commons.jxpath.Pointer;
 
 public class DataEntry {
 	static {
@@ -117,7 +116,7 @@ public class DataEntry {
 	public List<DataEntry> get(String xpath) {
 		createContext();
 		
-		return (List<DataEntry>)context.selectNodes(xpath);
+		return context.selectNodes(xpath);
 	}
 	
 	public DataEntry getSingle(String xpath) {
