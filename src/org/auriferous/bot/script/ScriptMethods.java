@@ -34,25 +34,21 @@ public class ScriptMethods {
 	
 	private String status = "";
 	private int mouseSpeed = DEFAULT_MOUSE_SPEED;
-	
-	protected Browser browser;
-	
+
 	private Mouse mouse;
 	private Keyboard keyboard;
 	
-	private Tab target;
+	protected Tab target;
 
 	public ScriptMethods(Tab target) {
 		this.target = target;
-		
-		this.browser = this.target.getBrowserInstance();
-		
+
 		this.mouse = new Mouse(this.target);
 		this.keyboard = new Keyboard(this.target);
 		
 		this.target.getTabView().addPaintListener(this.mouse);
 		
-		this.browser.addStatusListener(new StatusListener() {
+		this.target.getBrowserInstance().addStatusListener(new StatusListener() {
 			@Override
 			public void onStatusChange(StatusEvent event) {
 				status = event.getText();
@@ -67,7 +63,7 @@ public class ScriptMethods {
 	public void injectJQuery(long frameID) {
 		try {
 			if (!isJQueryInjected(frameID))
-				browser.executeJavaScript(frameID, ResourceLoader.loadResourceAsString("resources/js/jquery.min.js", true));
+				target.getBrowserInstance().executeJavaScript(frameID, ResourceLoader.loadResourceAsString("resources/js/jquery.min.js", true));
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}
@@ -76,7 +72,7 @@ public class ScriptMethods {
 	public void injectCode(long frameID) {
 		try {
 			if (!isCodeInjected(frameID)) {
-				browser.executeJavaScript(frameID,  ResourceLoader.loadResourceAsString("resources/js/inject.js", true));
+				target.getBrowserInstance().executeJavaScript(frameID,  ResourceLoader.loadResourceAsString("resources/js/inject.js", true));
 			}
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -84,11 +80,11 @@ public class ScriptMethods {
 	}
 	
 	private boolean isJQueryInjected(long frameID) {
-		return browser.executeJavaScriptAndReturnValue(frameID, "window.jQuery != undefined").getBoolean();
+		return target.getBrowserInstance().executeJavaScriptAndReturnValue(frameID, "window.jQuery != undefined").getBoolean();
 	}
 	
 	private boolean isCodeInjected(long frameID) {
-		return browser.executeJavaScriptAndReturnValue(frameID, "window.injectionLoaded != undefined").getBoolean();
+		return target.getBrowserInstance().executeJavaScriptAndReturnValue(frameID, "window.injectionLoaded != undefined").getBoolean();
 	}
 	
 	/*public ElementRect[] getElements(String... jqueryString) {
@@ -102,7 +98,7 @@ public class ScriptMethods {
 	public ElementBounds[] getElements(String jqueryString) {
 		List<ElementBounds> elems = new ArrayList<ElementBounds>();
 		
-		for (Long frame : browser.getFramesIds()) {
+		for (Long frame : target.getBrowserInstance().getFramesIds()) {
 			ElementBounds[] elems2 = getElements(frame, jqueryString);
 			elems.addAll(Arrays.asList(elems2));
 		}
@@ -117,7 +113,7 @@ public class ScriptMethods {
 		ElementBounds testEl = null;
 		ElementBounds[] foundEls = null;
 		
-		for (Long frame : browser.getFramesIds()) {
+		for (Long frame : target.getBrowserInstance().getFramesIds()) {
 			ElementBounds[] elems = getElements(frame, jqueryString);
 			if (elems.length > 0) {
 				if (testEl == null) {
@@ -136,26 +132,26 @@ public class ScriptMethods {
 	}*/
 	
 	public ElementBounds[] getElementsInIFrames(String jqueryString) {
-		String mainHref = browser.executeJavaScriptAndReturnValue("window.location.href;").getString();
+		String mainHref = target.getBrowserInstance().executeJavaScriptAndReturnValue("window.location.href;").getString();
 		String href = "";
 		
 		ElementBounds testEl = null;
 		ElementBounds[] foundEls = null;
 		
-		for (Long frame : browser.getFramesIds()) {
+		for (Long frame : target.getBrowserInstance().getFramesIds()) {
 			ElementBounds[] elems = getElements(frame, jqueryString);
 			if (elems.length > 0) {
 				//System.out.println("Testing "+jqueryString);
-				//System.out.println(browser.getHTML(frame));
+				//System.out.println(target.getBrowserInstance().getHTML(frame));
 				if (testEl == null) {
-					href = browser.executeJavaScriptAndReturnValue(frame, "window.location.href;").getString();
+					href = target.getBrowserInstance().executeJavaScriptAndReturnValue(frame, "window.location.href;").getString();
 
 					foundEls = elems;
 					testEl = elems[0];
 				} else {
 					if (elems[0].x > testEl.x && elems[0].y > testEl.y) {
 						//System.out.println("Getting highest offset");
-						href = browser.executeJavaScriptAndReturnValue(frame, "window.location.href;").getString();
+						href = target.getBrowserInstance().executeJavaScriptAndReturnValue(frame, "window.location.href;").getString();
 						
 						foundEls = elems;
 						testEl = elems[0];
@@ -169,7 +165,7 @@ public class ScriptMethods {
 				return foundEls;
 			} else {
 				//System.out.println("Searching iframes");
-				for (Long frame : browser.getFramesIds()) {
+				for (Long frame : target.getBrowserInstance().getFramesIds()) {
 					ElementBounds[] iframes = getElements(frame, "$(\"iframe[src='"+href+"']\");");
 					
 					if (iframes.length > 0) {
@@ -223,7 +219,7 @@ public class ScriptMethods {
     		
 	    	target.pushCallback(c);
 
-			browser.executeJavaScriptAndReturnValue(frameID, "sendBackResults("+search+")");
+			target.getBrowserInstance().executeJavaScriptAndReturnValue(frameID, "sendBackResults("+search+")");
 			
 			target.popCallback();
     	} catch (Exception e) {
@@ -236,27 +232,27 @@ public class ScriptMethods {
 	}
 	
 	public double getPageXOffset() {
-		return browser.executeJavaScriptAndReturnValue("window.pageXOffset").getNumber();
+		return target.getBrowserInstance().executeJavaScriptAndReturnValue("window.pageXOffset").getNumber();
 	}
 	
 	public double getPageYOffset() {
-		return browser.executeJavaScriptAndReturnValue("window.pageYOffset").getNumber();
+		return target.getBrowserInstance().executeJavaScriptAndReturnValue("window.pageYOffset").getNumber();
 	}
 	
 	public double getPageWidth() {
-		return browser.executeJavaScriptAndReturnValue("$(document).width()").getNumber();
+		return target.getBrowserInstance().executeJavaScriptAndReturnValue("$(document).width()").getNumber();
 	}
 	
 	public double getPageHeight() {
-		return browser.executeJavaScriptAndReturnValue("$(document).height()").getNumber();
+		return target.getBrowserInstance().executeJavaScriptAndReturnValue("$(document).height()").getNumber();
 	}
 	
 	public double getWindowWidth() {
-		return browser.executeJavaScriptAndReturnValue("$(window).width()").getNumber();
+		return target.getBrowserInstance().executeJavaScriptAndReturnValue("$(window).width()").getNumber();
 	}
 	
 	public double getWindowHeight() {
-		return browser.executeJavaScriptAndReturnValue("$(window).height()").getNumber();
+		return target.getBrowserInstance().executeJavaScriptAndReturnValue("$(window).height()").getNumber();
 	}
 	
 	public ElementBounds getRandomElement(String... selector) {
@@ -546,7 +542,7 @@ public class ScriptMethods {
 		keyboard.typeKey(c, DEFAULT_KEY_TIME, mods);
 	}
 
-	public Browser getBrowser() {
-		return browser;
+	public Browser getBrowserInstance() {
+		return target.getBrowserInstance();
 	}
 }

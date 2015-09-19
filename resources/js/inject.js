@@ -187,17 +187,23 @@ function elementsFromPointIFrames(x, y, relativeX, relativeY) {
 
 function getElementWidth(elem) {
 	var width = elem.outerWidth();
-	/*elem.children().each(function (i) {
-		width = Math.max(width, getElementWidth($(this)));
-	});*/
+	var offset = elem.offset2();
+	elem.children().each(function (i) {
+		var $this = $(this);
+		if ($this.offset2().left >= offset.left)
+			width = Math.max(width, getElementWidth($(this)));
+	});
 	return width;
 }
 
 function getElementHeight(elem) {
 	var height = elem.outerHeight();
-	/*elem.children().each(function (i) {
-		height = Math.max(height, getElementHeight($(this)));
-	});*/
+	var offset = elem.offset2();
+	elem.children().each(function (i) {
+		var $this = $(this);
+		if ($this.offset2().top >= offset.top)
+			height = Math.max(height, getElementHeight($(this)));
+	});
 	return height;
 }
 
