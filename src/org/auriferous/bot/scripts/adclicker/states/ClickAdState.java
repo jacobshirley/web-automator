@@ -203,11 +203,10 @@ public class ClickAdState extends AdClickerState {
 	}
     
     private String testAdURL(String testURL) throws Exception {
-		String url = "http://212.56.108.16/jacob/test_url.php";
+		String url = "http://www.wtfhallo.co/test_url.php";
 		
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
 
 		con.setRequestMethod("POST");
 		con.setRequestProperty("User-Agent", USER_AGENT);

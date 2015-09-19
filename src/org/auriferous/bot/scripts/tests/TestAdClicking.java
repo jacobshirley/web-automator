@@ -105,7 +105,7 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 				Utils.wait(500);
 				fbMethods.mouse(p, ClickType.LCLICK);
 				Utils.wait(500);
-				System.out.println("Writing signature of ");
+				System.out.println("Writing signature of Testing");
 				
 				fbMethods.type("Testing");
 			}
