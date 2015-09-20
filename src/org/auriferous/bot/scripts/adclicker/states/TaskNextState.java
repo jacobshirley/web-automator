@@ -20,6 +20,8 @@ public class TaskNextState extends AdClickerState{
 		
 		if (currentTask != null) {
 			System.out.println("Starting next task "+currentTask.url);
+			if (adClicker.getBotTab() != null)
+				adClicker.loadBlog();
 		} else {
 			System.out.println("Finished all tasks");
 			adClicker.getBotTab().alert("Finished!");

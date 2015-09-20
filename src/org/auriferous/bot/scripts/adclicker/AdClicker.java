@@ -34,8 +34,6 @@ import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 public class AdClicker extends Script implements PaintListener, JScriptGuiListener, Configurable{
 	private static final int MAX_WAIT_TIME = 10;
 	
-	private String curURL;
-	
 	private Tab botTab;
 	private ScriptMethods methods;
 	private boolean skipTask = false;
@@ -57,6 +55,10 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	
 	private long loadTimer = System.currentTimeMillis();
 	
+	private long mainFrameID = 0;
+
+	private String curURL = "";
+	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
 	}
@@ -72,8 +74,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		System.out.println("Opening tab");
 		
 		if (botTab != null) {
-			System.out.println("Loading URL "+curURL);
-			botTab = openTab();
+			botTab = openTab(curURL);
 		} else
 			botTab = openTab();
 		
@@ -82,6 +83,9 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 			public void onFinishLoadingFrame(FinishLoadingEvent event) {
 				if (event.isMainFrame()) {
 					System.out.println("page loaded");
+					
+					mainFrameID = event.getFrameId();
+					curURL = botTab.getURL();
 					loadTimer = System.currentTimeMillis();
 					stateMachine.pushEvent(Events.EVENT_PAGE_LOADED);
 				}
@@ -93,6 +97,10 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		methods = new ScriptMethods(botTab);
 		
 		loadBlog();
+	}
+	
+	public long getMainFrameID() {
+		return mainFrameID;
 	}
 	
 	private void openSignatureDialog() {
@@ -158,7 +166,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 			
 			boolean disposed = botTab.getBrowserInstance().isDisposed();
 			if (disposed) {
-				getTabs().closeTab(botTab);
+				//getTabs().closeTab(botTab);
 				System.out.println("Apparently disposed. Opening new tab.");
 				handleTab();
 				
@@ -189,8 +197,15 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 
 	@Override
 	public void onStart() {
+		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
+		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
+		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
+		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
+		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
+		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
+		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
 		new TaskManager(tasks, taskConfig);
-		//tasks.add(new Task("florats.tk", 1, 0, 0, 1, ""));
+		
 		//executeTasks();
 	}
 

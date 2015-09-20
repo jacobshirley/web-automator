@@ -30,7 +30,7 @@ import com.teamdev.jxbrowser.chromium.LoggerProvider;
 
 public class Bot implements ScriptExecutionListener, Configurable {
 	static {
-		System.setProperty("JExplorer.runInIsolatedProcess", "false");
+		//System.setProperty("JExplorer.runInIsolatedProcess", "false");
 		LoggerProvider.setLevel(Level.SEVERE);
 		
 		BrowserPreferences.setUserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
@@ -95,7 +95,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			});
 		}
 		try {
-			//scriptExecutor.runScript(scriptLoader.loadScript(manifest3));
+			scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/

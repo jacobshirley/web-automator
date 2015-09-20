@@ -44,10 +44,11 @@ public class ClickAdState extends AdClickerState {
 			@Override
 			public void onBeforeURLRequest(BeforeURLRequestParams arg0) {
 				pageLoading = true;
-
-				if (arg0.getURL().contains("gclid")) {
+				String url = arg0.getURL();
+				
+				if (url.contains("aclk?")) {
 					//System.out.println("Contains gclid!!");
-					handleAdTest(arg0.getURL());
+					handleAdTest(url);
 				}
 			}
 		});
@@ -156,6 +157,7 @@ public class ClickAdState extends AdClickerState {
 	
 	private void handleAdTest(String url) {
 		if (clickedAd) {
+			System.out.println("url req: "+url);
 			DataEntry historyConfig = adClicker.getHistoryConfig();
 		
 			clickedAd = false;
@@ -179,7 +181,7 @@ public class ClickAdState extends AdClickerState {
 					System.out.println("Already clicked this.");
 					
 					int clicks = Integer.parseInt(entry.getValue("//clicks", 1).toString())+1;
-					System.out.println("This has been clicked "+clicks+" times.");
+					System.out.println("This has been clicked "+(clicks-1)+" times.");
 					
 					if (clicks > MAX_CLICKS) {
 						adClicker.getBotTab().stop();

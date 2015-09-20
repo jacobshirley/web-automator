@@ -23,7 +23,8 @@ public class ShufflesState extends AdClickerState {
 				curShuffles++;
 				System.out.println("Doing shuffle "+curShuffles);
 				
-				Utils.wait(curTask.timeInterval*1000);
+				Utils.wait(Math.max(0, (curTask.timeInterval*1000)+Utils.random(-2000, 2000)));
+				//+Utils.random(5000)
 				
 				adClicker.loadBlog();
 			} else {

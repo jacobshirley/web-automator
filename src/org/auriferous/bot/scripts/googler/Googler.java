@@ -1,5 +1,7 @@
 package org.auriferous.bot.scripts.googler;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -16,10 +18,12 @@ import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.tabs.view.PaintListener;
+
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
-public class Googler extends Script implements JScriptGuiListener{
+public class Googler extends Script implements JScriptGuiListener, PaintListener{
 	private static final String[] SEARCHES = new String[] {"insurance marketplace", "insurance quotes", "insurance companies", "interest rates", "restaurants in Brighton", "pubs in Brighton"};
 	
 	private static final int STAGE_GOOGLE = 0;
@@ -39,6 +43,8 @@ public class Googler extends Script implements JScriptGuiListener{
 	private long mainFrame = 0;
 	
 	private List<String> searches = new LinkedList<String>();
+	
+	private ElementBounds debugElement = null;
 
 	public Googler(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -51,6 +57,7 @@ public class Googler extends Script implements JScriptGuiListener{
 	@Override
 	public void onStart() {
 		googleTab = openTab("www.google.co.uk");
+		googleTab.getTabView().addPaintListener(this);
 		
 		googleTab.getBrowserInstance().addLoadListener(new LoadAdapter() {
 			@Override
@@ -70,7 +77,7 @@ public class Googler extends Script implements JScriptGuiListener{
 	
 	private boolean tickGoogle() {
 		if (!searches.isEmpty()) {
-			Utils.wait(5000);
+			Utils.wait(2000);
 			
 			System.out.println("Started typing");
 			int random = (int)Math.floor(searches.size()*Math.random());
@@ -117,17 +124,17 @@ public class Googler extends Script implements JScriptGuiListener{
 	}
 	
 	private int getWaitTime() {
-		return getWaitTime(methods.getElements("$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');"));
+		return getWaitTime(methods.getElements(methods.LINK_JQUERY));
 	}
 	
 	private boolean tickSaveURL() {
 		subClicks = 0;
 		saveURL = googleTab.getURL();
 		
-		elements = methods.getElements("$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');");
+		elements = methods.getElements(methods.LINK_JQUERY);
 		if (elements == null) {
 			Utils.wait(5000);
-			elements = methods.getElements("$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"]');");
+			elements = methods.getElements(methods.LINK_JQUERY);
 		}
 		int waitTime = getWaitTime(elements);
 		System.out.println("Waiting "+(waitTime/1000)+" seconds");
@@ -144,7 +151,11 @@ public class Googler extends Script implements JScriptGuiListener{
 			System.out.println("Started clicking links "+subClicks+"/"+MAX_CLICKS);
 			
 			ElementBounds clickable = (ElementBounds)Utils.getRandomObject(elements);
+			
+			System.out.println("Got clickable");
+			
 			if (clickable != null) {
+				debugElement = clickable;
 				methods.mouse(clickable.getRandomPointFromCentre(0.7, 0.7));
 			} else {
 				System.out.println("couldn't find link");
@@ -203,5 +214,13 @@ public class Googler extends Script implements JScriptGuiListener{
 	@Override
 	public void onJMenuCreated(JMenu menu) {
 		menu.add(new JMenuItem("Add Search"));
+	}
+
+	@Override
+	public void onPaint(Graphics g) {
+		if (debugElement != null) {
+			g.setColor(Color.green);
+			g.drawRect(debugElement.x, debugElement.y, debugElement.width, debugElement.height);
+		}
 	}
 }

@@ -19,17 +19,11 @@ public class Tabs {
 	
 	public Tab openTab(String url) {
 		Tab tab = new Tab(this, url, history);
-		
-		
 		tabsList.add(tab);
 
 		tab.setID(tabsList.indexOf(tab));
 		
-		
 		setCurrentTab(tab);
-		
-		
-
 		for (TabControlListener listener : tabListeners) {
 			listener.onTabAdded(tab);
 			listener.onTabChange(tab);
@@ -87,6 +81,7 @@ public class Tabs {
 	}
 	
 	public void closeTab(Tab tab) {
+		System.out.println("Closing tab "+tab);
 		tab.getBrowserInstance().dispose();
 		if (tabsList.contains(tab)) {
 			tabsList.remove(tab);

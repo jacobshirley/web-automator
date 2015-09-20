@@ -87,10 +87,6 @@ public class ScriptMethods {
 		return target.getBrowserInstance().executeJavaScriptAndReturnValue(frameID, "window.injectionLoaded != undefined").getBoolean();
 	}
 	
-	/*public ElementRect[] getElements(String... jqueryString) {
-		
-	}*/
-	
 	public String getStatus() {
 		return status;
 	}
@@ -219,7 +215,9 @@ public class ScriptMethods {
     		
 	    	target.pushCallback(c);
 
+	    	System.out.println("Executing javascript");
 			target.getBrowserInstance().executeJavaScriptAndReturnValue(frameID, "sendBackResults("+search+")");
+			System.out.println("Finished executing javascript");
 			
 			target.popCallback();
     	} catch (Exception e) {
@@ -289,7 +287,9 @@ public class ScriptMethods {
 		if (elemsList.isEmpty())
 			return null;
 	
-		return elemsList.get((int) Math.floor(Math.random()*elemsList.size()));
+		int random = (int) Math.floor(Math.random()*elemsList.size());
+		System.out.println("got random "+random + " out of "+elemsList.size());
+		return elemsList.get(random);
 	}
 	
 	public ElementBounds getRandomTextField(long frameID) {

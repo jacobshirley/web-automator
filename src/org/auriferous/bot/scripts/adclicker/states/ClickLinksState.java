@@ -21,7 +21,7 @@ public class ClickLinksState extends AdClickerState{
 	private boolean waitForLoad = false;
 	
 	private String adURL;
-	
+
 	public ClickLinksState(AdClicker adClicker, String adURL) {
 		super(adClicker);
 		this.adURL = adURL;
@@ -47,7 +47,7 @@ public class ClickLinksState extends AdClickerState{
 			Utils.wait(2000);
 			System.out.println("Clicking link in ad");
 
-			ElementBounds randomLink = methods.getRandomClickable(false);
+			ElementBounds randomLink = methods.getRandomClickable(adClicker.getMainFrameID(), false);
 			
 			if (randomLink != null) {
 				curLinkClick++;

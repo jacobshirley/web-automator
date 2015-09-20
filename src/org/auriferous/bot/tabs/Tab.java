@@ -265,7 +265,7 @@ public class Tab {
 		browser.setPrintHandler(this.browser.getPrintHandler());
 		browser.setDialogHandler(this.browser.getDialogHandler());
 	
-		//this.browser.dispose();
+		this.browser.stop();
 		this.browser = browser;
 		
 		BROWSER_INSTANCES.add(this.browser);
@@ -299,6 +299,7 @@ public class Tab {
 		    @Override
 			public void run() {
 		    	for (Browser browser : BROWSER_INSTANCES) {
+		    		System.out.println("Disposing "+browser);
 		    		if (!browser.isDisposed())
 		    			browser.dispose();
 		    	}

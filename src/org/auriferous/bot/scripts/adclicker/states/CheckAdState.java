@@ -3,6 +3,7 @@ package org.auriferous.bot.scripts.adclicker.states;
 import java.util.List;
 
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.fsm.State;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
 import org.auriferous.bot.scripts.adclicker.Task;
@@ -36,10 +37,15 @@ public class CheckAdState extends AdClickerState {
 			
 			adClicker.getBotTab().getBrowserInstance().getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate());
 			
-			
 			System.out.println("Saving URL "+adURL);
 			
 			System.out.println("Now waiting on ad with random 5 seconds");
+			
+			ScriptMethods methods = adClicker.getScriptMethods();
+			int y = (int)Math.round(Math.random()*methods.getPageHeight());
+			
+			System.out.println("Scrolling to random "+y);
+			methods.scrollTo(y);
 			Utils.wait((currentTask.timeOnAd*1000) + Utils.random(5000));
 			
 			return new ClickLinksState(adClicker, adURL);
