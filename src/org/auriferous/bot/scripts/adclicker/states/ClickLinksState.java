@@ -13,7 +13,7 @@ import org.auriferous.bot.scripts.adclicker.states.events.Events;
 import org.auriferous.bot.tabs.Tab;
 
 public class ClickLinksState extends AdClickerState{
-	private static final int MAX_CLICK_TRIES = 2;
+	private static final int MAX_CLICK_TRIES = 0;
 	
 	private int curLinkClick = 0;
 	private int curClickTry = 0;

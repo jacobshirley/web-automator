@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
@@ -15,7 +17,7 @@ import org.auriferous.bot.data.DataEntry;
 import org.auriferous.bot.data.config.Configurable;
 import org.auriferous.bot.data.history.HistoryEntry;
 import org.auriferous.bot.data.library.ScriptManifest;
-import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
+import org.auriferous.bot.gui.swing.script.JScriptGui;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
@@ -31,7 +33,7 @@ import org.auriferous.bot.tabs.view.PaintListener;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
-public class AdClicker extends Script implements PaintListener, JScriptGuiListener, Configurable{
+public class AdClicker extends Script implements PaintListener, JScriptGui, Configurable{
 	private static final int MAX_WAIT_TIME = 10;
 	
 	private Tab botTab;
@@ -65,9 +67,9 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 	
 	private void executeTasks() {
 		stateMachine.pushState(new TaskNextState(this)).tick();
+		loadTimer = System.currentTimeMillis();
 		
 		handleTab();
-		loadTimer = System.currentTimeMillis();
 	}
 	
 	public void handleTab() {
@@ -166,8 +168,9 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 			
 			boolean disposed = botTab.getBrowserInstance().isDisposed();
 			if (disposed) {
-				//getTabs().closeTab(botTab);
 				System.out.println("Apparently disposed. Opening new tab.");
+				
+				getTabs().closeTab(botTab);
 				handleTab();
 				
 				return super.tick();
@@ -176,6 +179,17 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 			if (stateMachine.isFinished()) {
 				return STATE_EXIT_SUCCESS;
 			}
+			
+			Timer timer = new Timer();
+			timer.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					System.out.println("It's been two minutes. Browser must have crashed...");
+					getTabs().closeTab(botTab);
+					handleTab();
+					loadTimer = System.currentTimeMillis();
+				}
+			}, 1*60*1000);
 
 			try {
 				stateMachine.tick();
@@ -184,6 +198,8 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 				e.printStackTrace();
 				stateMachine.clearStates().pushState(new TaskNextState(this)).tick();
 			}
+			
+			timer.cancel();
 			
 			if (System.currentTimeMillis()-loadTimer >= MAX_WAIT_TIME*1000) {
 				System.out.println("Been "+MAX_WAIT_TIME+" seconds. Forcing execution.");
@@ -197,13 +213,11 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 
 	@Override
 	public void onStart() {
-		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
-		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
-		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
-		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
-		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
-		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
-		tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
+		/*
+		for (int i = 0; i < 5; i++)
+			tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
+			//*/
+		
 		new TaskManager(tasks, taskConfig);
 		
 		//executeTasks();
@@ -307,5 +321,11 @@ public class AdClicker extends Script implements PaintListener, JScriptGuiListen
 		root.add(taskConfig, true);
 		root.add(historyConfig, true);
 		root.add(taskHistoryConfig, true);
+	}
+
+	@Override
+	public boolean shouldCreateMenu() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

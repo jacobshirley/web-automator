@@ -26,7 +26,7 @@ public class ScriptMethods {
 	public static final String SHIFT_KEYS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ¬!\"£$%^&*()_+{}:@~<>?|€";
 	public static final int DEFAULT_KEY_TIME = 100;
 	
-	public static final String LINK_JQUERY = "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"], a[href^=\"/\"], a[href^=\"clkn\"], a[href^=\"clkg\"]');";
+	public static final String LINK_JQUERY = "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"], a[href^=\"clkn\"], a[href^=\"clkg\"]');";
 	
 	public enum ClickType {
 		LCLICK, RCLICK, NO_CLICK
@@ -215,9 +215,9 @@ public class ScriptMethods {
     		
 	    	target.pushCallback(c);
 
-	    	System.out.println("Executing javascript");
+	    	//System.out.println("Executing javascript");
 			target.getBrowserInstance().executeJavaScriptAndReturnValue(frameID, "sendBackResults("+search+")");
-			System.out.println("Finished executing javascript");
+			//System.out.println("Finished executing javascript");
 			
 			target.popCallback();
     	} catch (Exception e) {

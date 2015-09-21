@@ -120,6 +120,10 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 		return null;
 	}
 	
+	public Tab getCurrentTab() {
+		return getTabByBarIndex(getSelectedIndex());
+	}
+	
 	@Override
 	public void removeAll() {
 		super.removeAll();

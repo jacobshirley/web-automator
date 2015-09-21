@@ -68,6 +68,9 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		XMLScriptManifest manifest3 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.tests.TestAdClicking", "5", "Test Script", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest3, true);
 		
+		XMLScriptManifest manifest4 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.internal.debug.TestElementSearch", "6", "Test Element Search", "1.0", "RAARR", "bin");
+		scriptLibrary.addScript(manifest4, true);
+		
 		scriptLoader = new ScriptLoaderImpl(this, new ScriptContext(this));
 		scriptLoader.addLibrary(scriptLibrary);
 		
@@ -95,7 +98,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			});
 		}
 		try {
-			scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
+			scriptExecutor.runScript(scriptLoader.loadScript(manifest4));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/

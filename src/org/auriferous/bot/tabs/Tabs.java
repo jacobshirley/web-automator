@@ -82,7 +82,11 @@ public class Tabs {
 	
 	public void closeTab(Tab tab) {
 		System.out.println("Closing tab "+tab);
-		tab.getBrowserInstance().dispose();
+		if (!tab.getBrowserInstance().isDisposed()) {
+			tab.stop();
+			tab.getBrowserInstance().dispose();
+		}
+		
 		if (tabsList.contains(tab)) {
 			tabsList.remove(tab);
 			for (TabControlListener listener : tabListeners) {
@@ -93,7 +97,10 @@ public class Tabs {
 	
 	public void closeAll() {
 		for (Tab tab : tabsList) {
-			tab.getBrowserInstance().dispose();
+			if (!tab.getBrowserInstance().isDisposed()) {
+				tab.stop();
+				tab.getBrowserInstance().dispose();
+			}
 			for (TabControlListener listener : tabListeners) {
 				listener.onTabClosed(tab);
 			}

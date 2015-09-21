@@ -12,7 +12,7 @@ import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.data.library.ScriptManifest;
-import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
+import org.auriferous.bot.gui.swing.script.JScriptGui;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
@@ -23,7 +23,7 @@ import org.auriferous.bot.tabs.view.PaintListener;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
-public class Googler extends Script implements JScriptGuiListener, PaintListener{
+public class Googler extends Script implements JScriptGui, PaintListener{
 	private static final String[] SEARCHES = new String[] {"insurance marketplace", "insurance quotes", "insurance companies", "interest rates", "restaurants in Brighton", "pubs in Brighton"};
 	
 	private static final int STAGE_GOOGLE = 0;
@@ -222,5 +222,11 @@ public class Googler extends Script implements JScriptGuiListener, PaintListener
 			g.setColor(Color.green);
 			g.drawRect(debugElement.x, debugElement.y, debugElement.width, debugElement.height);
 		}
+	}
+
+	@Override
+	public boolean shouldCreateMenu() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
