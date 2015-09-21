@@ -20,7 +20,7 @@ import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
 public class Googler extends Script implements JScriptGuiListener{
-	private static final String[] SEARCHES = new String[] {"insurance marketplace", "insurance quotes", "insurance companies", "interest rates", "restaurants in Brighton", "pubs in Brighton"};
+	private static final String[] SEARCHES = new String[] {"insurance marketplace", "insurance quotes", "insurance companies", "interest rates"};
 	
 	private static final int STAGE_GOOGLE = 0;
 	private static final int STAGE_CLICK_LINK = 1;
