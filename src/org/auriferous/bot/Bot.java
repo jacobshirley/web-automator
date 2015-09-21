@@ -77,7 +77,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		userTabs = new Tabs(historyConfig);
 		
 		//mainConfig.addConfigurable(this);
-		//historyConfigFile.addConfigurable(historyConfig);
+		historyConfigFile.addConfigurable(historyConfig);
 		
 		if (createGUI) {
 			botGUI = new JBotFrame(this);

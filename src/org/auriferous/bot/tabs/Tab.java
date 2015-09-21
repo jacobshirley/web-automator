@@ -7,6 +7,7 @@ import java.util.Stack;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.data.history.HistoryConfig;
+import org.auriferous.bot.data.history.HistoryEntry;
 import org.auriferous.bot.tabs.view.TabView;
 
 import com.teamdev.jxbrowser.chromium.Browser;
@@ -18,6 +19,8 @@ import com.teamdev.jxbrowser.chromium.PopupContainer;
 import com.teamdev.jxbrowser.chromium.PopupHandler;
 import com.teamdev.jxbrowser.chromium.PopupParams;
 import com.teamdev.jxbrowser.chromium.events.ConsoleListener;
+import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
+import com.teamdev.jxbrowser.chromium.events.LoadEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadListener;
 import com.teamdev.jxbrowser.chromium.events.RenderListener;
 import com.teamdev.jxbrowser.chromium.events.StatusListener;
@@ -45,6 +48,8 @@ public class Tab {
 	private boolean openPopupsInNewTab = false;
 	private boolean blockJSMessages = false;
 	
+	private HistoryEntry lastHistoryEntry = null;
+	
 	public Tab(final Tabs parent, String url, final HistoryConfig history) {
 		this.id = -1;
 		this.parent = parent;
@@ -61,6 +66,8 @@ public class Tab {
 		this.browser.addTitleListener(new TitleListener() {
             @Override
 			public void onTitleChange(TitleEvent event) {
+            	if (lastHistoryEntry != null)
+            		lastHistoryEntry.setTitle(event.getTitle());
             	for (TabListener listener : tabListeners) 
 					listener.onTitleChange(event.getTitle());
             }
@@ -115,7 +122,6 @@ public class Tab {
 		this.browser.setPopupHandler(new PopupHandler() {
 		    @Override
 			public PopupContainer handlePopup(final PopupParams params) {
-		    	
 		        return new PopupContainer() {
 					@Override
 					public void insertBrowser(final Browser browser,
@@ -144,15 +150,18 @@ public class Tab {
 		    }
 		});
 		
-		/*this.browser.addLoadListener(new LoadAdapter() {
+		this.browser.addLoadListener(new LoadAdapter() {
 			@Override
 			public void onDocumentLoadedInMainFrame(LoadEvent arg0) {
 				super.onDocumentLoadedInMainFrame(arg0);
 				
 				Browser b = arg0.getBrowser();
-				history.addEntry(new HistoryEntry(System.currentTimeMillis(), "", b.getTitle(), b.getURL()));
+				
+				lastHistoryEntry = new HistoryEntry(System.currentTimeMillis(), "", b.getTitle(), b.getURL());
+				
+				history.addEntry(lastHistoryEntry);
 			}
-		});*/
+		});
 		loadURL(url);
 	}
 	
@@ -234,44 +243,46 @@ public class Tab {
 	}
 	
 	private void setBrowser(Browser browser) {
-		browser.getContext().getNetworkService().setNetworkDelegate(this.browser.getContext().getNetworkService().getNetworkDelegate());
-		browser.getContext().getNetworkService().setResourceHandler(this.browser.getContext().getNetworkService().getResourceHandler());
-
-		for (TitleListener l : this.browser.getTitleListeners())
-			browser.addTitleListener(l);
-		
-		for (LoadListener l : this.browser.getLoadListeners())
-			browser.addLoadListener(l);
-		
-		for (StatusListener l : this.browser.getStatusListeners())
-			browser.addStatusListener(l);
-		
-		for (ConsoleListener l : this.browser.getConsoleListeners())
-			browser.addConsoleListener(l);
-		
-		for (RenderListener l : this.browser.getRenderListeners())
-			browser.addRenderListener(l);
-
-		for (String s : this.browser.getBrowserFunctionNames())
-			browser.registerFunction(s, this.browser.getBrowserFunction(s));
-		
-		browser.setPreferences(this.browser.getPreferences());
-		browser.setPopupHandler(this.browser.getPopupHandler());
-		browser.setLoadHandler(this.browser.getLoadHandler());
-		browser.setDialogHandler(this.browser.getDialogHandler());
-		browser.setFullScreenHandler(this.browser.getFullScreenHandler());
-		browser.setDownloadHandler(this.browser.getDownloadHandler());
-		browser.setContextMenuHandler(this.browser.getContextMenuHandler());
-		browser.setPrintHandler(this.browser.getPrintHandler());
-		browser.setDialogHandler(this.browser.getDialogHandler());
+		synchronized (this.browser) {
+			browser.getContext().getNetworkService().setNetworkDelegate(this.browser.getContext().getNetworkService().getNetworkDelegate());
+			browser.getContext().getNetworkService().setResourceHandler(this.browser.getContext().getNetworkService().getResourceHandler());
 	
-		this.browser.stop();
-		this.browser = browser;
+			for (TitleListener l : this.browser.getTitleListeners())
+				browser.addTitleListener(l);
+			
+			for (LoadListener l : this.browser.getLoadListeners())
+				browser.addLoadListener(l);
+			
+			for (StatusListener l : this.browser.getStatusListeners())
+				browser.addStatusListener(l);
+			
+			for (ConsoleListener l : this.browser.getConsoleListeners())
+				browser.addConsoleListener(l);
+			
+			for (RenderListener l : this.browser.getRenderListeners())
+				browser.addRenderListener(l);
+	
+			for (String s : this.browser.getBrowserFunctionNames())
+				browser.registerFunction(s, this.browser.getBrowserFunction(s));
+			
+			browser.setPreferences(this.browser.getPreferences());
+			browser.setPopupHandler(this.browser.getPopupHandler());
+			browser.setLoadHandler(this.browser.getLoadHandler());
+			browser.setDialogHandler(this.browser.getDialogHandler());
+			browser.setFullScreenHandler(this.browser.getFullScreenHandler());
+			browser.setDownloadHandler(this.browser.getDownloadHandler());
+			browser.setContextMenuHandler(this.browser.getContextMenuHandler());
+			browser.setPrintHandler(this.browser.getPrintHandler());
+			browser.setDialogHandler(this.browser.getDialogHandler());
 		
-		BROWSER_INSTANCES.add(this.browser);
-		
-		for (TabListener listener : tabListeners) 
-			listener.onTabBrowserChanged(this.browser);
+			this.browser.stop();
+			this.browser = browser;
+			
+			BROWSER_INSTANCES.add(this.browser);
+			
+			for (TabListener listener : tabListeners) 
+				listener.onTabBrowserChanged(this.browser);
+		}
 	}
 	
 	public Browser getBrowserInstance() {
