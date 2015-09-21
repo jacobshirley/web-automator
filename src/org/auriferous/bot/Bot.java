@@ -98,7 +98,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			});
 		}
 		try {
-			scriptExecutor.runScript(scriptLoader.loadScript(manifest4));
+			//scriptExecutor.runScript(scriptLoader.loadScript(manifest4));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/
