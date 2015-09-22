@@ -355,7 +355,7 @@ public class ScriptMethods {
 	}
 	
 	public void scrollTo(int y) {
-		scrollTo(y, 10, 20);
+		scrollTo(y, 100, 20);
 	}
 	
 	public void moveMouseRandom() {

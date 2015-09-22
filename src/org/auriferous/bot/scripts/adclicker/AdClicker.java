@@ -329,7 +329,6 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 
 	@Override
 	public boolean shouldCreateMenu() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }

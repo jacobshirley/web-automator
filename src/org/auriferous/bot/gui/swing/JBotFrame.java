@@ -125,11 +125,6 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		return paintableComponent;
 	}
 	
-	@Override
-	public void setLocation(int x, int y) {
-		super.setLocation(x, y);
-	}
-	
 	private JMenu createFileMenu() {
 		JMenu fileMenu = new JMenu("File");
 		JMenuItem exitBotItem = new JMenuItem(new MenuActionItem("Exit", ACTION_EXIT_BOT));
@@ -177,7 +172,10 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	@Override
 	public void onRunScript(Script script) {
 		tabBar.addTabs(script.getTabs());
-		addScriptToMenu(script);
+		
+		if (script instanceof JScriptGui)
+			if (((JScriptGui)script).shouldCreateMenu())
+				addScriptToMenu(script);
 	}
 
 	@Override
@@ -219,7 +217,9 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		if (script instanceof JScriptGui)
 			((JScriptGui)script).onJMenuCreated(menu);
 		
-		menu.addSeparator();
+		if (menu.getItemCount() > 0)
+			menu.addSeparator();
+		
 		menu.add(new MenuActionItem("Pause", script, ACTION_PAUSE_SCRIPT));
 		menu.add(new MenuActionItem("Terminate", script, ACTION_TERMINATE_SCRIPT));
 		
