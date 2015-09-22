@@ -52,6 +52,10 @@ public class HistoryEntry extends DataEntry{
 		return faviconPath;
 	}
 	
+	public String getTitle() {
+		return title;
+	}
+	
 	public String getURL() {
 		return url;
 	}
@@ -62,6 +66,10 @@ public class HistoryEntry extends DataEntry{
 	
 	public void setFaviconPath(String faviconPath) {
 		this.faviconPath = faviconPath;
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 	public void setURL(String url) {

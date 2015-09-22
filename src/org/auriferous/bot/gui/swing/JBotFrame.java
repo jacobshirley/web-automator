@@ -22,12 +22,13 @@ import javax.swing.event.ChangeListener;
 
 import org.auriferous.bot.Bot;
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.gui.swing.script.JScriptGuiListener;
+import org.auriferous.bot.gui.swing.script.JScriptGui;
 import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorFrame;
 import org.auriferous.bot.gui.swing.tabs.JTab;
 import org.auriferous.bot.gui.swing.tabs.JTabBar;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.executor.ScriptExecutionListener;
+import org.auriferous.bot.scripts.internal.debug.TestElementSearch;
 import org.auriferous.bot.tabs.Tab;
 import org.auriferous.bot.tabs.Tabs;
 
@@ -55,6 +56,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private static final int ACTION_TAB_GO_FORWARD = 8;
 	private static final int ACTION_BLOCK_INPUT = 9;
 	private static final int ACTION_TAB_REFRESH = 10;
+	private static final int ACTION_DEBUG_ELEMENTS = 11;
 	
 	public static boolean mouseBlocked = false;
 	public static boolean keyboardBlocked = false;
@@ -162,6 +164,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		JMenu debugMenu = new JMenu("Debug");
 		
 		debugMenu.add(new MenuActionItem("Show", ACTION_ENABLE_DEBUG));
+		debugMenu.add(new MenuActionItem("Elements", ACTION_DEBUG_ELEMENTS));
 		debugMenu.add(new MenuActionItem("Block input", ACTION_BLOCK_INPUT));
 		
 		return debugMenu;
@@ -213,8 +216,8 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		}
 		
 		JMenu menu = new JMenu(script.getManifest().getName());
-		if (script instanceof JScriptGuiListener)
-			((JScriptGuiListener)script).onJMenuCreated(menu);
+		if (script instanceof JScriptGui)
+			((JScriptGui)script).onJMenuCreated(menu);
 		
 		menu.addSeparator();
 		menu.add(new MenuActionItem("Pause", script, ACTION_PAUSE_SCRIPT));
@@ -273,7 +276,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Tab current = JBotFrame.this.userTabs.getCurrentTab();
+			Tab current = tabBar.getCurrentTab();
 			switch (this.actionID) {
 			case ACTION_RUN_SCRIPT:
 				createScriptSelector(scriptsMenu);
@@ -327,6 +330,15 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 					current.reload();
 				} else {
 					Utils.alert("Cannot access tab.");
+				}
+				break;
+			case ACTION_DEBUG_ELEMENTS:
+				try {
+					TestElementSearch elementSearcher = (TestElementSearch) bot.getScriptLoader().loadScript("6");
+					elementSearcher.setDebugTab(current);
+					bot.getScriptExecutor().runScript(elementSearcher);
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
 				}
 				break;
 			case ACTION_EXIT_BOT:

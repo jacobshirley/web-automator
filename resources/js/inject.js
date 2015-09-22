@@ -67,12 +67,6 @@ function _findElementsInIFrames(parent, sel, offset) {
 	var el = oldFind.call(parent, sel);
     
 	if (el.length > 0) {
-		/*try {
-    		el.first().contents();
-    	} catch (e) {
-    		document.title = "error: "+e.message;
-    	}*/
-	
 		el.each(function (i) {
 			var $this = $(this);
 			
@@ -81,9 +75,6 @@ function _findElementsInIFrames(parent, sel, offset) {
 		});
 	} else {
     	oldFind.call(parent, "iframe").each(function(i) {
-    		if (this.id == "ad_iframe") {
-    			document.title = "found: "+this.id;
-    		}
     		var contents = null;
     		var off = null;
     		try {	
@@ -138,10 +129,10 @@ function findVisibleElements(parent, jquerySelector) {
 		var width = getElementWidth($this);
 		var height = getElementHeight($this);
 		
-		var x = offset2.left + 1 - pageOffX;
-		var y = offset2.top + 1 - pageOffY;
+		var x = offset2.left - pageOffX;
+		var y = offset2.top - pageOffY;
 		
-		if (x < pageWidth && y < pageHeight) {
+		if (x >= 0 && y >= 0 && x < pageWidth && y < pageHeight) {
 			var el = elementFromPointIFrames(x, y, offset.left, offset.top);
 			//println("x "+x+", y "+y+", "+document.elementFromPoint(x, y));
 			
@@ -207,4 +198,4 @@ function getElementHeight(elem) {
 	return height;
 }
 
-println("Code injected successfully");
+//println("Code injected successfully");

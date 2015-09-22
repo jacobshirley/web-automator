@@ -26,7 +26,7 @@ public class ScriptMethods {
 	public static final String SHIFT_KEYS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ¬!\"£$%^&*()_+{}:@~<>?|€";
 	public static final int DEFAULT_KEY_TIME = 100;
 	
-	public static final String LINK_JQUERY = "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"], a[href^=\"/\"], a[href^=\"clkn\"], a[href^=\"clkg\"]');";
+	public static final String LINK_JQUERY = "$(document).findVisibles('a[href^=\"http\"], a[href^=\"/\"], a[href^=\"clkn\"], a[href^=\"clkg\"]');";
 	
 	public enum ClickType {
 		LCLICK, RCLICK, NO_CLICK
@@ -86,10 +86,6 @@ public class ScriptMethods {
 	private boolean isCodeInjected(long frameID) {
 		return target.getBrowserInstance().executeJavaScriptAndReturnValue(frameID, "window.injectionLoaded != undefined").getBoolean();
 	}
-	
-	/*public ElementRect[] getElements(String... jqueryString) {
-		
-	}*/
 	
 	public String getStatus() {
 		return status;
@@ -219,7 +215,9 @@ public class ScriptMethods {
     		
 	    	target.pushCallback(c);
 
+	    	//System.out.println("Executing javascript");
 			target.getBrowserInstance().executeJavaScriptAndReturnValue(frameID, "sendBackResults("+search+")");
+			//System.out.println("Finished executing javascript");
 			
 			target.popCallback();
     	} catch (Exception e) {
@@ -289,7 +287,9 @@ public class ScriptMethods {
 		if (elemsList.isEmpty())
 			return null;
 	
-		return elemsList.get((int) Math.floor(Math.random()*elemsList.size()));
+		int random = (int) Math.floor(Math.random()*elemsList.size());
+		System.out.println("got random "+random + " out of "+elemsList.size());
+		return elemsList.get(random);
 	}
 	
 	public ElementBounds getRandomTextField(long frameID) {

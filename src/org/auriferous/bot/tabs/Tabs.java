@@ -19,17 +19,11 @@ public class Tabs {
 	
 	public Tab openTab(String url) {
 		Tab tab = new Tab(this, url, history);
-		
-		
 		tabsList.add(tab);
 
 		tab.setID(tabsList.indexOf(tab));
 		
-		
 		setCurrentTab(tab);
-		
-		
-
 		for (TabControlListener listener : tabListeners) {
 			listener.onTabAdded(tab);
 			listener.onTabChange(tab);
@@ -87,7 +81,12 @@ public class Tabs {
 	}
 	
 	public void closeTab(Tab tab) {
-		tab.getBrowserInstance().dispose();
+		System.out.println("Closing tab "+tab);
+		if (!tab.getBrowserInstance().isDisposed()) {
+			tab.stop();
+			tab.getBrowserInstance().dispose();
+		}
+		
 		if (tabsList.contains(tab)) {
 			tabsList.remove(tab);
 			for (TabControlListener listener : tabListeners) {
@@ -98,7 +97,10 @@ public class Tabs {
 	
 	public void closeAll() {
 		for (Tab tab : tabsList) {
-			tab.getBrowserInstance().dispose();
+			if (!tab.getBrowserInstance().isDisposed()) {
+				tab.stop();
+				tab.getBrowserInstance().dispose();
+			}
 			for (TabControlListener listener : tabListeners) {
 				listener.onTabClosed(tab);
 			}

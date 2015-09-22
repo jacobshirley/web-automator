@@ -37,16 +37,15 @@ public class PostFacebookState extends AdClickerState{
 					
 					ScriptMethods fbMethods = new ScriptMethods(fbTab);
 					
-					ElementBounds fbFoto = fbMethods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
+					ElementBounds fbFoto = fbMethods.getRandomElement("$('.UFICommentPhotoIcon');");
 					
 					if (fbFoto != null) {
 						System.out.println("Found Facebook photo");
 						
+						adClicker.setDebugElement(fbFoto);
 						Point p = fbFoto.getRandomPointFromCentre(0.5, 0.5);
-						
-						fbMethods.scrollTo(p.y, 40, 20);
-						
-						p.x += 150;
+
+						p.x -= 150;
 						
 						fbMethods.mouse(p, ClickType.LCLICK);
 						Utils.wait(500);
@@ -59,7 +58,6 @@ public class PostFacebookState extends AdClickerState{
 				}
 			}
 		});
-		
 		
 		return new TaskDoneState(adClicker, adURL);
 	}

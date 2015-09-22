@@ -30,7 +30,7 @@ import com.teamdev.jxbrowser.chromium.LoggerProvider;
 
 public class Bot implements ScriptExecutionListener, Configurable {
 	static {
-		System.setProperty("JExplorer.runInIsolatedProcess", "false");
+		//System.setProperty("JExplorer.runInIsolatedProcess", "false");
 		LoggerProvider.setLevel(Level.SEVERE);
 		
 		BrowserPreferences.setUserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
@@ -68,6 +68,9 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		XMLScriptManifest manifest3 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.tests.TestAdClicking", "5", "Test Script", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest3, true);
 		
+		XMLScriptManifest manifest4 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.internal.debug.TestElementSearch", "6", "Test Element Search", "1.0", "RAARR", "bin");
+		scriptLibrary.addScript(manifest4, true);
+		
 		scriptLoader = new ScriptLoaderImpl(this, new ScriptContext(this));
 		scriptLoader.addLibrary(scriptLibrary);
 		
@@ -77,7 +80,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		userTabs = new Tabs(historyConfig);
 		
 		//mainConfig.addConfigurable(this);
-		//historyConfigFile.addConfigurable(historyConfig);
+		historyConfigFile.addConfigurable(historyConfig);
 		
 		if (createGUI) {
 			botGUI = new JBotFrame(this);
@@ -95,7 +98,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			});
 		}
 		try {
-			//scriptExecutor.runScript(scriptLoader.loadScript(manifest3));
+			//scriptExecutor.runScript(scriptLoader.loadScript(manifest4));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/
