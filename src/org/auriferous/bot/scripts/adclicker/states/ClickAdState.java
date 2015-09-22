@@ -8,6 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.auriferous.bot.Utils;
@@ -25,6 +27,11 @@ import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class ClickAdState extends AdClickerState {
+	private static final String ADS_BY_GOOGLE = "$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
+	private static final String ASWIFT_0_EXPAND = "$('#aswift_0_expand').css('position', 'fixed').css('display', 'block').css('z-index', '99999998').css('left', '0px').css('top', '0px').show()";
+	
+	private static final String[] AD_ELEMENT_SEARCHES = new String[] {ADS_BY_GOOGLE, ASWIFT_0_EXPAND};
+	
 	private static final int MAX_CLICKS = 4;
 	
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
@@ -45,21 +52,30 @@ public class ClickAdState extends AdClickerState {
 			public void onBeforeURLRequest(BeforeURLRequestParams arg0) {
 				pageLoading = true;
 				String url = arg0.getURL();
-				
+				//System.out.println("Getting url "+url);
 				if (url.contains("aclk?")) {
-					//System.out.println("Contains gclid!!");
 					handleAdTest(url);
 				}
 			}
 		});
 	}
 	
-	private void removeAllAdsButOne(Browser browser, ScriptMethods methods) {
+	private void removeAllElementsButOne(Browser browser, ScriptMethods methods, String jquery) {
 		for (long id : browser.getFramesIds()) {
 			methods.injectJQuery(id);
 			methods.injectCode(id);
 			try {
-				browser.executeJavaScriptAndReturnValue(id, "removeAllButOneAd();");
+				browser.executeJavaScriptAndReturnValue(id, "removeAllButOne("+jquery+");");
+			} catch (Exception e) {}
+		}
+	}
+	
+	private void removeAllElements(Browser browser, ScriptMethods methods, String jquery) {
+		for (long id : browser.getFramesIds()) {
+			methods.injectJQuery(id);
+			methods.injectCode(id);
+			try {
+				browser.executeJavaScriptAndReturnValue(id, "removeAll("+jquery+");");
 			} catch (Exception e) {}
 		}
 	}
@@ -71,6 +87,7 @@ public class ClickAdState extends AdClickerState {
     	
     	ScriptMethods methods = adClicker.getScriptMethods();
     	Tab botTab = adClicker.getBotTab();
+    	botTab.setBlockJSMessages(false);
     	String url = botTab.getURL();
     	
     	if (blogURL != null && !url.contains(Utils.getBaseURL(currentTaskURL))) {
@@ -79,9 +96,8 @@ public class ClickAdState extends AdClickerState {
     		return new CheckAdState(adClicker, this);
     	} else {
     		currentTaskURL = url;
-    		removeAllAdsButOne(botTab.getBrowserInstance(), methods);
     		
-        	ElementBounds adElement = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
+        	ElementBounds adElement = findAds(botTab, "$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
         	pageLoading = false;
         	if (adElement != null) {
         		blogURL = botTab.getURL();
@@ -123,33 +139,46 @@ public class ClickAdState extends AdClickerState {
     	return this;
 	}
 	
-	private ElementBounds findAds(String... jqueryStrings) {
+	private ElementBounds findAds(Tab botTab, String... jqueryStrings) {
 		ScriptMethods methods = adClicker.getScriptMethods();
+
+		List<String> randomList = Arrays.asList(AD_ELEMENT_SEARCHES);
+		Collections.shuffle(randomList);
 		
-		ElementBounds[] adsbygoogle = methods.getElements("$('.adsbygoogle').first().css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()");
-		if (adsbygoogle.length > 0) {
-			ElementBounds bounds = adsbygoogle[0];
-			ElementBounds[] iframe1 = methods.getElements("$('#google_ads_frame1')");
-			if (iframe1.length > 0) {
-				bounds.add(iframe1[0]);
-				
-				ElementBounds[] result = null;
-				for (String s : jqueryStrings) {
-					result = methods.getElements(s);
-					if (result.length > 0) {
-						System.out.println("Found "+s);
-						
-						bounds.add(result[0]);
-						bounds.width = result[0].width;
-						bounds.height = result[0].height;
-						
-						bounds.setDOMElement(result[0].getDOMElement());
-						
-						break;
+		for (String search : randomList) {
+			removeAllElementsButOne(botTab.getBrowserInstance(), methods, search);
+
+			ElementBounds rootAd = methods.getRandomElement(search);
+			if (rootAd != null) {
+				for (String search2 : randomList) {
+					if (!search2.equals(search)) {
+						removeAllElements(botTab.getBrowserInstance(), methods, search2);
 					}
 				}
+				ElementBounds bounds = rootAd;
+				ElementBounds[] iframe1 = methods.getElements("$('#google_ads_frame1')");
+				
+				if (iframe1.length > 0) {
+					bounds.add(iframe1[0]);
+					
+					ElementBounds[] result = null;
+					for (String s : jqueryStrings) {
+						result = methods.getElements(s);
+						if (result.length > 0) {
+							System.out.println("Found "+s);
+							
+							bounds.add(result[0]);
+							bounds.width = result[0].width;
+							bounds.height = result[0].height;
+							
+							bounds.setDOMElement(result[0].getDOMElement());
+							
+							break;
+						}
+					}
+				}
+				return bounds;
 			}
-			return bounds;
 		}
 		
 		return null;
@@ -171,31 +200,26 @@ public class ClickAdState extends AdClickerState {
 				url = Utils.getBaseURL(url);
 				
 				System.out.println("Getting url of "+url);
-				DataEntry entry = historyConfig.getSingle("//history-entry[url/@value='"+url+"']");
-				
-				if (entry == null) {
-					entry = new HistoryEntry("", "", url);
-					entry.add(new DataEntry("clicks", 1));
-					historyConfig.add(entry);
+
+				if (!historyConfig.contains("//history-entry[url/@value='"+url+"']")) {
+					DataEntry entry = new HistoryEntry("", "", url);
+					
+					if (historyConfig.size() > 3) {
+						historyConfig.remove(0);
+						historyConfig.add(entry);
+					} else
+						historyConfig.add(entry);
 				} else {
 					System.out.println("Already clicked this.");
-					
-					int clicks = Integer.parseInt(entry.getValue("//clicks", 1).toString())+1;
-					System.out.println("This has been clicked "+(clicks-1)+" times.");
-					
-					if (clicks > MAX_CLICKS) {
-						adClicker.getBotTab().stop();
+					adClicker.getBotTab().stop();
 
-						new Thread(new Runnable() {
-							@Override
-							public void run() {
-								Utils.wait(2000);
-								adClicker.loadBlog();
-							}
-						}).start();
-					} else {
-						entry.set("//clicks", clicks);
-					}
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							Utils.wait(2000);
+							adClicker.loadBlog();
+						}
+					}).start();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -83,11 +83,9 @@ public class TaskManager extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			switch (actionID) {
-				case 0: Task t = new Task("http://trippins.tumblr.com/", 1, 0, 0, 2, "");
+				case 0: Task t = new Task("http://sadiebrookes.com", 1, 0, 0, 2, "");
 						tasks.add(t);
-						
-						taskConfig.add(new TaskConfigEntry(t));
-						
+
 						break;
 				case 1: tasks.remove(taskTable.getSelectedRow());
 						break;

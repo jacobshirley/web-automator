@@ -55,11 +55,16 @@ function getJSClickables() {
 		}).findVisibles("*");
 }
 
-function removeAllButOneAd() {
-	$('.adsbygoogle').each(function (i) {
+function removeAllButOne(elems) {
+	elems.each(function (i) {
 		if (i > 0)
 			$(this).remove();
 	});
+	return null;
+}
+
+function removeAll(elems) {
+	elems.empty();
 	return null;
 }
 

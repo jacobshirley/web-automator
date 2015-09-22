@@ -37,14 +37,14 @@ public class JTab extends JPanel implements TabListener {
 		this.tabView = new JTabView(overlayComp, this.tab);
 		this.tab.setTabView(tabView);
 		
-		this.tab.getBrowserInstance().setDialogHandler(new DefaultDialogHandler(tabView) {
+		/*this.tab.getBrowserInstance().setDialogHandler(new DefaultDialogHandler(tabView) {
             @Override
             public void onAlert(DialogParams params) {
                 String title = "From: "+params.getURL();
                 String message = params.getMessage();
                 Utils.alert(title, message);
             }
-        });
+        });*/
 		
 		this.add(tabView);
 	}

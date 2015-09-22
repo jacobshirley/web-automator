@@ -79,12 +79,17 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 			methods.mouse(p, ClickType.NO_CLICK);*/
 			
 			//System.out.println("offset "+methods.getPageYOffset()+", height "+methods.getPageHeight());
-			System.out.println("Waiting");
+			//System.out.println("Waiting");
 			Utils.wait(3000);
 			
-			System.out.println("On Facebook page!!!!");
+			methods.scrollMouse(false, 3);
+			System.out.println(methods.getPageYOffset());
 			
-			ScriptMethods fbMethods = new ScriptMethods(currentTab);
+			//System.out.println("On Facebook page!!!!");
+			
+			
+			
+			/*ScriptMethods fbMethods = new ScriptMethods(currentTab);
 			
 			ElementBounds fbFoto = fbMethods.getRandomElement("$('.UFICommentPhotoIcon')");// fbMethods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
 			
@@ -107,7 +112,7 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 				
 				fbMethods.type("Testing");
 			}//*/
-			startExec = false;
+			//startExec = false;
 		}
 		
 		return super.tick();

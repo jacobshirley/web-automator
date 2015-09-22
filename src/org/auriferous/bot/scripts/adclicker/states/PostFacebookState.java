@@ -26,6 +26,7 @@ public class PostFacebookState extends AdClickerState{
 	@Override
 	public State process(List<Integer> events) {
 		Task currentTask = adClicker.getCurrentTask();
+		System.out.println("Opening facebook page "+currentTask.fbLink);
 		final Tab fbTab = adClicker.openTab(currentTask.fbLink);
 		
 		fbTab.getBrowserInstance().addLoadListener(new LoadAdapter() {
