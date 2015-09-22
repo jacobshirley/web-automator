@@ -238,6 +238,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		JMenuItem executeTasks = new JMenuItem(new MenuAction("Execute Tasks", 1));
 		JMenuItem skipTask = new JMenuItem(new MenuAction("Skip Task", 3));
 		JMenuItem stepExec = new JMenuItem(new MenuAction("Step execution", 4));
+		JMenuItem openFb = new JMenuItem(new MenuAction("Open Facebook", 5));
 		
 		menu.add(setSignature);
 		menu.add(manageTasks);
@@ -245,6 +246,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		menu.addSeparator();
 		menu.add(skipTask);
 		menu.add(stepExec);
+		menu.add(openFb);
 	}
 	
 	class MenuAction extends AbstractAction {
@@ -268,6 +270,8 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 				case 3:	skipTask = true;
 						break;
 				case 4:	stateMachine.pushEvent(Events.EVENT_PAGE_LOADED);
+						break;
+				case 5: openTab("www.facebook.com");
 						break;
 			}
 		}
