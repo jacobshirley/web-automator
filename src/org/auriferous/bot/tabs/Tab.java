@@ -64,10 +64,11 @@ public class Tab {
 		this.browser.addTitleListener(new TitleListener() {
             @Override
 			public void onTitleChange(TitleEvent event) {
-            	if (lastHistoryEntry != null) {
+            	/*if (lastHistoryEntry != null) {
             		lastHistoryEntry.setTitle(event.getTitle());
             		lastHistoryEntry.setURL(event.getBrowser().getURL());
-            	}
+            	}*/
+            	history.addEntry(new HistoryEntry("", event.getTitle(), event.getBrowser().getURL()));
             	for (TabListener listener : tabListeners) 
 					listener.onTitleChange(event.getTitle());
             }
@@ -156,7 +157,7 @@ public class Tab {
 				
 				Browser b = arg0.getBrowser();
 				
-				lastHistoryEntry = new HistoryEntry(System.currentTimeMillis(), "", b.getTitle(), b.getURL());
+				lastHistoryEntry = new HistoryEntry("", b.getTitle(), b.getURL());
 				
 				history.addEntry(lastHistoryEntry);
 			}
