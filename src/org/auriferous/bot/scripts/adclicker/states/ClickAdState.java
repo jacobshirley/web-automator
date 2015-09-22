@@ -30,7 +30,7 @@ public class ClickAdState extends AdClickerState {
 	private static final String ADS_BY_GOOGLE = "$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
 	private static final String ASWIFT_0_EXPAND = "$('#aswift_0_expand').css('position', 'fixed').css('display', 'block').css('z-index', '99999998').css('left', '0px').css('top', '0px').show()";
 	
-	private static final String[] AD_ELEMENT_SEARCHES = new String[] {ADS_BY_GOOGLE, ASWIFT_0_EXPAND};
+	private static final String[] AD_ELEMENT_SEARCHES = new String[] {ASWIFT_0_EXPAND};
 	
 	private static final int MAX_CLICKS = 4;
 	
@@ -122,7 +122,8 @@ public class ClickAdState extends AdClickerState {
             			return new CheckAdState(adClicker, this);
             		}
         		}
-        	} else if (searchAdTries < 10) {
+        	}
+        	if (searchAdTries < 10) {
         		searchAdTries++;
         		System.out.println("Couldn't find ad on try "+searchAdTries+"/10. Reloading page.");
         		
@@ -146,16 +147,19 @@ public class ClickAdState extends AdClickerState {
 		Collections.shuffle(randomList);
 		
 		for (String search : randomList) {
-			removeAllElementsButOne(botTab.getBrowserInstance(), methods, search);
-
-			ElementBounds rootAd = methods.getRandomElement(search);
-			if (rootAd != null) {
+			ElementBounds[] rootAds = methods.getElements(search);
+			
+			if (rootAds.length > 0) {
+				removeAllElementsButOne(botTab.getBrowserInstance(), methods, search);
+			
 				for (String search2 : randomList) {
+					
 					if (!search2.equals(search)) {
+						System.out.println("Removing "+search2);
 						removeAllElements(botTab.getBrowserInstance(), methods, search2);
 					}
 				}
-				ElementBounds bounds = rootAd;
+				ElementBounds bounds = rootAds[0];
 				ElementBounds[] iframe1 = methods.getElements("$('#google_ads_frame1')");
 				
 				if (iframe1.length > 0) {
@@ -178,6 +182,7 @@ public class ClickAdState extends AdClickerState {
 					}
 				}
 				return bounds;
+				
 			}
 		}
 		
