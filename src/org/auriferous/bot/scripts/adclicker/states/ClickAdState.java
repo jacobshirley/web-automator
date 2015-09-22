@@ -28,9 +28,9 @@ import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class ClickAdState extends AdClickerState {
 	private static final String ADS_BY_GOOGLE = "$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
-	private static final String ASWIFT_0_EXPAND = "$('#aswift_0_expand').css('position', 'fixed').css('display', 'block').css('z-index', '99999998').css('left', '0px').css('top', '0px').show()";
+	private static final String ASWIFT = "$('ins[id^=\"aswift_\"][id$=_anchor]').css('position', 'fixed').css('display', 'block').css('z-index', '99999998').css('left', '0px').css('top', '0px').show()";
 	
-	private static final String[] AD_ELEMENT_SEARCHES = new String[] {ASWIFT_0_EXPAND};
+	private static final String[] AD_ELEMENT_SEARCHES = new String[] {ASWIFT};
 	
 	private static final int MAX_CLICKS = 4;
 	
@@ -152,13 +152,12 @@ public class ClickAdState extends AdClickerState {
 			if (rootAds.length > 0) {
 				removeAllElementsButOne(botTab.getBrowserInstance(), methods, search);
 			
-				for (String search2 : randomList) {
-					
+				/*for (String search2 : randomList) {
 					if (!search2.equals(search)) {
 						System.out.println("Removing "+search2);
 						removeAllElements(botTab.getBrowserInstance(), methods, search2);
 					}
-				}
+				}*/
 				ElementBounds bounds = rootAds[0];
 				ElementBounds[] iframe1 = methods.getElements("$('#google_ads_frame1')");
 				
