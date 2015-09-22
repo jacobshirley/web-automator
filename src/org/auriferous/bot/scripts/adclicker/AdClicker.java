@@ -228,7 +228,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 			tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
 			//*/
 		
-		new TaskManager(tasks, taskConfig);
+		new TaskManager(tasks);
 		
 		//tasks.add(new Task("http://sadiebrookes.com", 1, 0, 0, 1, ""));
 		//executeTasks();
@@ -282,7 +282,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			switch (actionID) {
-				case 0: new TaskManager(tasks, taskConfig);
+				case 0: new TaskManager(tasks);
 						break;
 				case 1:	executeTasks();
 						break;

@@ -23,22 +23,20 @@ import org.auriferous.bot.scripts.adclicker.gui.table.TaskTableModel;
 public class TaskManager extends JFrame{
 	//http://sadiebrookes.com
 	private static final Task DEFAULT_TASK = new Task("http://", 10, 12, 20, 2, "");
+	//private static final Task DEFAULT_TASK = new Task("http://contempt.tk", 0, 0, 0, 1, "");
 	
 	private JTable taskTable;
 	private List<Task> tasks;
-	private DataEntry taskConfig;
 	
-	public TaskManager(List<Task> tasks, DataEntry taskConfig) {
+	public TaskManager(List<Task> tasks) {
 		super("Task Manager");
 		
 		this.tasks = tasks;
-		this.taskConfig = taskConfig;
 		
 		JPanel content = new JPanel();
 		content.setLayout(new BorderLayout());
 		content.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
-        //Create the list and put it in a scroll pane.
 		taskTable = new JPasteTable(new TaskTableModel(tasks));
 		taskTable.setMinimumSize(new Dimension(400, 500));
 		
