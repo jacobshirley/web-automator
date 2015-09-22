@@ -79,12 +79,17 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 			methods.mouse(p, ClickType.NO_CLICK);*/
 			
 			//System.out.println("offset "+methods.getPageYOffset()+", height "+methods.getPageHeight());
-			System.out.println("Waiting");
+			//System.out.println("Waiting");
 			Utils.wait(3000);
 			
-			System.out.println("On Facebook page!!!!");
+			methods.scrollMouse(false, 3);
+			System.out.println(methods.getPageYOffset());
 			
-			ScriptMethods fbMethods = new ScriptMethods(currentTab);
+			//System.out.println("On Facebook page!!!!");
+			
+			
+			
+			/*ScriptMethods fbMethods = new ScriptMethods(currentTab);
 			
 			ElementBounds fbFoto = fbMethods.getRandomElement("$('.UFICommentPhotoIcon')");// fbMethods.getRandomElement("$('.UFIReplyActorPhotoWrapper');");
 			
@@ -107,7 +112,7 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 				
 				fbMethods.type("Testing");
 			}//*/
-			startExec = false;
+			//startExec = false;
 		}
 		
 		return super.tick();
@@ -184,7 +189,7 @@ public class TestAdClicking extends Script implements PaintListener, LoadListene
 		System.out.println("Starting");
 		//openTab("naht.tk/random");//
 		// openTab("http://www.bomgar.com/sem/pam?wm_lpID=121979522&wm_ctID=377&wm_kwID=74414766&wm_mtID=145&wm_kw=728x90%5FPAM%5FLearnMore%5FPAM+RT%5FGoogle+Display+Network&utm_source=google+display+network&utm_medium=display&utm_term=728x90%5Fpam%5Flearnmore%5Fpam+rt%5Fgoogle+display+network&utm_campaign=bomgar+retargeting+uk+pam&wm_sd=1&wm_clid=6357823082402855862125610816-635782308240285586&wm_v=google+display+network&wm_camp=bomgar+retargeting+uk+pam&wm_ag=banners%5Fgoogle+display+network%5F728x90%5Fpam+rt");
-		currentTab = openTab("https://www.facebook.com/groups/381168852071038/permalink/465231853664737/?__mref=message_bubble");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
+		currentTab = openTab("https://www.facebook.com/groups/381168852071038/permalink/466387946882461/");//openTab("https://m.audibene.com/hearing-aids-consultation-siemens/?utm_source=google&utm_medium=cpc&utm_campaign=UK_GDN_INT&gclid=CMKUuITtnscCFWoJwwodyh0KBw");//openTab("http://ceehu.tk/random");// openTab("http://trippins.tk/random");//openTab("http://ceehu.tk/random");//openTab("http://www.w3schools.com/html/tryit.asp?filename=tryhtml_input");
 		
 		//currentTab.getTabView().addTabPaintListener(this);
 		getTabs().addTabControlListener(new TabControlAdapter() {

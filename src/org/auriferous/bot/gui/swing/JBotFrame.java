@@ -57,6 +57,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private static final int ACTION_BLOCK_INPUT = 9;
 	private static final int ACTION_TAB_REFRESH = 10;
 	private static final int ACTION_DEBUG_ELEMENTS = 11;
+	private static final int ACTION_CHECK_URL = 12;
 	
 	public static boolean mouseBlocked = false;
 	public static boolean keyboardBlocked = false;
@@ -125,11 +126,6 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		return paintableComponent;
 	}
 	
-	@Override
-	public void setLocation(int x, int y) {
-		super.setLocation(x, y);
-	}
-	
 	private JMenu createFileMenu() {
 		JMenu fileMenu = new JMenu("File");
 		JMenuItem exitBotItem = new JMenuItem(new MenuActionItem("Exit", ACTION_EXIT_BOT));
@@ -163,6 +159,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private JMenu createDebugMenu() {
 		JMenu debugMenu = new JMenu("Debug");
 		
+		debugMenu.add(new MenuActionItem("Check URL", ACTION_CHECK_URL));
 		debugMenu.add(new MenuActionItem("Show", ACTION_ENABLE_DEBUG));
 		debugMenu.add(new MenuActionItem("Elements", ACTION_DEBUG_ELEMENTS));
 		debugMenu.add(new MenuActionItem("Block input", ACTION_BLOCK_INPUT));
@@ -177,7 +174,10 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	@Override
 	public void onRunScript(Script script) {
 		tabBar.addTabs(script.getTabs());
-		addScriptToMenu(script);
+		
+		if (script instanceof JScriptGui)
+			if (((JScriptGui)script).shouldCreateMenu())
+				addScriptToMenu(script);
 	}
 
 	@Override
@@ -219,7 +219,9 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		if (script instanceof JScriptGui)
 			((JScriptGui)script).onJMenuCreated(menu);
 		
-		menu.addSeparator();
+		if (menu.getItemCount() > 0)
+			menu.addSeparator();
+		
 		menu.add(new MenuActionItem("Pause", script, ACTION_PAUSE_SCRIPT));
 		menu.add(new MenuActionItem("Terminate", script, ACTION_TERMINATE_SCRIPT));
 		
@@ -340,6 +342,9 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 				} catch (ClassNotFoundException e1) {
 					e1.printStackTrace();
 				}
+				break;
+			case ACTION_CHECK_URL:
+				System.out.println("URL: "+current.getURL());
 				break;
 			case ACTION_EXIT_BOT:
 				System.exit(1);

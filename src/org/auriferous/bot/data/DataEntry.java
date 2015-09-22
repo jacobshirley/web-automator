@@ -59,6 +59,10 @@ public class DataEntry {
 		children.clear();
 	}
 	
+	public int size() {
+		return children.size();
+	}
+	
 	public void add(String xpath, DataEntry subEntry) {
 		add(xpath, subEntry, false);
 	}
@@ -91,8 +95,22 @@ public class DataEntry {
 		}
 	}
 	
+	public void set(int index, DataEntry entry) {
+		children.set(index, entry);
+	}
+	
 	public void set(String xpath, Object value) {
-		context.setValue(xpath, value);
+		if (value instanceof DataEntry) {
+			
+		} else {
+			context.setValue(xpath, value);
+		}
+	}
+	
+	public boolean remove(int index) {
+		DataEntry e = children.remove(index);
+		e.parents.remove(this);
+		return e != null;
 	}
 	
 	public boolean remove(DataEntry subEntry) {
@@ -100,18 +118,21 @@ public class DataEntry {
 		return children.remove(subEntry);
 	}
 	
-	public void remove(String xpath) {
+	public boolean remove(String xpath) {
 		createContext();
 		
 		Iterator<DataEntry> it = context.iterate(xpath);
+		
+		boolean done = false;
 		
 		while (it.hasNext()) {
 			DataEntry e = it.next();
 
 			for (DataEntry parent : e.parents) {
-				parent.remove(e);
+				done = parent.remove(e);
 			}
 		}
+		return done;
 	}
 	
 	public List<DataEntry> get(String xpath) {

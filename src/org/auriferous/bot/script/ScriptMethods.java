@@ -343,19 +343,31 @@ public class ScriptMethods {
 	}
 	
 	public void scrollTo(int y, int timeWait, int randomTime) {
-		while (y - getPageYOffset() > target.getTabView().getHeight()) {
+		double lastOffset = getPageYOffset();
+		double curOffset = getPageYOffset();
+		while (y - curOffset > target.getTabView().getHeight()) {
 			Utils.wait(timeWait+Utils.random(randomTime));
 			scrollMouse(false, 3);
+			
+			curOffset = getPageYOffset();
+			if (lastOffset == curOffset)
+				break;
 		}
 		
-		while (y - getPageYOffset() < 0) {
+		lastOffset = getPageYOffset();
+		curOffset = getPageYOffset();
+		while (y - curOffset < 0) {
 			Utils.wait(timeWait+Utils.random(randomTime));
 			scrollMouse(true, 3);
+			
+			curOffset = getPageYOffset();
+			if (lastOffset == curOffset)
+				break;
 		}
 	}
 	
 	public void scrollTo(int y) {
-		scrollTo(y, 10, 20);
+		scrollTo(y, 100, 20);
 	}
 	
 	public void moveMouseRandom() {

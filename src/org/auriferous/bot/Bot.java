@@ -25,8 +25,10 @@ import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.script.loader.ScriptLoaderImpl;
 import org.auriferous.bot.tabs.Tabs;
 
+import com.teamdev.jxbrowser.chromium.BeforeURLRequestParams;
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.LoggerProvider;
+import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class Bot implements ScriptExecutionListener, Configurable {
 	static {
@@ -98,7 +100,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			});
 		}
 		try {
-			//scriptExecutor.runScript(scriptLoader.loadScript(manifest4));
+			//scriptExecutor.runScript(scriptLoader.loadScript(manifest3));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/

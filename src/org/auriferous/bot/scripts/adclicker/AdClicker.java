@@ -57,9 +57,23 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 	
 	private long loadTimer = System.currentTimeMillis();
 	
-	private long mainFrameID = 0;
+	private long mainFrameID = -1;
 
 	private String curURL = "";
+	
+	private LoadAdapter loader = new LoadAdapter() {
+		@Override
+		public void onFinishLoadingFrame(FinishLoadingEvent event) {
+			if (event.isMainFrame()) {
+				System.out.println("page loaded");
+				
+				mainFrameID = event.getFrameId();
+				curURL = botTab.getURL();
+				loadTimer = System.currentTimeMillis();
+				stateMachine.pushEvent(Events.EVENT_PAGE_LOADED);
+			}
+		}
+	};
 	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -80,19 +94,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		} else
 			botTab = openTab();
 		
-		botTab.getBrowserInstance().addLoadListener(new LoadAdapter() {
-			@Override
-			public void onFinishLoadingFrame(FinishLoadingEvent event) {
-				if (event.isMainFrame()) {
-					System.out.println("page loaded");
-					
-					mainFrameID = event.getFrameId();
-					curURL = botTab.getURL();
-					loadTimer = System.currentTimeMillis();
-					stateMachine.pushEvent(Events.EVENT_PAGE_LOADED);
-				}
-			}
-		});
+		botTab.getBrowserInstance().addLoadListener(loader);
 		
 		botTab.getTabView().addPaintListener(this);
 		
@@ -142,6 +144,11 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		return historyConfig;
 	}
 	
+	private void close() {
+		botTab.getBrowserInstance().removeLoadListener(loader);
+		botTab.getTabView().removePaintListener(this);
+	}
+	
 	public String compileSignature(String urlString) {
 		String base = Utils.getBaseURL(urlString);
 		String title = base.split("\\.")[1];
@@ -160,6 +167,9 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 	@Override
 	public int tick() {
 		if (botTab != null) {
+			/*if (mainFrameID > 0) {
+				methods.getElements("$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()");
+			}*/
 			if (skipTask) {
 				System.out.println("Skipping task...");
 				skipTask = false;
@@ -220,7 +230,18 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		
 		new TaskManager(tasks, taskConfig);
 		
+		//tasks.add(new Task("http://sadiebrookes.com", 1, 0, 0, 1, ""));
 		//executeTasks();
+	}
+	
+	@Override
+	public void onFinished() {
+		close();
+	}
+	
+	@Override
+	public void onTerminate() {
+		close();
 	}
 
 	@Override
@@ -329,7 +350,6 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 
 	@Override
 	public boolean shouldCreateMenu() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }

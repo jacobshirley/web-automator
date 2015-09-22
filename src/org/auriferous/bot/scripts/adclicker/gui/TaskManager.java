@@ -21,6 +21,9 @@ import org.auriferous.bot.scripts.adclicker.gui.table.JPasteTable;
 import org.auriferous.bot.scripts.adclicker.gui.table.TaskTableModel;
 
 public class TaskManager extends JFrame{
+	//http://sadiebrookes.com
+	private static final Task DEFAULT_TASK = new Task("http://", 10, 12, 20, 2, "");
+	
 	private JTable taskTable;
 	private List<Task> tasks;
 	private DataEntry taskConfig;
@@ -83,11 +86,9 @@ public class TaskManager extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			switch (actionID) {
-				case 0: Task t = new Task("http://trippins.tumblr.com/", 1, 0, 0, 2, "");
+				case 0: Task t = DEFAULT_TASK.copy();
 						tasks.add(t);
-						
-						taskConfig.add(new TaskConfigEntry(t));
-						
+
 						break;
 				case 1: tasks.remove(taskTable.getSelectedRow());
 						break;

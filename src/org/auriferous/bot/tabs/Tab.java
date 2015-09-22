@@ -29,9 +29,7 @@ import com.teamdev.jxbrowser.chromium.events.TitleListener;
 
 public class Tab {
 	private static final List<Browser> BROWSER_INSTANCES = new ArrayList<Browser>();
-	
-	private static final BrowserContext DEFAULT_CONTEXT = new BrowserContext("test");
-	
+
 	private int id;
 	private String originalURL;
 	
@@ -58,7 +56,7 @@ public class Tab {
 		
 		setBlockJSMessages(true);
 		
-		this.browser = new Browser(DEFAULT_CONTEXT);
+		this.browser = new Browser(new BrowserContext("test"));
 		this.browser.getPreferences().setLocalStorageEnabled(true);
 		
 		BROWSER_INSTANCES.add(this.browser);
@@ -66,8 +64,10 @@ public class Tab {
 		this.browser.addTitleListener(new TitleListener() {
             @Override
 			public void onTitleChange(TitleEvent event) {
-            	if (lastHistoryEntry != null)
+            	if (lastHistoryEntry != null) {
             		lastHistoryEntry.setTitle(event.getTitle());
+            		lastHistoryEntry.setURL(event.getBrowser().getURL());
+            	}
             	for (TabListener listener : tabListeners) 
 					listener.onTitleChange(event.getTitle());
             }
@@ -126,8 +126,7 @@ public class Tab {
 					@Override
 					public void insertBrowser(final Browser browser,
 							java.awt.Rectangle dimensions) {
-						
-						System.out.println("Potential popup");
+						System.out.println("Popup");
 						/*final String url = browser.getURL();
 						browser.stop();
 						new Thread(new Runnable() {
@@ -186,7 +185,7 @@ public class Tab {
 	}
 	
 	public void alert(String message) {
-		browser.executeJavaScript("alert('"+message+"');");
+		//browser.executeJavaScript("alert('"+message+"');");
 	}
 	
 	public void pushCallback(TabCallback callback) {
@@ -244,9 +243,6 @@ public class Tab {
 	
 	private void setBrowser(Browser browser) {
 		synchronized (this.browser) {
-			browser.getContext().getNetworkService().setNetworkDelegate(this.browser.getContext().getNetworkService().getNetworkDelegate());
-			browser.getContext().getNetworkService().setResourceHandler(this.browser.getContext().getNetworkService().getResourceHandler());
-	
 			for (TitleListener l : this.browser.getTitleListeners())
 				browser.addTitleListener(l);
 			
