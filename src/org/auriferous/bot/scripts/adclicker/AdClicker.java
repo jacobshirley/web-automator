@@ -80,6 +80,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 	}
 	
 	private void executeTasks() {
+		executeTasks.setEnabled(false);
 		stateMachine.pushState(new TaskNextState(this)).tick();
 		loadTimer = System.currentTimeMillis();
 		
@@ -252,11 +253,13 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		}
 	}
 	
+	private JMenuItem executeTasks = new JMenuItem(new MenuAction("Execute Tasks", 1));
+	
 	@Override
 	public void onJMenuCreated(JMenu menu) {
 		JMenuItem setSignature = new JMenuItem(new MenuAction("Signature", 2));
 		JMenuItem manageTasks = new JMenuItem(new MenuAction("Manage Tasks", 0));
-		JMenuItem executeTasks = new JMenuItem(new MenuAction("Execute Tasks", 1));
+		
 		JMenuItem skipTask = new JMenuItem(new MenuAction("Skip Task", 3));
 		JMenuItem stepExec = new JMenuItem(new MenuAction("Step execution", 4));
 		JMenuItem openFb = new JMenuItem(new MenuAction("Open Facebook", 5));
