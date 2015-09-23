@@ -32,7 +32,7 @@ public class ClickAdState extends AdClickerState {
 	
 	private static final String[] AD_ELEMENT_SEARCHES = new String[] {ASWIFT};
 	
-	private static final int MAX_CLICKS = 4;
+	private static final int MAX_CLICKS = 5;
 	
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
 
@@ -49,11 +49,11 @@ public class ClickAdState extends AdClickerState {
 		final Browser browser = adClicker.getBotTab().getBrowserInstance();
 		browser.getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate() {
 			@Override
-			public void onBeforeURLRequest(BeforeURLRequestParams arg0) {
-				pageLoading = true;
-				String url = arg0.getURL();
+			public void onBeforeURLRequest(BeforeURLRequestParams event) {
+				String url = event.getURL();
 				//System.out.println("Getting url "+url);
 				if (url.contains("aclk?")) {
+					pageLoading = true;
 					handleAdTest(url);
 				}
 			}
@@ -130,7 +130,7 @@ public class ClickAdState extends AdClickerState {
         		botTab.reload();
         		
         		return this;
-        	} else if (searchAdTries == 10){
+        	} else if (searchAdTries >= 10){
         		System.out.println("Couldn't find ad. Next task...");
         		
         		return new TaskNextState(adClicker);
@@ -159,7 +159,7 @@ public class ClickAdState extends AdClickerState {
 					}
 				}*/
 				ElementBounds bounds = rootAds[0];
-				ElementBounds[] iframe1 = methods.getElements("$('#google_ads_frame1')");
+				ElementBounds[] iframe1 = methods.getElements("$('iframe[id^=\"google_ads_frame\"]')");
 				
 				if (iframe1.length > 0) {
 					bounds.add(iframe1[0]);
@@ -208,7 +208,7 @@ public class ClickAdState extends AdClickerState {
 				if (!historyConfig.contains("//history-entry[url/@value='"+url+"']")) {
 					DataEntry entry = new HistoryEntry("", "", url);
 					
-					if (historyConfig.size() > 3) {
+					if (historyConfig.size() >= MAX_CLICKS) {
 						historyConfig.remove(0);
 						historyConfig.add(entry);
 					} else
@@ -232,7 +232,7 @@ public class ClickAdState extends AdClickerState {
 		}
 	}
     
-    private String testAdURL(String testURL) throws Exception {
+    public static String testAdURL(String testURL) throws Exception {
 		String url = "http://www.wtfhallo.co/test_url.php";
 		
 		URL obj = new URL(url);

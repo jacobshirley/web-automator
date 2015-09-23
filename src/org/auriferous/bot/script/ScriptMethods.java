@@ -379,10 +379,10 @@ public class ScriptMethods {
 	public void mouse(int x, int y, ClickType clickType) {
 		scrollTo(y);
 		
-		if (y > getWindowHeight()) {
+		//if (y > getWindowHeight()) {
 			x -= getPageXOffset();
 			y -= getPageYOffset();
-		}
+		//}
 		
 		if (x <= target.getTabView().getWidth()) {
 			double x1 = mouse.getMouseX();

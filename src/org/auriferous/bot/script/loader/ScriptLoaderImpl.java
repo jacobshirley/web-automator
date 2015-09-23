@@ -11,12 +11,11 @@ import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 
 public class ScriptLoaderImpl extends ScriptLoader{
-	private ScriptContext context;
 	private Bot bot;
 
 	public ScriptLoaderImpl(Bot bot, ScriptContext context) {
+		super(context);
 		this.bot = bot;
-		this.context = context;
 	}
 
 	@Override

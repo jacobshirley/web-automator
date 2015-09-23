@@ -23,6 +23,8 @@ public class TestElementSearch extends Script implements PaintListener {
 	private boolean startExec;
 	private ScriptMethods methods;
 	private ElementBounds[] elements = null;
+	
+	private long mainFrame;
 
 	public TestElementSearch(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -55,8 +57,6 @@ public class TestElementSearch extends Script implements PaintListener {
 		
 		return super.tick();
 	}
-	
-	private long mainFrame;
 
 	@Override
 	public void onStart() {

@@ -151,10 +151,21 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 	}
 	
 	public String compileSignature(String urlString) {
-		String base = Utils.getBaseURL(urlString);
+		String signatures = (String) signatureConfig.getValue();
+		
+		String[] sigs = signatures.split("\n\\s");
+		if (sigs.length > 0) {
+			return getSignature(Utils.getRandomObject(sigs), urlString);
+		} else {
+			return getSignature(signatures, urlString);
+		}
+	}
+	
+	private String getSignature(String signatureString, String url) {
+		String base = Utils.getBaseURL(url);
 		String title = base.split("\\.")[1];
 		
-		return signatureConfig.getValue().toString().replace("$title", title).replace("$base", base);
+		return signatureString.replace("$title", title).replace("$base", base);
 	}
 	
 	public LinkedList<Task> getTasks() {
@@ -230,6 +241,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 			//*/
 		
 		new TaskManager(tasks);
+		//compileSignature("http://www.google.co.uk/");
 		
 		//tasks.add(new Task("http://sadiebrookes.com", 1, 0, 0, 1, ""));
 		//executeTasks();
