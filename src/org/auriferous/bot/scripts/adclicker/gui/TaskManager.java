@@ -23,7 +23,7 @@ import org.auriferous.bot.scripts.adclicker.gui.table.TaskTableModel;
 public class TaskManager extends JFrame{
 	//http://sadiebrookes.com
 	private static final Task DEFAULT_TASK = new Task("http://", 10, 12, 20, 2, "");
-	//private static final Task DEFAULT_TASK = new Task("http://contempt.tk", 0, 0, 0, 1, "");
+	//private static final Task DEFAULT_TASK = new Task("http://sadiebrookes.com/", 0, 0, 0, 1, "");
 	
 	private JTable taskTable;
 	private List<Task> tasks;

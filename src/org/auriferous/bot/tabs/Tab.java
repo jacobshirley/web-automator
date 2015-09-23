@@ -19,6 +19,7 @@ import com.teamdev.jxbrowser.chromium.PopupContainer;
 import com.teamdev.jxbrowser.chromium.PopupHandler;
 import com.teamdev.jxbrowser.chromium.PopupParams;
 import com.teamdev.jxbrowser.chromium.events.ConsoleListener;
+import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 import com.teamdev.jxbrowser.chromium.events.LoadEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadListener;
@@ -162,6 +163,7 @@ public class Tab {
 				history.addEntry(lastHistoryEntry);
 			}
 		});
+		
 		loadURL(url);
 	}
 	

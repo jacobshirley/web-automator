@@ -64,7 +64,7 @@ public class Utils {
 		return x >= min && x <= max;
 	}
 	
-	public static Object getRandomObject(Object[] arr) {
+	public static <T> T getRandomObject(T[] arr) {
 		if (arr == null || arr.length == 0)
 			return null;
 		return arr[(int) Math.floor(Math.random()*arr.length)];

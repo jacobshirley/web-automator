@@ -28,11 +28,12 @@ public class PostFacebookState extends AdClickerState{
 		Task currentTask = adClicker.getCurrentTask();
 		System.out.println("Opening facebook page "+currentTask.fbLink);
 		final Tab fbTab = adClicker.openTab(currentTask.fbLink);
+		fbTab.getTabView().addPaintListener(adClicker);
 		
 		fbTab.getBrowserInstance().addLoadListener(new LoadAdapter() {
 			@Override
-			public void onFinishLoadingFrame(FinishLoadingEvent arg0) {
-				if (arg0.isMainFrame()) {
+			public void onFinishLoadingFrame(FinishLoadingEvent event) {
+				if (event.isMainFrame()) {
 					Utils.wait(5000);
 					System.out.println("On Facebook page!!!!");
 					
@@ -46,6 +47,8 @@ public class PostFacebookState extends AdClickerState{
 						adClicker.setDebugElement(fbFoto);
 						Point p = fbFoto.getRandomPointFromCentre(0.5, 0.5);
 
+						//fbMethods.scrollTo(p.y);
+						
 						p.x -= 150;
 						
 						fbMethods.mouse(p, ClickType.LCLICK);

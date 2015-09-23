@@ -6,11 +6,22 @@ import java.util.List;
 import org.auriferous.bot.data.library.ScriptLibrary;
 import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
+import org.auriferous.bot.script.ScriptContext;
 
 public abstract class ScriptLoader {
 	protected List<ScriptLibrary> libraries = new ArrayList<ScriptLibrary>();
+	protected ScriptContext context;
 
-	public ScriptLoader() {
+	public ScriptLoader(ScriptContext context) {
+		this.context = context;
+	}
+	
+	public void setContext(ScriptContext context) {
+		this.context = context;
+	}
+	
+	public ScriptContext getContext() {
+		return context;
 	}
 	
 	public void addLibrary(ScriptLibrary library) {

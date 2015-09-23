@@ -226,7 +226,6 @@ public class Googler extends Script implements JScriptGui, PaintListener{
 
 	@Override
 	public boolean shouldCreateMenu() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }

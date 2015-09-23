@@ -21,6 +21,7 @@ import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.executor.ScriptExecutionListener;
 import org.auriferous.bot.script.executor.ScriptExecutor;
+import org.auriferous.bot.script.loader.CachedScriptLoader;
 import org.auriferous.bot.script.loader.ScriptLoader;
 import org.auriferous.bot.script.loader.ScriptLoaderImpl;
 import org.auriferous.bot.tabs.Tabs;
@@ -73,7 +74,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		XMLScriptManifest manifest4 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.internal.debug.TestElementSearch", "6", "Test Element Search", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest4, true);
 		
-		scriptLoader = new ScriptLoaderImpl(this, new ScriptContext(this));
+		scriptLoader = new CachedScriptLoader(this, new ScriptContext(this));
 		scriptLoader.addLibrary(scriptLibrary);
 		
 		scriptExecutor = new ScriptExecutor();
@@ -100,12 +101,12 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			});
 		}
 		try {
-			//scriptExecutor.runScript(scriptLoader.loadScript(manifest3));
+			//scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/
 		
-		//userTabs.openTab("florats.tk");
+		//userTabs.openTab("www.google.co.uk");
 		
 		/*config.addConfigurable(this);
 		try {
