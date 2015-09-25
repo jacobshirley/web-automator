@@ -33,6 +33,8 @@ function getAdURL() {
 }
 
 function sendBackResults(results) {
+	var offX = window.pageXOffset;
+	var offY = window.pageYOffset;
 	results.each(function (i) {
 		var el = $(this);
 		var off = el.offset2();
@@ -66,6 +68,10 @@ function removeAllButOne(elems) {
 function removeAll(elems) {
 	elems.empty();
 	return null;
+}
+
+function move(elems, parent) {
+	parent.append(elems.detach());
 }
 
 function _findElementsInIFrames(parent, sel, offset) {

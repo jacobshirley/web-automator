@@ -30,7 +30,7 @@ public class CheckAdState extends AdClickerState {
 			Task currentTask = adClicker.getCurrentTask();
 			
 			if (adURL.contains(Utils.getBaseURL(lastState.getCurrentTaskURL()))) {
-				lastState.incSearchAdTries();
+				lastState.triggerError();
 				System.out.println("Gone back to blog. Setting appropriate state.");
 				return lastState;
 			}
