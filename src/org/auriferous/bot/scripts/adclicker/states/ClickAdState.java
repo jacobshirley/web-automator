@@ -28,7 +28,7 @@ import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class ClickAdState extends AdClickerState {
 	private static final String ADS_BY_GOOGLE = "$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
-	private static final String ASWIFT = "$('ins[id^=\"aswift_\"][id$=_anchor]').css('position', 'fixed').css('display', 'block').css('z-index', '99999998').css('left', '0px').css('top', '0px').show()";
+	private static final String ASWIFT = "$('ins[id^=\"aswift_\"][id$=_anchor]').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
 	
 	private static final String[] AD_ELEMENT_SEARCHES = new String[] {ASWIFT};
 	
@@ -42,6 +42,8 @@ public class ClickAdState extends AdClickerState {
 	private int searchAdTries = 0;
 	private boolean clickedAd = false;
 	private boolean pageLoading = false;
+	
+	private boolean triggerError = false;
 
 	public ClickAdState(AdClicker adClicker) {
 		super(adClicker);
@@ -51,6 +53,7 @@ public class ClickAdState extends AdClickerState {
 			@Override
 			public void onBeforeURLRequest(BeforeURLRequestParams event) {
 				String url = event.getURL();
+				
 				//System.out.println("Getting url "+url);
 				if (url.contains("aclk?")) {
 					pageLoading = true;
@@ -58,6 +61,10 @@ public class ClickAdState extends AdClickerState {
 				}
 			}
 		});
+	}
+	
+	public void triggerError() {
+		this.triggerError = true;
 	}
 	
 	private void removeAllElementsButOne(Browser browser, ScriptMethods methods, String jquery) {
@@ -76,6 +83,16 @@ public class ClickAdState extends AdClickerState {
 			methods.injectCode(id);
 			try {
 				browser.executeJavaScriptAndReturnValue(id, "removeAll("+jquery+");");
+			} catch (Exception e) {}
+		}
+	}
+	
+	private void moveElements(Browser browser, ScriptMethods methods, String jquery, String jqueryParent) {
+		for (long id : browser.getFramesIds()) {
+			methods.injectJQuery(id);
+			methods.injectCode(id);
+			try {
+				browser.executeJavaScriptAndReturnValue(id, "move("+jquery+", "+jqueryParent+");");
 			} catch (Exception e) {}
 		}
 	}
@@ -99,7 +116,7 @@ public class ClickAdState extends AdClickerState {
     		
         	ElementBounds adElement = findAds(botTab, "$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
         	pageLoading = false;
-        	if (adElement != null) {
+        	if (!this.triggerError && adElement != null) {
         		blogURL = botTab.getURL();
         		
         		adElement.width -= 35;
@@ -125,6 +142,7 @@ public class ClickAdState extends AdClickerState {
         	}
         	if (searchAdTries < 10) {
         		searchAdTries++;
+        		this.triggerError = false;
         		System.out.println("Couldn't find ad on try "+searchAdTries+"/10. Reloading page.");
         		
         		botTab.reload();
@@ -150,6 +168,7 @@ public class ClickAdState extends AdClickerState {
 			ElementBounds[] rootAds = methods.getElements(search);
 			
 			if (rootAds.length > 0) {
+				moveElements(botTab.getBrowserInstance(), methods, search, "$('body')");
 				removeAllElementsButOne(botTab.getBrowserInstance(), methods, search);
 			
 				/*for (String search2 : randomList) {

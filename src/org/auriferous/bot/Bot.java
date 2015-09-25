@@ -83,7 +83,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		userTabs = new Tabs(historyConfig);
 		
 		//mainConfig.addConfigurable(this);
-		historyConfigFile.addConfigurable(historyConfig);
+		//historyConfigFile.addConfigurable(historyConfig);
 		
 		if (createGUI) {
 			botGUI = new JBotFrame(this);
@@ -101,7 +101,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 			});
 		}
 		try {
-			//scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
+			scriptExecutor.runScript(scriptLoader.loadScript(manifest2));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/
