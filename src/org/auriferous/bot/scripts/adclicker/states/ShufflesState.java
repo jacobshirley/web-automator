@@ -27,9 +27,11 @@ public class ShufflesState extends AdClickerState {
 				//+Utils.random(5000)
 				
 				adClicker.loadBlog();
+				adClicker.resetTimer();
 			} else {
 				System.out.println("Going to clicker");
-				return new ClickAdState(adClicker);
+				adClicker.resetTimer();
+				return new ClickAdState(adClicker, adClicker.getBotTab().getURL());
 			}
 		}
 		

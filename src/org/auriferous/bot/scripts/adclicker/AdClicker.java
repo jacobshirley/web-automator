@@ -83,8 +83,6 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		executeTasks.setEnabled(false);
 		stateMachine.pushState(new TaskNextState(this)).tick();
 		loadTimer = System.currentTimeMillis();
-		
-		handleTab();
 	}
 	
 	public void handleTab() {
@@ -93,7 +91,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		if (botTab != null) {
 			botTab = openTab(curURL);
 		} else
-			botTab = openTab();
+			botTab = openTab(curURL);
 		
 		botTab.getBrowserInstance().addLoadListener(loader);
 		
@@ -102,6 +100,10 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		methods = new ScriptMethods(botTab);
 		
 		loadBlog();
+	}
+	
+	public void resetTimer() {
+		loadTimer = System.currentTimeMillis();
 	}
 	
 	public long getMainFrameID() {
@@ -118,11 +120,24 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 	
 	public void loadBlog() {
 		if (currentTask != null) {
-			if (currentTask.url.endsWith("/"))
-				botTab.loadURL(currentTask.url+"random");
-			else
-				botTab.loadURL(currentTask.url+"/random");
+			String url = currentTask.url;
+			if (!url.endsWith("random") && !url.endsWith("random/")) {
+				if (currentTask.url.endsWith("/"))
+					url += "random";
+				else
+					url += "/random";
+			}
+			botTab.loadURL(url);
 		}
+	}
+	
+	public boolean onBlog() {
+		String url = botTab.getURL();
+		return url.contains(Utils.getBaseURL(currentTask.url));
+	}
+	
+	public void setBotTab(Tab botTab) {
+		this.botTab = botTab;
 	}
 	
 	public Tab getBotTab() {
@@ -197,11 +212,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 				
 				return super.tick();
 			}
-			
-			if (stateMachine.isFinished()) {
-				return STATE_EXIT_SUCCESS;
-			}
-			
+
 			Timer timer = new Timer();
 			timer.schedule(new TimerTask() {
 				@Override
@@ -209,7 +220,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 					System.out.println("It's been two minutes. Browser must have crashed...");
 					getTabs().closeTab(botTab);
 					handleTab();
-					loadTimer = System.currentTimeMillis();
+					resetTimer();
 				}
 			}, 1*60*1000);
 
@@ -223,9 +234,13 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 			
 			timer.cancel();
 			
+			if (stateMachine.isFinished()) {
+				return STATE_EXIT_SUCCESS;
+			}
+			
 			if (System.currentTimeMillis()-loadTimer >= MAX_WAIT_TIME*1000) {
 				System.out.println("Been "+MAX_WAIT_TIME+" seconds. Forcing execution.");
-				loadTimer = System.currentTimeMillis();
+				resetTimer();
 				stateMachine.pushEvent(Events.EVENT_PAGE_LOADED);
 			}
 		}

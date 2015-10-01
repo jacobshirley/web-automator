@@ -22,7 +22,7 @@ import org.auriferous.bot.scripts.adclicker.gui.table.TaskTableModel;
 
 public class TaskManager extends JFrame{
 	//http://sadiebrookes.com
-	private static final Task DEFAULT_TASK = new Task("http://", 10, 12, 20, 2, "");
+	private static final Task DEFAULT_TASK = new Task("http://", 10, 12, 20, 4, "");
 	//private static final Task DEFAULT_TASK = new Task("http://rxquiehm.cf/", 0, 0, 0, 1, "");
 	
 	private JTable taskTable;
@@ -69,8 +69,6 @@ public class TaskManager extends JFrame{
 				super.windowClosing(e);
 			}
 		});
-		
-		//setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 	
 	class ButtonAction extends AbstractAction {
@@ -88,9 +86,12 @@ public class TaskManager extends JFrame{
 						tasks.add(t);
 
 						break;
-				case 1: tasks.remove(taskTable.getSelectedRow());
+				case 1: int selected = taskTable.getSelectedRow();
+						if (selected >= 0) {
+							tasks.remove(selected);
+						}
 						break;
-				case 2: int selected = taskTable.getSelectedRow();
+				case 2: selected = taskTable.getSelectedRow();
 						if (selected >= 0) {
 							Task task = tasks.get(selected).copy();
 							tasks.add(task);

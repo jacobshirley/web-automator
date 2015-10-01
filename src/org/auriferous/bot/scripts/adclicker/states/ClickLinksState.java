@@ -13,13 +13,11 @@ import org.auriferous.bot.scripts.adclicker.states.events.Events;
 import org.auriferous.bot.tabs.Tab;
 
 public class ClickLinksState extends AdClickerState{
-	private static final int MAX_CLICK_TRIES = 0;
+	private static final int MAX_CLICK_TRIES = 5;
 	
 	private int curLinkClick = 0;
 	private int curClickTry = 0;
-	
-	private boolean waitForLoad = false;
-	
+
 	private String adURL;
 
 	public ClickLinksState(AdClicker adClicker, String adURL) {
@@ -34,15 +32,15 @@ public class ClickLinksState extends AdClickerState{
 
 	@Override
 	public State process(List<Integer> events) {
-		if (waitForLoad && !events.contains(Events.EVENT_PAGE_LOADED))
-			return this;
-		
 		Task currentTask = adClicker.getCurrentTask();
 		ScriptMethods methods = adClicker.getScriptMethods();
 		Tab botTab = adClicker.getBotTab();
 		
 		if (curLinkClick < currentTask.subClicks) {
-			System.out.println("Sub clicked done: "+curLinkClick);
+			curClickTry++;
+			curLinkClick++;
+			
+			System.out.println("Sub clicks done: "+curLinkClick);
 			
 			Utils.wait(2000);
 			System.out.println("Clicking link in ad");
@@ -50,26 +48,27 @@ public class ClickLinksState extends AdClickerState{
 			ElementBounds randomLink = methods.getRandomClickable(adClicker.getMainFrameID(), false);
 			
 			if (randomLink != null) {
-				curLinkClick++;
 				adClicker.setDebugElement(randomLink);
 				Point p = randomLink.getRandomPointFromCentre(0.5, 0.5);
 	        	
 	        	System.out.println("Clicking at "+p.x+", "+p.y);
 	        	
 	        	methods.mouse(p.x, p.y);
+	        	adClicker.resetTimer();
 	        	
 	        	return new WaitOnLinkState(adClicker, adURL, curLinkClick);
 			} else if (curClickTry < MAX_CLICK_TRIES){
-				curClickTry++;
         		System.out.println("Couldn't find link on try "+curClickTry+"/"+MAX_CLICK_TRIES+". Returning to ad to try again.");
+        		adClicker.resetTimer();
         		
-        		botTab.loadURL(adURL);
-        		
-        		waitForLoad = true;
-			} else if (curClickTry == MAX_CLICK_TRIES) {
+        		methods.scrollToRandom(true);
+			} else if (curClickTry >= MAX_CLICK_TRIES) {
+				System.out.println("Couldn't find link on try "+curClickTry+"/"+MAX_CLICK_TRIES+". Next task.");
+				
 				return new TaskDoneState(adClicker, adURL);
 			}
 		} else {
+			System.out.println("Finished link clicking");
 			if (!currentTask.fbLink.equals(""))
 				return new PostFacebookState(adClicker, adURL);
 			else

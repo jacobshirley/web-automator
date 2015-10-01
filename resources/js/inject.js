@@ -143,7 +143,7 @@ function findVisibleElements(parent, jquerySelector) {
 		var x = offset2.left - pageOffX;
 		var y = offset2.top - pageOffY;
 		
-		if (x >= 0 && y >= 0 && x < pageWidth && y < pageHeight) {
+		if (x >= 0 && y >= 0) {
 			var el = elementFromPointIFrames(x, y, offset.left, offset.top);
 			//println("x "+x+", y "+y+", "+document.elementFromPoint(x, y));
 			

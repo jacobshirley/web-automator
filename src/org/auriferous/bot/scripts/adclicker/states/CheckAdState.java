@@ -24,14 +24,16 @@ public class CheckAdState extends AdClickerState {
 	@Override
 	public State process(List<Integer> events) {
 		if (events.contains(Events.EVENT_PAGE_LOADED)) {
-			
+			Utils.wait(2000);
 			adURL = adClicker.getBotTab().getURL();
 			
 			Task currentTask = adClicker.getCurrentTask();
 			
-			if (adURL.contains(Utils.getBaseURL(lastState.getCurrentTaskURL()))) {
+			if (adClicker.onBlog()) {
+				adClicker.resetTimer();
 				lastState.triggerError();
-				System.out.println("Gone back to blog. Setting appropriate state.");
+				System.out.println("Ad invalid. Setting appropriate state.");
+				
 				return lastState;
 			}
 			
@@ -39,14 +41,15 @@ public class CheckAdState extends AdClickerState {
 			
 			System.out.println("Saving URL "+adURL);
 			
-			System.out.println("Now waiting on ad with random 5 seconds");
-			
 			ScriptMethods methods = adClicker.getScriptMethods();
-			int y = (int)Math.round(Math.random()*methods.getPageHeight());
+			methods.scrollToRandom(true);
 			
-			System.out.println("Scrolling to random "+y);
-			methods.scrollTo(y);
-			Utils.wait((currentTask.timeOnAd*1000) + Utils.random(5000));
+			int time = Math.max(0, (currentTask.timeOnAd*1000) + Utils.random(-5000, 500));
+			
+			System.out.println("Now waiting on ad for "+(time/1000)+" seconds.");
+			
+			Utils.wait(time);
+			adClicker.resetTimer();
 			
 			return new ClickLinksState(adClicker, adURL);
 		}
