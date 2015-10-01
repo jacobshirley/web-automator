@@ -20,13 +20,17 @@ public class TaskNextState extends AdClickerState{
 		
 		if (currentTask != null) {
 			System.out.println("Starting next task "+currentTask.url);
-			if (adClicker.getBotTab() != null)
-				adClicker.loadBlog();
+			if (adClicker.getBotTab() != null) {
+				adClicker.closeTab(adClicker.getBotTab());
+			}
+			adClicker.handleTab();
 		} else {
 			System.out.println("Finished all tasks");
-			adClicker.getBotTab().alert("Finished!");
+
 			return null;
 		}
+		
+		adClicker.resetTimer();
 		
 		return new ShufflesState(adClicker);
 	}

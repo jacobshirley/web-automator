@@ -28,25 +28,29 @@ import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class ClickAdState extends AdClickerState {
 	private static final String ADS_BY_GOOGLE = "$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
-	private static final String ASWIFT = "$('ins[id^=\"aswift_\"][id$=_anchor]').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
+	private static final String ASWIFT = "$('ins[id^=\"aswift_\"][id$=\"_anchor\"]').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
 	
 	private static final String[] AD_ELEMENT_SEARCHES = new String[] {ASWIFT};
 	
 	private static final int MAX_CLICKS = 5;
 	
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
+	private static final int MAX_SEARCH_TRIES = 10;
 
 	private String currentTaskURL;
-	private String blogURL = null;
 	
 	private int searchAdTries = 0;
 	private boolean clickedAd = false;
 	private boolean pageLoading = false;
 	
 	private boolean triggerError = false;
+	
+	private boolean reloadingPage = false;
 
-	public ClickAdState(AdClicker adClicker) {
+	public ClickAdState(AdClicker adClicker, String curURL) {
 		super(adClicker);
+		
+		this.currentTaskURL = curURL;
 		
 		final Browser browser = adClicker.getBotTab().getBrowserInstance();
 		browser.getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate() {
@@ -61,6 +65,74 @@ public class ClickAdState extends AdClickerState {
 				}
 			}
 		});
+	}
+	
+	@Override
+	public State process(List<Integer> events) {
+		if (this.reloadingPage && !events.contains(Events.EVENT_PAGE_LOADED))
+			return this;
+		
+		if (searchAdTries >= MAX_SEARCH_TRIES){
+    		System.out.println("Couldn't find ad. Next task...");
+    		
+    		return new TaskNextState(adClicker);
+    	}
+		
+		reloadingPage = false;
+		searchAdTries++;
+		
+		if (this.triggerError) {
+			this.triggerError = false;
+    		
+    		System.out.println("Couldn't find ad on try "+searchAdTries+"/10.");
+    	}
+		
+		System.out.println("Started ad clicking");
+    	Utils.wait(1000);
+    	
+    	ScriptMethods methods = adClicker.getScriptMethods();
+    	Tab botTab = adClicker.getBotTab();
+    	
+    	String url = botTab.getURL();
+		if (!url.contains(Utils.getBaseURL(getCurrentTaskURL()))) {
+			adClicker.resetTimer();
+			System.out.println("Not in blog. Going back.");
+			this.reloadingPage = true;
+			adClicker.loadBlog();
+			return this;
+		}
+
+    	ElementBounds adElement = findAds(botTab, "$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
+    	pageLoading = false;
+    	moveElements(botTab.getBrowserInstance(), methods, "$('.adsbygoogle')", "$('body')");
+    	Utils.wait(1000);
+    	
+    	if (adElement != null) {
+    		adElement.width -= 35;
+    		
+    		adClicker.setDebugElement(adElement);
+    		
+    		for (int i = 0; i < 10; i++) {
+    			clickedAd = true;
+        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
+
+        		methods.mouse(p.x, p.y);
+        		
+        		Utils.wait(1000);
+        		
+        		if (pageLoading) {
+        			System.out.println("Page loading!!!");
+        			break;
+        		}
+    		}
+    	} else {
+    		this.triggerError = true;
+    		//this.reloadingPage = true;
+    		botTab.reload();
+    	}
+    	
+    	adClicker.resetTimer();
+    	return new CheckAdState(adClicker, this);
 	}
 	
 	public void triggerError() {
@@ -97,67 +169,6 @@ public class ClickAdState extends AdClickerState {
 		}
 	}
 	
-	@Override
-	public State process(List<Integer> events) {
-		System.out.println("Started ad clicking");
-    	Utils.wait(2000);
-    	
-    	ScriptMethods methods = adClicker.getScriptMethods();
-    	Tab botTab = adClicker.getBotTab();
-    	botTab.setBlockJSMessages(false);
-    	String url = botTab.getURL();
-    	
-    	if (blogURL != null && !url.contains(Utils.getBaseURL(currentTaskURL))) {
-    		System.out.println("Clicked ad successfully.");
-    		
-    		return new CheckAdState(adClicker, this);
-    	} else {
-    		currentTaskURL = url;
-    		
-        	ElementBounds adElement = findAds(botTab, "$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
-        	pageLoading = false;
-        	if (!this.triggerError && adElement != null) {
-        		blogURL = botTab.getURL();
-        		
-        		adElement.width -= 35;
-        		
-        		adClicker.setDebugElement(adElement);
-        		
-        		for (int i = 0; i < 10; i++) {
-        			//if (!botTab.getURL().contains(Utils.getBaseURL(currentTaskURL)))
-        			//	return new CheckAdState(adClicker, this);
-        			
-        			clickedAd = true;
-	        		Point p = adElement.getRandomPointFromCentre(0.5, 0.5);
-
-            		methods.mouse(p.x, p.y);
-            		
-            		Utils.wait(1000);
-            		
-            		if (pageLoading) {
-            			System.out.println("Page loading!!!");
-            			return new CheckAdState(adClicker, this);
-            		}
-        		}
-        	}
-        	if (searchAdTries < 10) {
-        		searchAdTries++;
-        		this.triggerError = false;
-        		System.out.println("Couldn't find ad on try "+searchAdTries+"/10. Reloading page.");
-        		
-        		botTab.reload();
-        		
-        		return this;
-        	} else if (searchAdTries >= 10){
-        		System.out.println("Couldn't find ad. Next task...");
-        		
-        		return new TaskNextState(adClicker);
-        	}
-    	}
-    	
-    	return this;
-	}
-	
 	private ElementBounds findAds(Tab botTab, String... jqueryStrings) {
 		ScriptMethods methods = adClicker.getScriptMethods();
 
@@ -168,7 +179,7 @@ public class ClickAdState extends AdClickerState {
 			ElementBounds[] rootAds = methods.getElements(search);
 			
 			if (rootAds.length > 0) {
-				moveElements(botTab.getBrowserInstance(), methods, search, "$('body')");
+				//moveElements(botTab.getBrowserInstance(), methods, search, "$('body')");
 				removeAllElementsButOne(botTab.getBrowserInstance(), methods, search);
 			
 				/*for (String search2 : randomList) {
@@ -181,6 +192,7 @@ public class ClickAdState extends AdClickerState {
 				ElementBounds[] iframe1 = methods.getElements("$('iframe[id^=\"google_ads_frame\"]')");
 				
 				if (iframe1.length > 0) {
+					System.out.println("Found google_ads_frame");
 					bounds.add(iframe1[0]);
 					
 					ElementBounds[] result = null;
@@ -194,13 +206,12 @@ public class ClickAdState extends AdClickerState {
 							bounds.height = result[0].height;
 							
 							bounds.setDOMElement(result[0].getDOMElement());
-							
+
 							break;
 						}
 					}
 				}
 				return bounds;
-				
 			}
 		}
 		

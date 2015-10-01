@@ -370,6 +370,17 @@ public class ScriptMethods {
 		scrollTo(y, 100, 20);
 	}
 	
+	public void scrollToRandom(boolean minOffPage) {
+		int height = target.getTabView().getHeight();
+		int pageHeight = (int) getPageHeight();
+		if (pageHeight > height) {
+			int y = (int)Math.round(Utils.random(height, pageHeight));
+			
+			System.out.println("Scrolling to random "+y);
+			scrollTo(y);
+		}
+	}
+	
 	public void moveMouseRandom() {
 		int randomY = (int)Math.round(Math.random()*getPageHeight());
 		System.out.println("moving mouse to "+randomY);

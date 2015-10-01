@@ -55,4 +55,8 @@ public abstract class Script {
 	public final Tab openTab(String url) {
 		return tabs.openTab(url);
 	}
+	
+	public final void closeTab(Tab tab) {
+		tabs.closeTab(tab);
+	}
 }
