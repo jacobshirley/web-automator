@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.auriferous.bot.ResourceLoader;
 import org.auriferous.bot.Utils;
+import org.auriferous.bot.script.callbacks.JSCallback;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.input.Keyboard;
 import org.auriferous.bot.script.input.Mouse;
@@ -18,6 +19,7 @@ import org.auriferous.bot.tabs.TabCallback;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.JSObject;
+import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.events.StatusEvent;
 import com.teamdev.jxbrowser.chromium.events.StatusListener;
 
@@ -76,6 +78,30 @@ public class ScriptMethods {
 			}
 		} catch (Exception e) {
 			//e.printStackTrace();
+		}
+	}
+	
+	public void execJS(String code) {
+		Browser browser = target.getBrowserInstance();
+		for (long id : browser.getFramesIds()) {
+			injectJQuery(id);
+			injectCode(id);
+			try {
+				browser.executeJavaScriptAndReturnValue(id, code);
+			} catch (Exception e) {}
+		}
+	}
+	
+	public void execJS(String code, JSCallback callback) {
+		Browser browser = target.getBrowserInstance();
+		for (long id : browser.getFramesIds()) {
+			injectJQuery(id);
+			injectCode(id);
+			try {
+				JSValue val = browser.executeJavaScriptAndReturnValue(id, code);
+				if (callback.onResult(val))
+					break;
+			} catch (Exception e) {}
 		}
 	}
 	

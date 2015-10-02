@@ -74,6 +74,8 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 			}
 		}
 	};
+
+	private String blogURL;
 	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -133,7 +135,11 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 	
 	public boolean onBlog() {
 		String url = botTab.getURL();
-		return url.contains(Utils.getBaseURL(currentTask.url));
+		return url.contains(Utils.getBaseURL(this.blogURL));
+	}
+	
+	public void saveBlogURL() {
+		this.blogURL = botTab.getURL();
 	}
 	
 	public void setBotTab(Tab botTab) {

@@ -28,10 +28,6 @@ $.fn.findVisibles = function(sel) {
 	return findVisibleElements(this, sel);
 }
 
-function getAdURL() {
-	return $("a[href*='&adurl=']").get(0).href;
-}
-
 function sendBackResults(results) {
 	var offX = window.pageXOffset;
 	var offY = window.pageYOffset;
@@ -207,6 +203,20 @@ function getElementHeight(elem) {
 			height = Math.max(height, getElementHeight($(this)));
 	});
 	return height;
+}
+
+//AD CLICKER STUFF
+
+function getAdURL() {
+	var finalHref = null;
+	$("a").each(function() {
+		var href = this.href;
+		if (href.indexOf("&adurl=") > 0) {
+			finalHref = href;
+			return false;
+		}
+	});
+	return finalHref;
 }
 
 //println("Code injected successfully");
