@@ -1,8 +1,8 @@
 package org.auriferous.bot.script;
 
-import org.auriferous.bot.data.library.ScriptManifest;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.Tabs;
+import org.auriferous.bot.shared.data.library.ScriptManifest;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.Tabs;
 
 public abstract class Script {
 	public static final int STATE_RUNNING = 0;

@@ -10,9 +10,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.auriferous.bot.gui.swing.JOverlayComponent;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.TabControlListener;
-import org.auriferous.bot.tabs.Tabs;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.TabControlListener;
+import org.auriferous.bot.shared.tabs.Tabs;
 
 public class JTabBar extends JTabbedPane implements TabControlListener, ChangeListener {
 	private static final long serialVersionUID = 1L;

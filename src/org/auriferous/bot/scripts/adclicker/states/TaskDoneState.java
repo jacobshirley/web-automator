@@ -2,8 +2,8 @@ package org.auriferous.bot.scripts.adclicker.states;
 
 import java.util.List;
 
-import org.auriferous.bot.script.fsm.State;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
+import org.auriferous.bot.shared.fsm.State;
 
 public class TaskDoneState extends AdClickerState {
 	private String adURL;

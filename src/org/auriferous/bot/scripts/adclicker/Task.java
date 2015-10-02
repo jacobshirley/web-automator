@@ -1,6 +1,6 @@
 package org.auriferous.bot.scripts.adclicker;
 
-import org.auriferous.bot.data.DataEntry;
+import org.auriferous.bot.shared.data.DataEntry;
 
 public class Task {
 	public String url;

@@ -13,15 +13,15 @@ import java.util.Collections;
 import java.util.List;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.data.DataEntry;
-import org.auriferous.bot.data.history.HistoryEntry;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.callbacks.JSCallback;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.script.fsm.State;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
 import org.auriferous.bot.scripts.adclicker.states.events.Events;
-import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.shared.data.DataEntry;
+import org.auriferous.bot.shared.data.history.HistoryEntry;
+import org.auriferous.bot.shared.fsm.State;
+import org.auriferous.bot.shared.tabs.Tab;
 
 import com.teamdev.jxbrowser.chromium.BeforeURLRequestParams;
 import com.teamdev.jxbrowser.chromium.Browser;

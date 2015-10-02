@@ -1,6 +1,7 @@
 package org.auriferous.bot.gui.swing.tabs;
 
 import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -10,9 +11,9 @@ import java.util.List;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.gui.swing.JBotFrame;
 import org.auriferous.bot.gui.swing.JOverlayComponent;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.view.PaintListener;
-import org.auriferous.bot.tabs.view.TabView;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.view.PaintListener;
+import org.auriferous.bot.shared.tabs.view.TabView;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.events.DisposeEvent;
@@ -37,6 +38,23 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 		browser.addDisposeListener(this);
 		
 		paintComponent.addPaintListener(this);
+		
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				System.out.println(e);
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				System.out.println(e);
+			}
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				System.out.println(e);
+			}
+		});
 	}
 	
 	@Override
@@ -107,12 +125,12 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 	public void dispatchTypeKey(int c, int time, int mods) {
 		dispatchPressKey(c, mods);
 		
-		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_TYPED, System.currentTimeMillis(), mods, KeyEvent.VK_UNDEFINED, (char)c, KeyEvent.KEY_LOCATION_UNKNOWN);
-		super.forwardKeyTypedEvent(event);
-	
 		Utils.wait(time+Utils.random(20));
 	
 		dispatchReleaseKey(c, mods);
+		
+		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_TYPED, System.currentTimeMillis(), mods, KeyEvent.VK_UNDEFINED, (char)c, KeyEvent.KEY_LOCATION_UNKNOWN);
+		super.forwardKeyTypedEvent(event);
 	}
 	
 	@Override

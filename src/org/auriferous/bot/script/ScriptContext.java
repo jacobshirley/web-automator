@@ -1,7 +1,7 @@
 package org.auriferous.bot.script;
 
 import org.auriferous.bot.Bot;
-import org.auriferous.bot.data.history.HistoryConfig;
+import org.auriferous.bot.shared.data.history.HistoryConfig;
 
 public class ScriptContext {
 	private HistoryConfig history;

@@ -6,11 +6,11 @@ import java.util.List;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.script.fsm.State;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
 import org.auriferous.bot.scripts.adclicker.Task;
 import org.auriferous.bot.scripts.adclicker.states.events.Events;
-import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.shared.fsm.State;
+import org.auriferous.bot.shared.tabs.Tab;
 
 public class ClickLinksState extends AdClickerState{
 	private static final int MAX_CLICK_TRIES = 5;

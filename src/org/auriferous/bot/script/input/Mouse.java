@@ -7,9 +7,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.view.PaintListener;
-import org.auriferous.bot.tabs.view.TabView;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.view.PaintListener;
+import org.auriferous.bot.shared.tabs.view.TabView;
 
 public class Mouse extends Input implements PaintListener {
 	public Mouse(Tab target) {

@@ -2,9 +2,9 @@ package org.auriferous.bot.scripts.googler.states;
 
 import java.util.List;
 
-import org.auriferous.bot.script.fsm.FSM;
-import org.auriferous.bot.script.fsm.State;
 import org.auriferous.bot.scripts.googler.Googler;
+import org.auriferous.bot.shared.fsm.FSM;
+import org.auriferous.bot.shared.fsm.State;
 
 public class GooglerState extends State {
 	protected Googler googler;

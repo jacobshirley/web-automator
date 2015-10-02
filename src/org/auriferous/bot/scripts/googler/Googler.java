@@ -11,14 +11,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.gui.swing.script.JScriptGui;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.view.PaintListener;
+import org.auriferous.bot.shared.data.library.ScriptManifest;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.view.PaintListener;
 
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
@@ -87,7 +87,7 @@ public class Googler extends Script implements JScriptGui, PaintListener{
 			methods.clickElement(methods.getRandomElement("$(\"*[maxlength='2048']\");"));
 			System.out.println("Found input element");
 			
-			methods.type(search);
+			methods.type('^');
 			methods.type(KeyEvent.VK_ENTER);
 			
 			Utils.wait(2000);

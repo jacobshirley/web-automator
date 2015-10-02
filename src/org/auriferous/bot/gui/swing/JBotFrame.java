@@ -3,6 +3,8 @@ package org.auriferous.bot.gui.swing;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
@@ -26,11 +28,11 @@ import org.auriferous.bot.gui.swing.script.JScriptGui;
 import org.auriferous.bot.gui.swing.script.selector.JScriptSelectorFrame;
 import org.auriferous.bot.gui.swing.tabs.JTab;
 import org.auriferous.bot.gui.swing.tabs.JTabBar;
+import org.auriferous.bot.internal.executor.ScriptExecutionListener;
 import org.auriferous.bot.script.Script;
-import org.auriferous.bot.script.executor.ScriptExecutionListener;
 import org.auriferous.bot.scripts.internal.debug.TestElementSearch;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.Tabs;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.Tabs;
 
 public class JBotFrame extends JFrame implements ScriptExecutionListener, ChangeListener{
 	

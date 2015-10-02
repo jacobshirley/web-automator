@@ -14,11 +14,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 
-import org.auriferous.bot.data.DataEntry;
 import org.auriferous.bot.scripts.adclicker.Task;
 import org.auriferous.bot.scripts.adclicker.TaskConfigEntry;
 import org.auriferous.bot.scripts.adclicker.gui.table.JPasteTable;
 import org.auriferous.bot.scripts.adclicker.gui.table.TaskTableModel;
+import org.auriferous.bot.shared.data.DataEntry;
 
 public class TaskManager extends JFrame{
 	//http://sadiebrookes.com

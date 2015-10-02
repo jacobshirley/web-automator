@@ -3,7 +3,7 @@ package org.auriferous.bot.scripts.adclicker;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.auriferous.bot.data.DataEntry;
+import org.auriferous.bot.shared.data.DataEntry;
 
 public class TaskConfigEntry extends DataEntry{
 	private Task task;
