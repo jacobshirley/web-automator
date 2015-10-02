@@ -16,6 +16,7 @@ import org.auriferous.bot.Utils;
 import org.auriferous.bot.data.DataEntry;
 import org.auriferous.bot.data.history.HistoryEntry;
 import org.auriferous.bot.script.ScriptMethods;
+import org.auriferous.bot.script.callbacks.JSCallback;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.fsm.State;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
@@ -24,6 +25,7 @@ import org.auriferous.bot.tabs.Tab;
 
 import com.teamdev.jxbrowser.chromium.BeforeURLRequestParams;
 import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class ClickAdState extends AdClickerState {
@@ -46,6 +48,10 @@ public class ClickAdState extends AdClickerState {
 	private boolean triggerError = false;
 	
 	private boolean reloadingPage = false;
+	
+	private ScriptMethods methods = null;
+	
+	private boolean shouldCheckAdOnClick = false;
 
 	public ClickAdState(AdClicker adClicker, String curURL) {
 		super(adClicker);
@@ -59,9 +65,11 @@ public class ClickAdState extends AdClickerState {
 				String url = event.getURL();
 				
 				//System.out.println("Getting url "+url);
-				if (url.contains("aclk?")) {
+				
+				if (url.contains("&adurl=")) {
 					pageLoading = true;
-					handleAdTest(url);
+					if (shouldCheckAdOnClick)
+						handleAdTest(url);
 				}
 			}
 		});
@@ -78,23 +86,17 @@ public class ClickAdState extends AdClickerState {
     		return new TaskNextState(adClicker);
     	}
 		
-		reloadingPage = false;
-		searchAdTries++;
-		
 		if (this.triggerError) {
 			this.triggerError = false;
     		
     		System.out.println("Couldn't find ad on try "+searchAdTries+"/10.");
     	}
-		
-		System.out.println("Started ad clicking");
-    	Utils.wait(1000);
-    	
-    	ScriptMethods methods = adClicker.getScriptMethods();
+
+    	methods = adClicker.getScriptMethods();
     	Tab botTab = adClicker.getBotTab();
     	
     	String url = botTab.getURL();
-		if (!url.contains(Utils.getBaseURL(getCurrentTaskURL()))) {
+		if (!adClicker.onBlog()) {
 			adClicker.resetTimer();
 			System.out.println("Not in blog. Going back.");
 			this.reloadingPage = true;
@@ -102,12 +104,50 @@ public class ClickAdState extends AdClickerState {
 			return this;
 		}
 
+		reloadingPage = false;
+		searchAdTries++;
+		
+		System.out.println("Started ad clicking");
+		Utils.wait(3000);
+
     	ElementBounds adElement = findAds(botTab, "$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
     	pageLoading = false;
-    	moveElements(botTab.getBrowserInstance(), methods, "$('.adsbygoogle')", "$('body')");
-    	Utils.wait(1000);
+    	//moveElements("$('ins[id^=\"aswift_\"][id$=\"_anchor\"]')", "$('body')");
+    	
+    	//methods.execJS("$('body').find('div').not('ins[id^=\"aswift_\"][id$=\"_anchor\"]').css('position', 'absolute').css('right', '100%')");
+
     	
     	if (adElement != null) {
+    		String adURL = getBaseAdURL();
+    		DataEntry historyConfig = adClicker.getHistoryConfig();
+    		
+    		shouldCheckAdOnClick = true;
+    		
+    		if (!adURL.equals("")) {
+    			if (!historyConfig.contains("//history-entry[url/@value='"+adURL+"']")) {
+    				System.out.println("Haven't clicked "+adURL +" recently!");
+    				DataEntry entry = new HistoryEntry("", "", adURL);
+    				
+    				if (historyConfig.size() >= MAX_CLICKS) {
+    					historyConfig.remove(0);
+    					historyConfig.add(entry);
+    				} else
+    					historyConfig.add(entry);
+    				
+    				shouldCheckAdOnClick = false;
+    			} else {
+    				System.out.println("Already clicked this recently.");
+    				
+    				triggerError();
+    				this.reloadingPage = true;
+    				botTab.reload();
+    				return this;
+    			}
+    		} else {
+    			System.out.println("Couldn't find adurl in any element");
+    			shouldCheckAdOnClick = true;
+    		}
+    		
     		adElement.width -= 35;
     		
     		adClicker.setDebugElement(adElement);
@@ -135,38 +175,45 @@ public class ClickAdState extends AdClickerState {
     	return new CheckAdState(adClicker, this);
 	}
 	
+	private synchronized String getBaseAdURL() {
+		class CheckerCallback implements JSCallback {
+			private String url = "";
+
+			public boolean onResult(JSValue value) {
+				if (!value.isNull()) {
+					url = value.getString();
+					return true;
+				}
+				return false;
+			}
+		}
+		CheckerCallback callback = new CheckerCallback();
+		methods.execJS("getAdURL();", callback);
+		
+		String url = callback.url;
+		if (!url.equals("")) {
+			url = url.split("&adurl=")[1];
+		}
+		if (url.equals(""))
+			return "";
+		
+		return Utils.getBaseURL(url);
+	}
+	
 	public void triggerError() {
 		this.triggerError = true;
 	}
 	
-	private void removeAllElementsButOne(Browser browser, ScriptMethods methods, String jquery) {
-		for (long id : browser.getFramesIds()) {
-			methods.injectJQuery(id);
-			methods.injectCode(id);
-			try {
-				browser.executeJavaScriptAndReturnValue(id, "removeAllButOne("+jquery+");");
-			} catch (Exception e) {}
-		}
+	private void removeAllElementsButOne(String jquery) {
+		methods.execJS("removeAllButOne("+jquery+");");
 	}
 	
-	private void removeAllElements(Browser browser, ScriptMethods methods, String jquery) {
-		for (long id : browser.getFramesIds()) {
-			methods.injectJQuery(id);
-			methods.injectCode(id);
-			try {
-				browser.executeJavaScriptAndReturnValue(id, "removeAll("+jquery+");");
-			} catch (Exception e) {}
-		}
+	private void removeAllElements(String jquery) {
+		methods.execJS("removeAll("+jquery+");");
 	}
 	
-	private void moveElements(Browser browser, ScriptMethods methods, String jquery, String jqueryParent) {
-		for (long id : browser.getFramesIds()) {
-			methods.injectJQuery(id);
-			methods.injectCode(id);
-			try {
-				browser.executeJavaScriptAndReturnValue(id, "move("+jquery+", "+jqueryParent+");");
-			} catch (Exception e) {}
-		}
+	private void moveElements(String jquery, String jqueryParent) {
+		methods.execJS("move("+jquery+", "+jqueryParent+");");	
 	}
 	
 	private ElementBounds findAds(Tab botTab, String... jqueryStrings) {
@@ -180,7 +227,7 @@ public class ClickAdState extends AdClickerState {
 			
 			if (rootAds.length > 0) {
 				//moveElements(botTab.getBrowserInstance(), methods, search, "$('body')");
-				removeAllElementsButOne(botTab.getBrowserInstance(), methods, search);
+				removeAllElementsButOne(search);
 			
 				/*for (String search2 : randomList) {
 					if (!search2.equals(search)) {
@@ -220,18 +267,13 @@ public class ClickAdState extends AdClickerState {
 	
 	private void handleAdTest(String url) {
 		if (clickedAd) {
-			System.out.println("url req: "+url);
 			DataEntry historyConfig = adClicker.getHistoryConfig();
 		
 			clickedAd = false;
 			try {
-				System.out.println("Testing url");
-				url = testAdURL(url).replace("https://", "http://");
-				int id = url.lastIndexOf("?");
-				if (id > 0)
-					url = url.substring(0, id);
-				
-				url = Utils.getBaseURL(url);
+				if (!url.equals("")) {
+					url = url.split("&adurl=")[1];
+				}
 				
 				System.out.println("Getting url of "+url);
 
@@ -260,49 +302,5 @@ public class ClickAdState extends AdClickerState {
 			}
 			
 		}
-	}
-    
-    public static String testAdURL(String testURL) throws Exception {
-		String url = "http://www.wtfhallo.co/test_url.php";
-		
-		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		con.setRequestMethod("POST");
-		con.setRequestProperty("User-Agent", USER_AGENT);
-		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-
-		String urlParameters = "url="+URLEncoder.encode(testURL, "UTF-8");
-
-		con.setDoOutput(true);
-		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		wr.writeBytes(urlParameters);
-		wr.flush();
-		wr.close();
-
-		int responseCode = con.getResponseCode();
-		//System.out.println("\nSending 'POST' request to URL : " + url);
-		//System.out.println("Post parameters : " + urlParameters);
-		//System.out.println("Response Code : " + responseCode);
-
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(con.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
-		
-		return URLDecoder.decode(response.toString(), "UTF-8");
-    }
-
-	public String getCurrentTaskURL() {
-		return currentTaskURL;
-	}
-	
-	public void incSearchAdTries() {
-		searchAdTries++;
 	}
 }

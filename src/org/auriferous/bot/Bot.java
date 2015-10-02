@@ -74,6 +74,9 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		XMLScriptManifest manifest4 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.internal.debug.TestElementSearch", "6", "Test Element Search", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest4, true);
 		
+		XMLScriptManifest manifest5 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.tests.TestAdChecking", "6", "Test Ad Checking", "1.0", "RAARR", "bin");
+		scriptLibrary.addScript(manifest5, true);
+		
 		scriptLoader = new CachedScriptLoader(this, new ScriptContext(this));
 		scriptLoader.addLibrary(scriptLibrary);
 		
