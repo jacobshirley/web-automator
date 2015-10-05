@@ -1,0 +1,7 @@
+/bin
+*.xml
+/chrome
+/config
+/jxbrowser-cache
+/test
+*.log

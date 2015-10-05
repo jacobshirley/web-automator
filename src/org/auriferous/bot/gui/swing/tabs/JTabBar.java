@@ -71,7 +71,7 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 	}
 	
 	public void addTab(JTab tab) {
-		addTab(tab.getTab().getTitle(), tab);
+		addTab(tab.getTabInstance().getTitle(), tab);
 	}
 	
 	public void addTab(String title, JTab tab) {
@@ -87,7 +87,7 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 	public void remove(int index) {
 		Component comp = getComponentAt(index);
 		if (comp instanceof JTab) {
-			Tab tab = ((JTab)comp).getTab();
+			Tab tab = ((JTab)comp).getTabInstance();
 			for (Tabs tabs : scriptTabs) {
 				if (tabs.containsTab(tab)) {
 					tabs.closeTab(tab);
@@ -101,7 +101,7 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 		for (int i = 0; i < getTabCount(); i++) {
 			Component comp = getComponentAt(i);
 			if (comp instanceof JTab) {
-				Tab tab2 = ((JTab)comp).getTab();
+				Tab tab2 = ((JTab)comp).getTabInstance();
 				if (tab2.equals(tab))
 					return i;
 			}
@@ -113,7 +113,7 @@ public class JTabBar extends JTabbedPane implements TabControlListener, ChangeLi
 		if (getTabCount() > 0) {
 			Component comp = getComponentAt(index);
 			if (comp instanceof JTab) {
-				Tab tab = ((JTab)comp).getTab();
+				Tab tab = ((JTab)comp).getTabInstance();
 				return tab;
 			}
 		}

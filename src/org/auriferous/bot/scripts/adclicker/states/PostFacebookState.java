@@ -8,7 +8,7 @@ import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
-import org.auriferous.bot.scripts.adclicker.Task;
+import org.auriferous.bot.scripts.adclicker.task.Task;
 import org.auriferous.bot.shared.fsm.State;
 import org.auriferous.bot.shared.tabs.Tab;
 
@@ -64,6 +64,6 @@ public class PostFacebookState extends AdClickerState{
 			}
 		});
 		
-		return new TaskDoneState(adClicker, adURL);
+		return new TaskDoneState(adClicker, adURL, "Complete.");
 	}
 }

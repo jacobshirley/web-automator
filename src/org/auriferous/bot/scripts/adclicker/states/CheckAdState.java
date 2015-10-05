@@ -5,8 +5,8 @@ import java.util.List;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
-import org.auriferous.bot.scripts.adclicker.Task;
 import org.auriferous.bot.scripts.adclicker.states.events.Events;
+import org.auriferous.bot.scripts.adclicker.task.Task;
 import org.auriferous.bot.shared.fsm.State;
 
 import com.teamdev.jxbrowser.chromium.javafx.DefaultNetworkDelegate;

@@ -29,6 +29,7 @@ import com.teamdev.jxbrowser.chromium.events.TitleEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleListener;
 
 public class Tab {
+	private static final boolean TEST_MODE = false;
 	private static final List<Browser> BROWSER_INSTANCES = new ArrayList<Browser>();
 
 	private int id;
@@ -57,7 +58,14 @@ public class Tab {
 		
 		setBlockJSMessages(true);
 		
-		this.browser = new Browser(new BrowserContext("test"));
+		BrowserContext context = null;
+		if (TEST_MODE) {
+			context = new BrowserContext("test");
+		} else {
+			context = new BrowserContext(System.getProperty("user.dir")+"/jxbrowser-cache");
+		}
+		
+		this.browser = new Browser();
 		this.browser.getPreferences().setLocalStorageEnabled(true);
 		
 		BROWSER_INSTANCES.add(this.browser);

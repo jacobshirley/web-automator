@@ -53,7 +53,7 @@ public class JTab extends JPanel implements TabListener {
 		return tabComponent;
 	}
 	
-	public Tab getTab() {
+	public Tab getTabInstance() {
 		return tab;
 	}
 	

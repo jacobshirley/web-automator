@@ -38,23 +38,6 @@ public class JTabView extends BrowserView implements DisposeListener<Browser>, T
 		browser.addDisposeListener(this);
 		
 		paintComponent.addPaintListener(this);
-		
-		addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				System.out.println(e);
-			}
-			
-			@Override
-			public void keyReleased(KeyEvent e) {
-				System.out.println(e);
-			}
-			
-			@Override
-			public void keyTyped(KeyEvent e) {
-				System.out.println(e);
-			}
-		});
 	}
 	
 	@Override

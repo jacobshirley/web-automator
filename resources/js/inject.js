@@ -219,4 +219,11 @@ function getAdURL() {
 	return finalHref;
 }
 
+function moveOtherElements() {
+	$('.adsbygoogle').each(function() {
+		var $this = $(this);
+		$this.parentsUntil('body').css('position', 'relative').css('z-index', '0');
+	});
+}
+
 //println("Code injected successfully");

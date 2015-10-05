@@ -177,9 +177,12 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	public void onRunScript(Script script) {
 		tabBar.addTabs(script.getTabs());
 		
-		if (script instanceof JScriptGui)
+		if (script instanceof JScriptGui) {
 			if (((JScriptGui)script).shouldCreateMenu())
 				addScriptToMenu(script);
+		} else {
+			addScriptToMenu(script);
+		}
 	}
 
 	@Override
@@ -248,8 +251,8 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	@Override
 	public void stateChanged(ChangeEvent cE) {
 		Component comp = tabBar.getSelectedComponent();
-		if (comp != null)
-			debugger.debug(((JTab)comp).getTab().getBrowserInstance());
+		if (comp != null && (comp instanceof JTab))
+			debugger.debug(((JTab)comp).getTabInstance().getBrowserInstance());
 	}
 	
 	class MenuActionItem extends AbstractAction {
@@ -282,75 +285,76 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		public void actionPerformed(ActionEvent e) {
 			Tab current = tabBar.getCurrentTab();
 			switch (this.actionID) {
-			case ACTION_RUN_SCRIPT:
-				createScriptSelector(scriptsMenu);
-				break;
-			case ACTION_ENABLE_DEBUG:
-				debugger.setVisible(true);
-				break;
-			case ACTION_BLOCK_INPUT:
-				JBotFrame.mouseBlocked = !JBotFrame.mouseBlocked;
-				JBotFrame.keyboardBlocked = !JBotFrame.keyboardBlocked;
-				break;
-			case ACTION_TERMINATE_SCRIPT:
-				bot.getScriptExecutor().terminateScript(script);
-				break;
-			case ACTION_PAUSE_SCRIPT:
-				bot.getScriptExecutor().pauseScript(script);
-				break;
-			case ACTION_RESUME_SCRIPT:
-				bot.getScriptExecutor().resumeScript(script);
-				break;
-			case ACTION_TAB_GO_BACK:
-				if (current != null) {
-					current.goBack();
-				} else {
-					Utils.alert("Cannot access tab.");
+				case ACTION_RUN_SCRIPT:
+					createScriptSelector(scriptsMenu);
+					break;
+				case ACTION_ENABLE_DEBUG:
+					debugger.setVisible(true);
+					debugger.debug(current.getBrowserInstance().getRemoteDebuggingURL());
+					break;
+				case ACTION_BLOCK_INPUT:
+					JBotFrame.mouseBlocked = !JBotFrame.mouseBlocked;
+					JBotFrame.keyboardBlocked = !JBotFrame.keyboardBlocked;
+					break;
+				case ACTION_TERMINATE_SCRIPT:
+					bot.getScriptExecutor().terminateScript(script);
+					break;
+				case ACTION_PAUSE_SCRIPT:
+					bot.getScriptExecutor().pauseScript(script);
+					break;
+				case ACTION_RESUME_SCRIPT:
+					bot.getScriptExecutor().resumeScript(script);
+					break;
+				case ACTION_TAB_GO_BACK:
+					if (current != null) {
+						current.goBack();
+					} else {
+						Utils.alert("Cannot access tab.");
+					}
+					break;
+				case ACTION_TAB_GO_FORWARD:
+					if (current != null) {
+						current.goForward();
+					} else {
+						Utils.alert("Cannot access tab.");
+					}
+					break;
+				case ACTION_CREATE_TAB:
+					String s = (String)JOptionPane.showInputDialog(
+		                    JBotFrame.this,
+		                    "Tab URL: ",
+		                    "Enter a URL",
+		                    JOptionPane.PLAIN_MESSAGE,
+		                    null,
+		                    null,
+		                    "http://www.google.com/");
+					
+					if ((s != null) && (s.length() > 0)) {
+						userTabs.openTab(s);
+					}
+					break;
+				case ACTION_TAB_REFRESH:
+					if (current != null) {
+						current.reload();
+					} else {
+						Utils.alert("Cannot access tab.");
+					}
+					break;
+				case ACTION_DEBUG_ELEMENTS:
+					try {
+						TestElementSearch elementSearcher = (TestElementSearch) bot.getScriptLoader().loadScript("6");
+						elementSearcher.setDebugTab(current);
+						bot.getScriptExecutor().runScript(elementSearcher);
+					} catch (ClassNotFoundException e1) {
+						e1.printStackTrace();
+					}
+					break;
+				case ACTION_CHECK_URL:
+					System.out.println("URL: "+current.getURL());
+					break;
+				case ACTION_EXIT_BOT:
+					System.exit(1);
 				}
-				break;
-			case ACTION_TAB_GO_FORWARD:
-				if (current != null) {
-					current.goForward();
-				} else {
-					Utils.alert("Cannot access tab.");
-				}
-				break;
-			case ACTION_CREATE_TAB:
-				String s = (String)JOptionPane.showInputDialog(
-	                    JBotFrame.this,
-	                    "Tab URL: ",
-	                    "Enter a URL",
-	                    JOptionPane.PLAIN_MESSAGE,
-	                    null,
-	                    null,
-	                    "http://www.google.com/");
-				
-				if ((s != null) && (s.length() > 0)) {
-					userTabs.openTab(s);
-				}
-				break;
-			case ACTION_TAB_REFRESH:
-				if (current != null) {
-					current.reload();
-				} else {
-					Utils.alert("Cannot access tab.");
-				}
-				break;
-			case ACTION_DEBUG_ELEMENTS:
-				try {
-					TestElementSearch elementSearcher = (TestElementSearch) bot.getScriptLoader().loadScript("6");
-					elementSearcher.setDebugTab(current);
-					bot.getScriptExecutor().runScript(elementSearcher);
-				} catch (ClassNotFoundException e1) {
-					e1.printStackTrace();
-				}
-				break;
-			case ACTION_CHECK_URL:
-				System.out.println("URL: "+current.getURL());
-				break;
-			case ACTION_EXIT_BOT:
-				System.exit(1);
-			}
 		}
 	}
 }

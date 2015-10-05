@@ -18,6 +18,7 @@ import org.auriferous.bot.script.callbacks.JSCallback;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
 import org.auriferous.bot.scripts.adclicker.states.events.Events;
+import org.auriferous.bot.scripts.adclicker.task.Task;
 import org.auriferous.bot.shared.data.DataEntry;
 import org.auriferous.bot.shared.data.history.HistoryEntry;
 import org.auriferous.bot.shared.fsm.State;
@@ -31,6 +32,8 @@ import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 public class ClickAdState extends AdClickerState {
 	private static final String ADS_BY_GOOGLE = "$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
 	private static final String ASWIFT = "$('ins[id^=\"aswift_\"][id$=\"_anchor\"]').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
+	
+	private static final String MOVE_ALL_ELEMENTS = "$('body').children('*').css('position', 'absolute').css('left', '100%').css('top', '100%')";
 	
 	private static final String[] AD_ELEMENT_SEARCHES = new String[] {ASWIFT};
 	
@@ -83,7 +86,7 @@ public class ClickAdState extends AdClickerState {
 		if (searchAdTries >= MAX_SEARCH_TRIES){
     		System.out.println("Couldn't find ad. Next task...");
     		
-    		return new TaskNextState(adClicker);
+    		return new TaskErrorState(adClicker, Task.STATUS_FAILED, "Couldn't find ad.");
     	}
 		
 		if (this.triggerError) {
@@ -110,6 +113,8 @@ public class ClickAdState extends AdClickerState {
 		System.out.println("Started ad clicking");
 		Utils.wait(3000);
 
+		//methods.execJS(MOVE_ALL_ELEMENTS);
+		
     	ElementBounds adElement = findAds(botTab, "$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
     	pageLoading = false;
     	//moveElements("$('ins[id^=\"aswift_\"][id$=\"_anchor\"]')", "$('body')");
@@ -166,6 +171,7 @@ public class ClickAdState extends AdClickerState {
         		}
     		}
     	} else {
+    		System.out.println("Couldn't find ad.");
     		this.triggerError = true;
     		//this.reloadingPage = true;
     		botTab.reload();
@@ -196,6 +202,8 @@ public class ClickAdState extends AdClickerState {
 		}
 		if (url.equals(""))
 			return "";
+		
+		System.out.println(url);
 		
 		return Utils.getBaseURL(url);
 	}
