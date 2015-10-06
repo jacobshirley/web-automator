@@ -219,4 +219,15 @@ function getAdURL() {
 	return finalHref;
 }
 
+function moveOtherElements() {
+	var c = 8888888;
+	$('.adsbygoogle').each(function() {
+		var $this = $(this);
+		$this.parentsUntil('body').css('position', 'relative');
+		//$this.css('position', 'fixed').css('display', 'block').css('z-index', ""+c).css('left', '0px').css('top', '0px').show();
+		//$this.detach().appendTo("body");
+		c += 1111111;
+	});
+}
+
 //println("Code injected successfully");

@@ -2,21 +2,19 @@ package org.auriferous.bot.scripts.adclicker.states;
 
 import java.util.List;
 
-import org.auriferous.bot.script.fsm.State;
 import org.auriferous.bot.scripts.adclicker.AdClicker;
-import org.auriferous.bot.scripts.adclicker.Task;
+import org.auriferous.bot.scripts.adclicker.task.Task;
+import org.auriferous.bot.shared.fsm.State;
 
 public class TaskNextState extends AdClickerState{
-
 	public TaskNextState(AdClicker adClicker) {
 		super(adClicker);
 	}
 
 	@Override
 	public State process(List<Integer> events) {
-		adClicker.setCurrentTask(adClicker.getTasks().poll());
-		
-		Task currentTask = adClicker.getCurrentTask();
+		Task currentTask = adClicker.getTasks().poll();
+		adClicker.setNextTask(currentTask);
 		
 		if (currentTask != null) {
 			System.out.println("Starting next task "+currentTask.url);

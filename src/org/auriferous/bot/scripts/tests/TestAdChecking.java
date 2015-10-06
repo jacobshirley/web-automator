@@ -7,13 +7,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.callbacks.JSCallback;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.tabs.Tab;
+import org.auriferous.bot.shared.data.library.ScriptManifest;
+import org.auriferous.bot.shared.tabs.Tab;
 
 import com.teamdev.jxbrowser.chromium.BeforeURLRequestParams;
 import com.teamdev.jxbrowser.chromium.Browser;
@@ -24,8 +24,8 @@ import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class TestAdChecking extends Script {
 	private static final String URL = "dexsus.tk/random";
-	
-	private static final String ASWIFT = "$('ins[id^=\"aswift_\"][id$=\"_anchor\"]').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
+	private static final String ASWIFT_ROOT = "$('ins[id^=\"aswift_\"][id$=\"_anchor\"]')";
+	private static final String ASWIFT = ASWIFT_ROOT+".css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()";
 	
 	private static final String[] AD_ELEMENT_SEARCHES = new String[] {ASWIFT};
 	
@@ -36,7 +36,6 @@ public class TestAdChecking extends Script {
 	
 	public TestAdChecking(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -69,18 +68,25 @@ public class TestAdChecking extends Script {
 		});
 	}
 	
+	private static final String MOVE_ALL_ELEMENTS = "moveOtherElements();";
+	
+	
 	@Override
 	public int tick() {
 		if (exec) {
 			exec = false;
 			
-			/*ElementBounds ad = findAds("$('.rh-title').find('a');", "$('#ad_iframe');", "$('#google_image_div').find('img');", "$('#bg-exit');", "$('#google_flash_embed');");
+			Utils.wait(3000);
 			
-			if (ad != null) {
-				System.out.println(getBaseAdURL());
-				//methods.clickElement(ad);
-			}*/
-			botTab.loadURL(URL);
+			//methods.execJS(MOVE_ALL_ELEMENTS);
+			
+			//Utils.wait(5000);
+			
+			//methods.execJS(MOVE_ALL_ELEMENTS);
+			methods.execJS(ASWIFT);
+			
+			//botTab.loadURL(URL);
+			return STATE_EXIT_SUCCESS;
 		}
 		return super.tick();
 	}

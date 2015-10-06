@@ -13,22 +13,24 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.data.DataEntry;
-import org.auriferous.bot.data.config.Configurable;
-import org.auriferous.bot.data.history.HistoryEntry;
-import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.gui.swing.script.JScriptGui;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.script.fsm.FSM;
-import org.auriferous.bot.scripts.adclicker.gui.SetSignatureFrame;
-import org.auriferous.bot.scripts.adclicker.gui.TaskManager;
+import org.auriferous.bot.scripts.adclicker.gui.JSetSignatureFrame;
+import org.auriferous.bot.scripts.adclicker.gui.JTaskManagerFrame;
 import org.auriferous.bot.scripts.adclicker.states.TaskNextState;
 import org.auriferous.bot.scripts.adclicker.states.events.Events;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.view.PaintListener;
+import org.auriferous.bot.scripts.adclicker.task.Task;
+import org.auriferous.bot.scripts.adclicker.task.TaskConfigEntry;
+import org.auriferous.bot.shared.data.DataEntry;
+import org.auriferous.bot.shared.data.config.Configurable;
+import org.auriferous.bot.shared.data.history.HistoryEntry;
+import org.auriferous.bot.shared.data.library.ScriptManifest;
+import org.auriferous.bot.shared.fsm.FSM;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.view.PaintListener;
 
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
@@ -41,11 +43,15 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 	private boolean skipTask = false;
 	
 	private Task currentTask = null;
-	private LinkedList<Task> tasks = new LinkedList<Task>();
 	
+	private LinkedList<Task> tasks = new LinkedList<Task>();
+	private List<Task> previousTasks = new LinkedList<Task>();
+	
+	private String blogURL;
+
 	private ElementBounds debugElement = null;
 	
-	private SetSignatureFrame setSigFrame = new SetSignatureFrame(this);
+	private JSetSignatureFrame setSigFrame = new JSetSignatureFrame(this);
 	
 	private DataEntry taskConfig = new DataEntry("tasks");
 	private DataEntry historyConfig = new DataEntry("click-history");
@@ -74,8 +80,6 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 			}
 		}
 	};
-
-	private String blogURL;
 	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -193,8 +197,11 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		return tasks;
 	}
 	
-	public void setCurrentTask(Task currentTask) {
-		this.currentTask = currentTask;
+	public void setNextTask(Task currentTask) {
+		if (currentTask != null) {
+			this.currentTask = currentTask.copy();
+			this.previousTasks.add(this.currentTask);
+		}
 	}
 	
 	@Override
@@ -261,7 +268,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 			tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
 			//*/
 		
-		new TaskManager(tasks);
+		new JTaskManagerFrame(tasks, previousTasks);
 		//compileSignature("http://www.google.co.uk/");
 		
 		//tasks.add(new Task("http://sadiebrookes.com", 1, 0, 0, 1, ""));
@@ -318,7 +325,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			switch (actionID) {
-				case 0: new TaskManager(tasks);
+				case 0: new JTaskManagerFrame(tasks, previousTasks);
 						break;
 				case 1:	executeTasks();
 						break;
@@ -358,6 +365,12 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		l = configEntries.get("//"+taskHistoryConfig.getKey());
 		for (DataEntry history : l) {
 			taskHistoryConfig = history;
+			
+			for (DataEntry taskEntry : taskHistoryConfig.getChildren()) {
+				Task t = new Task(taskEntry);
+				
+				this.previousTasks.add(t);
+			}
 		}
 		
 		l = configEntries.get("//"+signatureConfig.getKey());
@@ -381,6 +394,12 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		root.add(signatureConfig, true);
 		root.add(taskConfig, true);
 		root.add(historyConfig, true);
+		
+		taskHistoryConfig.clear();
+		for (Task t : previousTasks) {
+			taskHistoryConfig.add(new TaskConfigEntry(t));
+		}
+		
 		root.add(taskHistoryConfig, true);
 	}
 

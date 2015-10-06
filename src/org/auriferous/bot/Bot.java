@@ -8,23 +8,23 @@ import java.util.logging.Level;
 
 import javax.swing.JFrame;
 
-import org.auriferous.bot.data.DataEntry;
-import org.auriferous.bot.data.DataStore;
-import org.auriferous.bot.data.config.ClassDataStore;
-import org.auriferous.bot.data.config.Configurable;
-import org.auriferous.bot.data.history.HistoryConfig;
-import org.auriferous.bot.data.library.ScriptLibrary;
-import org.auriferous.bot.data.library.xml.XMLScriptLibrary;
-import org.auriferous.bot.data.library.xml.XMLScriptManifest;
 import org.auriferous.bot.gui.swing.JBotFrame;
+import org.auriferous.bot.internal.executor.ScriptExecutionListener;
+import org.auriferous.bot.internal.executor.ScriptExecutor;
+import org.auriferous.bot.internal.loader.CachedScriptLoader;
+import org.auriferous.bot.internal.loader.ScriptLoader;
+import org.auriferous.bot.internal.loader.ScriptLoaderImpl;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
-import org.auriferous.bot.script.executor.ScriptExecutionListener;
-import org.auriferous.bot.script.executor.ScriptExecutor;
-import org.auriferous.bot.script.loader.CachedScriptLoader;
-import org.auriferous.bot.script.loader.ScriptLoader;
-import org.auriferous.bot.script.loader.ScriptLoaderImpl;
-import org.auriferous.bot.tabs.Tabs;
+import org.auriferous.bot.shared.data.DataEntry;
+import org.auriferous.bot.shared.data.DataStore;
+import org.auriferous.bot.shared.data.config.ClassDataStore;
+import org.auriferous.bot.shared.data.config.Configurable;
+import org.auriferous.bot.shared.data.history.HistoryConfig;
+import org.auriferous.bot.shared.data.library.ScriptLibrary;
+import org.auriferous.bot.shared.data.library.xml.XMLScriptLibrary;
+import org.auriferous.bot.shared.data.library.xml.XMLScriptManifest;
+import org.auriferous.bot.shared.tabs.Tabs;
 
 import com.teamdev.jxbrowser.chromium.BeforeURLRequestParams;
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
@@ -76,6 +76,9 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		
 		XMLScriptManifest manifest5 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.tests.TestAdChecking", "6", "Test Ad Checking", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest5, true);
+		
+		XMLScriptManifest manifest6 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.shufflr.Shufflr", "7", "Shufflr", "1.0", "RAARR", "bin");
+		scriptLibrary.addScript(manifest6, true);
 		
 		scriptLoader = new CachedScriptLoader(this, new ScriptContext(this));
 		scriptLoader.addLibrary(scriptLibrary);

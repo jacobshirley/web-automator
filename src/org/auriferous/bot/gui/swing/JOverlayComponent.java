@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.tabs.view.PaintListener;
+import org.auriferous.bot.shared.tabs.view.PaintListener;
 
 public class JOverlayComponent extends JComponent implements Runnable{
 	private boolean running = false;

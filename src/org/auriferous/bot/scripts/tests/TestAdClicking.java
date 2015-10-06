@@ -5,15 +5,15 @@ import java.awt.Graphics;
 import java.awt.Point;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.data.library.ScriptManifest;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.TabControlAdapter;
-import org.auriferous.bot.tabs.view.PaintListener;
+import org.auriferous.bot.shared.data.library.ScriptManifest;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.TabControlAdapter;
+import org.auriferous.bot.shared.tabs.view.PaintListener;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.events.FailLoadingEvent;

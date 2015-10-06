@@ -11,20 +11,21 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.data.library.ScriptManifest;
+
 import org.auriferous.bot.gui.swing.script.JScriptGui;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.view.PaintListener;
+import org.auriferous.bot.shared.data.library.ScriptManifest;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.view.PaintListener;
 
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
 public class Googler extends Script implements JScriptGui, PaintListener{
-	private static final String[] SEARCHES = new String[] {"insurance marketplace", "insurance quotes", "insurance companies", "interest rates", "restaurants in Brighton", "pubs in Brighton"};
+	private static final String[] SEARCHES = new String[] {"Network Storage and Data Management","netapp, netapp network storage","cloud computing","virtualisation in netapp","storage efficiency","data storage","information management","nas","what does netapp do","Mulesoft","Mulesoft FAQ","connect applications together with mulesoft","what are developer connections","system integration","message routing software","transaction management software","Mule ESB","Mulesoft INC","integration platform","mulesoft.com"};
 	
 	private static final int STAGE_GOOGLE = 0;
 	private static final int STAGE_CLICK_LINK = 1;
@@ -227,5 +228,4 @@ public class Googler extends Script implements JScriptGui, PaintListener{
 	@Override
 	public boolean shouldCreateMenu() {
 		return true;
-	}
-}
+	}}

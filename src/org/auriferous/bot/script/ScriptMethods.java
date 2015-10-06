@@ -14,8 +14,8 @@ import org.auriferous.bot.script.callbacks.JSCallback;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.script.input.Keyboard;
 import org.auriferous.bot.script.input.Mouse;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.TabCallback;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.TabCallback;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.JSObject;
@@ -561,15 +561,17 @@ public class ScriptMethods {
 		boolean shiftDown = false;
 		int mods = 0;
 		for (char c : message.toCharArray()) {
-			boolean isShiftKey = SHIFT_KEYS.contains(""+c);
+			boolean requiresShiftKey = SHIFT_KEYS.contains(""+c);
+			
 			if (!shiftDown) {
-				if (isShiftKey) {
+				if (requiresShiftKey) {
+					System.out.println(c+": "+requiresShiftKey);
 					shiftDown = true;
 					keyboard.pressKey(KeyEvent.VK_SHIFT, InputEvent.SHIFT_DOWN_MASK);
 					mods |= InputEvent.SHIFT_DOWN_MASK;
 				} else
 					mods = 0;
-			} else if (shiftDown && !isShiftKey) {
+			} else if (shiftDown && !requiresShiftKey) {
 				shiftDown = false;
 				keyboard.releaseKey(KeyEvent.VK_SHIFT, InputEvent.SHIFT_DOWN_MASK);
 				mods = 0;
@@ -585,7 +587,7 @@ public class ScriptMethods {
 	public final void type(int c) {
 		int mods = 0;
 		if (SHIFT_KEYS.contains(""+(char)c)) {
-			keyboard.typeKey(KeyEvent.VK_SHIFT, DEFAULT_KEY_TIME, InputEvent.SHIFT_DOWN_MASK);
+			keyboard.pressKey(KeyEvent.VK_SHIFT, InputEvent.SHIFT_DOWN_MASK);
 			mods |= InputEvent.SHIFT_DOWN_MASK;
 		}
 		keyboard.typeKey(c, DEFAULT_KEY_TIME, mods);

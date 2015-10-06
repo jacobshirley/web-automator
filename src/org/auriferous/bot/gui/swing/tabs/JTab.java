@@ -8,9 +8,9 @@ import javax.swing.JPanel;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.gui.swing.Constants;
 import org.auriferous.bot.gui.swing.JOverlayComponent;
-import org.auriferous.bot.tabs.Tab;
-import org.auriferous.bot.tabs.TabListener;
-import org.auriferous.bot.tabs.view.PaintListener;
+import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.TabListener;
+import org.auriferous.bot.shared.tabs.view.PaintListener;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.DialogParams;
@@ -53,7 +53,7 @@ public class JTab extends JPanel implements TabListener {
 		return tabComponent;
 	}
 	
-	public Tab getTab() {
+	public Tab getTabInstance() {
 		return tab;
 	}
 	
