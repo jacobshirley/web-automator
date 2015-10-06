@@ -198,8 +198,10 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 	}
 	
 	public void setNextTask(Task currentTask) {
-		this.currentTask = currentTask.copy();
-		this.previousTasks.add(this.currentTask);
+		if (currentTask != null) {
+			this.currentTask = currentTask.copy();
+			this.previousTasks.add(this.currentTask);
+		}
 	}
 	
 	@Override
