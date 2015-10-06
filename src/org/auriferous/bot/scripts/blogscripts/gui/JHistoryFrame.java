@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts.adclicker.gui;
+package org.auriferous.bot.scripts.blogscripts.gui;
 
 import javax.swing.JFrame;
 

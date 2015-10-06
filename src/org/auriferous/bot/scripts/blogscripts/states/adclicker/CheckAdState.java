@@ -1,12 +1,12 @@
-package org.auriferous.bot.scripts.adclicker.states;
+package org.auriferous.bot.scripts.blogscripts.states.adclicker;
 
 import java.util.List;
 
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ScriptMethods;
-import org.auriferous.bot.scripts.adclicker.AdClicker;
-import org.auriferous.bot.scripts.adclicker.states.events.Events;
-import org.auriferous.bot.scripts.adclicker.task.Task;
+import org.auriferous.bot.scripts.blogscripts.AdClicker;
+import org.auriferous.bot.scripts.blogscripts.events.Events;
+import org.auriferous.bot.scripts.blogscripts.task.Task;
 import org.auriferous.bot.shared.fsm.State;
 
 import com.teamdev.jxbrowser.chromium.javafx.DefaultNetworkDelegate;

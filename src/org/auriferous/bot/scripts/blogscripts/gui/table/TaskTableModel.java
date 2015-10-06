@@ -1,18 +1,24 @@
-package org.auriferous.bot.scripts.adclicker.gui.table;
+package org.auriferous.bot.scripts.blogscripts.gui.table;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.DefaultTableModel;
 
-import org.auriferous.bot.scripts.adclicker.task.Task;
+import org.auriferous.bot.scripts.blogscripts.task.Task;
 
 public class TaskTableModel extends DefaultTableModel{
 	private List<Task> tasks = new ArrayList<Task>();
 
-	public TaskTableModel(List<Task> tasks, boolean previousTasks) {
-		super(new String[] {"URL", "Shuffles", "Shuffle Time Interval (seconds)", "Time On Ad (seconds)", "Clicks In Ad", "Facebook Link"}, tasks.size());
+	public TaskTableModel(List<Task> tasks, boolean justShuffler, boolean previousTasks) {
+		super(new String[] {"URL", "Shuffles", "Shuffle Time Interval (seconds)"}, tasks.size());
 
+		if (!justShuffler) {
+			addColumn("Time On Ad (seconds)");
+			addColumn("Clicks In Ad");
+			addColumn("Facebook Link");
+		}
+		
 		if (previousTasks) {
 			addColumn("Status");
 			addColumn("Info");

@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts.adclicker.task;
+package org.auriferous.bot.scripts.blogscripts.task;
 
 import org.auriferous.bot.shared.data.DataEntry;
 

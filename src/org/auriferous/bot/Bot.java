@@ -65,7 +65,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		XMLScriptManifest manifest = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.googler.Googler", "3", "Googler", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest, true);
 		
-		XMLScriptManifest manifest2 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.adclicker.AdClicker", "4", "Ad Clicker", "1.0", "RAARR", "bin");
+		XMLScriptManifest manifest2 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.blogscripts.AdClicker", "4", "Ad Clicker", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest2, true);
 		
 		XMLScriptManifest manifest3 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.tests.TestAdClicking", "5", "Test Script", "1.0", "RAARR", "bin");
@@ -77,7 +77,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		XMLScriptManifest manifest5 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.tests.TestAdChecking", "6", "Test Ad Checking", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest5, true);
 		
-		XMLScriptManifest manifest6 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.shufflr.Shufflr", "7", "Shufflr", "1.0", "RAARR", "bin");
+		XMLScriptManifest manifest6 = new XMLScriptManifest("bin", "org.auriferous.bot.scripts.blogscripts.Shufflr", "7", "Shufflr", "1.0", "RAARR", "bin");
 		scriptLibrary.addScript(manifest6, true);
 		
 		scriptLoader = new CachedScriptLoader(this, new ScriptContext(this));

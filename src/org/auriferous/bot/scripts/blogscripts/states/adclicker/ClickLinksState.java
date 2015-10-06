@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts.adclicker.states;
+package org.auriferous.bot.scripts.blogscripts.states.adclicker;
 
 import java.awt.Point;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.List;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.scripts.adclicker.AdClicker;
-import org.auriferous.bot.scripts.adclicker.states.events.Events;
-import org.auriferous.bot.scripts.adclicker.task.Task;
+import org.auriferous.bot.scripts.blogscripts.AdClicker;
+import org.auriferous.bot.scripts.blogscripts.events.Events;
+import org.auriferous.bot.scripts.blogscripts.task.Task;
 import org.auriferous.bot.shared.fsm.State;
 import org.auriferous.bot.shared.tabs.Tab;
 
@@ -65,14 +65,14 @@ public class ClickLinksState extends AdClickerState{
 			} else if (curClickTry >= MAX_CLICK_TRIES) {
 				System.out.println("Couldn't find link on try "+curClickTry+"/"+MAX_CLICK_TRIES+". Next task.");
 				
-				return new TaskDoneState(adClicker, adURL, "Couldn't find link inside ad.");
+				return new TaskDoneSignatureState(adClicker, adURL, "Couldn't find link inside ad.");
 			}
 		} else {
 			System.out.println("Finished link clicking");
 			if (!currentTask.fbLink.equals(""))
 				return new PostFacebookState(adClicker, adURL);
 			else
-				return new TaskDoneState(adClicker, adURL, "Complete.");
+				return new TaskDoneSignatureState(adClicker, adURL, "Complete.");
 		}
 		
 		return this;

@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts.adclicker.task;
+package org.auriferous.bot.scripts.blogscripts.task;
 
 import java.util.ArrayList;
 import java.util.List;

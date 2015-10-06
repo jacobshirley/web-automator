@@ -1,6 +1,6 @@
 package org.auriferous.bot;
 
-import org.auriferous.bot.scripts.adclicker.states.ClickAdState;
+import org.auriferous.bot.scripts.blogscripts.states.adclicker.ClickAdState;
 
 public class Main {
     public static void main(String[] args) {

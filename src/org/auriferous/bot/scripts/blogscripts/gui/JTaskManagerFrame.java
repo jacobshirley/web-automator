@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts.adclicker.gui;
+package org.auriferous.bot.scripts.blogscripts.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -17,10 +17,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.auriferous.bot.scripts.adclicker.gui.table.JPasteTable;
-import org.auriferous.bot.scripts.adclicker.gui.table.TaskTableModel;
-import org.auriferous.bot.scripts.adclicker.task.Task;
-import org.auriferous.bot.scripts.adclicker.task.TaskConfigEntry;
+import org.auriferous.bot.scripts.blogscripts.gui.table.JPasteTable;
+import org.auriferous.bot.scripts.blogscripts.gui.table.TaskTableModel;
+import org.auriferous.bot.scripts.blogscripts.task.Task;
+import org.auriferous.bot.scripts.blogscripts.task.TaskConfigEntry;
 import org.auriferous.bot.shared.data.DataEntry;
 
 public class JTaskManagerFrame extends JFrame{
@@ -38,21 +38,21 @@ public class JTaskManagerFrame extends JFrame{
 	private List<Task> currentTasks;
 	private List<Task> previousTasks;
 	
-	public JTaskManagerFrame(List<Task> currentTasks, List<Task> previousTasks) {
+	public JTaskManagerFrame(List<Task> currentTasks, boolean justShufflr, List<Task> previousTasks) {
 		super("Task Manager");
 		
 		this.tasks = currentTasks;
-		this.currentTasks = currentTasks;;
+		this.currentTasks = currentTasks;
 		this.previousTasks = previousTasks;
 		
 		JPanel content = new JPanel();
 		content.setLayout(new BorderLayout());
 		content.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
-		curTasksTable = new JPasteTable(new TaskTableModel(currentTasks, false));
+		curTasksTable = new JPasteTable(new TaskTableModel(currentTasks, justShufflr, false));
 		curTasksTable.setMinimumSize(new Dimension(400, 500));
 		
-		prevTasksTable = new JPasteTable(new TaskTableModel(previousTasks, true));
+		prevTasksTable = new JPasteTable(new TaskTableModel(previousTasks, justShufflr, true));
 		prevTasksTable.setMinimumSize(new Dimension(400, 500));
 		
 		tabPane = new JTabbedPane();

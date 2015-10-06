@@ -1,9 +1,9 @@
-package org.auriferous.bot.scripts.adclicker.states;
+package org.auriferous.bot.scripts.blogscripts.states.adclicker;
 
 import java.util.List;
 
 import org.auriferous.bot.Utils;
-import org.auriferous.bot.scripts.adclicker.AdClicker;
+import org.auriferous.bot.scripts.blogscripts.AdClicker;
 import org.auriferous.bot.shared.fsm.State;
 
 public class WaitOnLinkState extends AdClickerState {

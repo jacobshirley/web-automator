@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts.adclicker.gui.table;
+package org.auriferous.bot.scripts.blogscripts.gui.table;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;

@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts.adclicker.gui;
+package org.auriferous.bot.scripts.blogscripts.gui.adclicker;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -13,7 +13,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-import org.auriferous.bot.scripts.adclicker.AdClicker;
+import org.auriferous.bot.scripts.blogscripts.AdClicker;
+import org.auriferous.bot.scripts.blogscripts.BlogScript;
 
 public class JSetSignatureFrame extends JFrame {
 	final JTextArea textArea = new JTextArea();

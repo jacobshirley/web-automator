@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts.adclicker.states;
+package org.auriferous.bot.scripts.blogscripts.states.adclicker;
 
 import java.awt.Point;
 import java.util.List;
@@ -7,8 +7,9 @@ import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.ScriptMethods.ClickType;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.scripts.adclicker.AdClicker;
-import org.auriferous.bot.scripts.adclicker.task.Task;
+import org.auriferous.bot.scripts.blogscripts.AdClicker;
+import org.auriferous.bot.scripts.blogscripts.BlogScript;
+import org.auriferous.bot.scripts.blogscripts.task.Task;
 import org.auriferous.bot.shared.fsm.State;
 import org.auriferous.bot.shared.tabs.Tab;
 
@@ -58,12 +59,12 @@ public class PostFacebookState extends AdClickerState{
 						Utils.wait(500);
 						System.out.println("Writing signature of "+adURL);
 						
-						fbMethods.type(adClicker.compileSignature(adURL));
+						fbMethods.type(((AdClicker)adClicker).compileSignature(adURL));
 					}
 				}
 			}
 		});
 		
-		return new TaskDoneState(adClicker, adURL, "Complete.");
+		return new TaskDoneSignatureState((AdClicker)adClicker, adURL, "Complete.");
 	}
 }

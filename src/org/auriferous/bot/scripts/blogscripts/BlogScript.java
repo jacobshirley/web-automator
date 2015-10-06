@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts.adclicker;
+package org.auriferous.bot.scripts.blogscripts;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -18,12 +18,12 @@ import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
-import org.auriferous.bot.scripts.adclicker.gui.JSetSignatureFrame;
-import org.auriferous.bot.scripts.adclicker.gui.JTaskManagerFrame;
-import org.auriferous.bot.scripts.adclicker.states.TaskNextState;
-import org.auriferous.bot.scripts.adclicker.states.events.Events;
-import org.auriferous.bot.scripts.adclicker.task.Task;
-import org.auriferous.bot.scripts.adclicker.task.TaskConfigEntry;
+import org.auriferous.bot.scripts.blogscripts.events.Events;
+import org.auriferous.bot.scripts.blogscripts.gui.JTaskManagerFrame;
+import org.auriferous.bot.scripts.blogscripts.gui.adclicker.JSetSignatureFrame;
+import org.auriferous.bot.scripts.blogscripts.states.TaskNextState;
+import org.auriferous.bot.scripts.blogscripts.task.Task;
+import org.auriferous.bot.scripts.blogscripts.task.TaskConfigEntry;
 import org.auriferous.bot.shared.data.DataEntry;
 import org.auriferous.bot.shared.data.config.Configurable;
 import org.auriferous.bot.shared.data.history.HistoryEntry;
@@ -35,7 +35,7 @@ import org.auriferous.bot.shared.tabs.view.PaintListener;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 
-public class AdClicker extends Script implements PaintListener, JScriptGui, Configurable{
+public abstract class BlogScript extends Script implements PaintListener, Configurable{
 	private static final int MAX_WAIT_TIME = 10;
 	
 	private Tab botTab;
@@ -51,16 +51,10 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 
 	private ElementBounds debugElement = null;
 	
-	private JSetSignatureFrame setSigFrame = new JSetSignatureFrame(this);
-	
 	private DataEntry taskConfig = new DataEntry("tasks");
-	private DataEntry historyConfig = new DataEntry("click-history");
 	private DataEntry taskHistoryConfig = new DataEntry("task-history");
 	
-	public DataEntry signatureConfig = new DataEntry("signature", "");
-	
 	private FSM stateMachine = new FSM();
-	
 	private long loadTimer = System.currentTimeMillis();
 	
 	private long mainFrameID = -1;
@@ -81,14 +75,26 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		}
 	};
 	
-	public AdClicker(ScriptManifest manifest, ScriptContext context) {
+	public BlogScript(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
 	}
 	
-	private void executeTasks() {
-		executeTasks.setEnabled(false);
-		stateMachine.pushState(new TaskNextState(this)).tick();
+	public void executeTasks() {
+		System.out.println(this.getClass().getName());
+		stateMachine.pushState(new TaskNextState(this));
 		loadTimer = System.currentTimeMillis();
+	}
+	
+	public void skipTask() {
+		skipTask = true;
+	}
+	
+	public List<Task> getPreviousTasks() {
+		return previousTasks;
+	}
+	
+	public FSM getStateMachine() {
+		return stateMachine;
 	}
 	
 	public void handleTab() {
@@ -114,10 +120,6 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 	
 	public long getMainFrameID() {
 		return mainFrameID;
-	}
-	
-	private void openSignatureDialog() {
-		setSigFrame.setVisible(true);
 	}
 	
 	public Task getCurrentTask() {
@@ -166,31 +168,11 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		this.debugElement = debugElement;
 	}
 	
-	public DataEntry getHistoryConfig() {
-		return historyConfig;
-	}
-	
 	private void close() {
-		botTab.getBrowserInstance().removeLoadListener(loader);
-		botTab.getTabView().removePaintListener(this);
-	}
-	
-	public String compileSignature(String urlString) {
-		String signatures = (String) signatureConfig.getValue();
-		
-		String[] sigs = signatures.split("\n\\s");
-		if (sigs.length > 0) {
-			return getSignature(Utils.getRandomObject(sigs), urlString);
-		} else {
-			return getSignature(signatures, urlString);
+		if (botTab != null) {
+			botTab.getBrowserInstance().removeLoadListener(loader);
+			botTab.getTabView().removePaintListener(this);
 		}
-	}
-	
-	private String getSignature(String signatureString, String url) {
-		String base = Utils.getBaseURL(url);
-		String title = base.split("\\.")[1];
-		
-		return signatureString.replace("$title", title).replace("$base", base);
 	}
 	
 	public LinkedList<Task> getTasks() {
@@ -206,36 +188,23 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 	
 	@Override
 	public int tick() {
-		if (botTab != null) {
-			/*if (mainFrameID > 0) {
-				methods.getElements("$('.adsbygoogle').css('position', 'fixed').css('display', 'block').css('z-index', '99999999').css('left', '0px').css('top', '0px').show()");
-			}*/
+		if (!stateMachine.isFinished()) {
 			if (skipTask) {
 				System.out.println("Skipping task...");
 				skipTask = false;
 				stateMachine.clearStates().pushState(new TaskNextState(this));
 			}
 			
-			boolean disposed = botTab.getBrowserInstance().isDisposed();
-			if (disposed) {
-				System.out.println("Apparently disposed. Opening new tab.");
-				
-				getTabs().closeTab(botTab);
-				handleTab();
-				
-				return super.tick();
-			}
-
-			Timer timer = new Timer();
-			timer.schedule(new TimerTask() {
-				@Override
-				public void run() {
-					System.out.println("It's been two minutes. Browser must have crashed...");
+			if (botTab != null) {
+				boolean disposed = botTab.getBrowserInstance().isDisposed();
+				if (disposed) {
 					getTabs().closeTab(botTab);
+					System.out.println("Apparently disposed. Opening new tab.");
 					handleTab();
-					resetTimer();
+					
+					return super.tick();
 				}
-			}, 1*60*1000);
+			}
 
 			try {
 				stateMachine.tick();
@@ -245,34 +214,16 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 				stateMachine.clearStates().pushState(new TaskNextState(this)).tick();
 			}
 			
-			timer.cancel();
-			
-			if (stateMachine.isFinished()) {
-				return STATE_EXIT_SUCCESS;
-			}
-			
 			if (System.currentTimeMillis()-loadTimer >= MAX_WAIT_TIME*1000) {
 				System.out.println("Been "+MAX_WAIT_TIME+" seconds. Forcing execution.");
-				resetTimer();
+				loadTimer = System.currentTimeMillis();
 				stateMachine.pushEvent(Events.EVENT_PAGE_LOADED);
 			}
+		} else if (botTab != null) {
+			status = STATE_EXIT_SUCCESS;
 		}
 		
 		return super.tick();
-	}
-
-	@Override
-	public void onStart() {
-		/*
-		for (int i = 0; i < 5; i++)
-			tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
-			//*/
-		
-		new JTaskManagerFrame(tasks, previousTasks);
-		//compileSignature("http://www.google.co.uk/");
-		
-		//tasks.add(new Task("http://sadiebrookes.com", 1, 0, 0, 1, ""));
-		//executeTasks();
 	}
 	
 	@Override
@@ -292,54 +243,6 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 			g.drawRect(debugElement.x, debugElement.y, debugElement.width, debugElement.height);
 		}
 	}
-	
-	private JMenuItem executeTasks = new JMenuItem(new MenuAction("Execute Tasks", 1));
-	
-	@Override
-	public void onJMenuCreated(JMenu menu) {
-		JMenuItem setSignature = new JMenuItem(new MenuAction("Signature", 2));
-		JMenuItem manageTasks = new JMenuItem(new MenuAction("Manage Tasks", 0));
-		
-		JMenuItem skipTask = new JMenuItem(new MenuAction("Skip Task", 3));
-		JMenuItem stepExec = new JMenuItem(new MenuAction("Step execution", 4));
-		JMenuItem openFb = new JMenuItem(new MenuAction("Open Facebook", 5));
-		
-		menu.add(setSignature);
-		menu.add(manageTasks);
-		menu.add(executeTasks);
-		menu.addSeparator();
-		menu.add(skipTask);
-		menu.add(stepExec);
-		menu.add(openFb);
-	}
-	
-	class MenuAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
-		private int actionID;
-		
-		public MenuAction(String text, int actionID) {
-			super(text);
-			this.actionID = actionID;
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			switch (actionID) {
-				case 0: new JTaskManagerFrame(tasks, previousTasks);
-						break;
-				case 1:	executeTasks();
-						break;
-				case 2:	openSignatureDialog();
-						break;
-				case 3:	skipTask = true;
-						break;
-				case 4:	stateMachine.pushEvent(Events.EVENT_PAGE_LOADED);
-						break;
-				case 5: openTab("www.facebook.com");
-						break;
-			}
-		}
-	}
 
 	@Override
 	public void load(DataEntry configEntries) {
@@ -354,14 +257,7 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 				this.tasks.add(t);
 			}
 		}
-		
-		l = configEntries.get("//"+historyConfig.getKey());
-		for (DataEntry history : l) {
-			historyConfig = history;
-		}
-		
-		//System.out.println(historyConfig.get("//history-entry[url/@value='http://global2.cmdolb.com/ops/akamai/images/r20.gif']").get(0).getValue("//clicks", 1));
-		
+
 		l = configEntries.get("//"+taskHistoryConfig.getKey());
 		for (DataEntry history : l) {
 			taskHistoryConfig = history;
@@ -372,15 +268,6 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 				this.previousTasks.add(t);
 			}
 		}
-		
-		l = configEntries.get("//"+signatureConfig.getKey());
-		for (DataEntry signature : l) {
-			signatureConfig = signature;
-		}
-		
-		setSigFrame.setText(signatureConfig.getValue().toString());
-		//System.out.println(historyConfig.contains("//*[@value='http://www.manageengine.com/products/applications_manager/applications-monitoring-features.html']"));
-		//System.out.println(historyConfig.get("//*[@value='"+"http://www.manageengine.com/products/applications_manager/applications-monitoring-features.html".replace("https://", "http://")+"']"));
 	}
 
 	@Override
@@ -390,21 +277,14 @@ public class AdClicker extends Script implements PaintListener, JScriptGui, Conf
 		for (Task t : tasks) {
 			taskConfig.add(new TaskConfigEntry(t));
 		}
-		
-		root.add(signatureConfig, true);
+
 		root.add(taskConfig, true);
-		root.add(historyConfig, true);
-		
+
 		taskHistoryConfig.clear();
 		for (Task t : previousTasks) {
 			taskHistoryConfig.add(new TaskConfigEntry(t));
 		}
 		
 		root.add(taskHistoryConfig, true);
-	}
-
-	@Override
-	public boolean shouldCreateMenu() {
-		return true;
 	}
 }
