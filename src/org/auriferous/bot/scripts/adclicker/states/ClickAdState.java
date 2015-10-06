@@ -98,7 +98,7 @@ public class ClickAdState extends AdClickerState {
     	methods = adClicker.getScriptMethods();
     	Tab botTab = adClicker.getBotTab();
     	
-    	String url = botTab.getURL();
+ 
 		if (!adClicker.onBlog()) {
 			adClicker.resetTimer();
 			System.out.println("Not in blog. Going back.");
@@ -123,6 +123,10 @@ public class ClickAdState extends AdClickerState {
 
     	
     	if (adElement != null) {
+    		adElement.width -= 35;
+    		
+    		adClicker.setDebugElement(adElement);
+    		
     		String adURL = getBaseAdURL();
     		DataEntry historyConfig = adClicker.getHistoryConfig();
     		
@@ -152,10 +156,6 @@ public class ClickAdState extends AdClickerState {
     			System.out.println("Couldn't find adurl in any element");
     			shouldCheckAdOnClick = true;
     		}
-    		
-    		adElement.width -= 35;
-    		
-    		adClicker.setDebugElement(adElement);
     		
     		for (int i = 0; i < 10; i++) {
     			clickedAd = true;

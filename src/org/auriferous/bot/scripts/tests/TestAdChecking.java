@@ -78,7 +78,11 @@ public class TestAdChecking extends Script {
 			
 			Utils.wait(3000);
 			
-			methods.execJS(MOVE_ALL_ELEMENTS);
+			//methods.execJS(MOVE_ALL_ELEMENTS);
+			
+			//Utils.wait(5000);
+			
+			//methods.execJS(MOVE_ALL_ELEMENTS);
 			methods.execJS(ASWIFT);
 			
 			//botTab.loadURL(URL);

@@ -72,7 +72,7 @@ public class TaskTableModel extends DefaultTableModel{
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		Task task = tasks.get(rowIndex);
 		switch (columnIndex) {
-			case 0: task.url = ((String) aValue).replaceAll(" ", "");
+			case 0: task.url = ((String) aValue).replaceAll(" ", "").replaceAll(",", ".").replaceAll("\\(", "").replaceAll("\\)", "");
 					break;
 			case 1: task.shuffles = Integer.parseInt((String)aValue);
 					break;
