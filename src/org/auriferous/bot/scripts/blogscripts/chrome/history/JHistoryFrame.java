@@ -1,6 +1,8 @@
 package org.auriferous.bot.scripts.blogscripts.chrome.history;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -49,13 +51,17 @@ public class JHistoryFrame extends JFrame{
 				HistoryEntry entry = entries.get(i);
 				if (!entry.getURL().equals("about:blank")) {
 					String time = new SimpleDateFormat("hh:mm a").format(new Date(entry.getTimeStamp())).toString();
+					String url = entry.getURL();
+					
+					String fav = "http://www.google.com/s2/favicons?domain="+URLEncoder.encode(url, "UTF-8");
+					
 					
 					htmlEntry += "<div class='hist-line'>"+
 								 "<input type='checkbox'>"+
 								 "<div class='timestamp'>"+time+"</div>"+
-								 "<div class='favicon'><img src='"+""+"'></div>"+
-								 "<a href='"+entry.getURL()+"' class='title'>"+entry.getTitle()+"</a>"+
-								 "<div class='url'>"+Utils.getBaseURL(entry.getURL())+"</div>"+
+								 "<div class='favicon'><img src='"+fav+"'></div>"+
+								 "<a href='"+url+"' class='title'>"+entry.getTitle()+"</a>"+
+								 "<div class='url'>"+new URL(url).getHost()+"</div>"+
 								 "</div>";
 				}
 			}

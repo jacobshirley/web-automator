@@ -17,6 +17,7 @@ import com.teamdev.jxbrowser.chromium.BrowserFunction;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.LoadHTMLParams;
+import com.teamdev.jxbrowser.chromium.NavigationEntry;
 import com.teamdev.jxbrowser.chromium.PopupContainer;
 import com.teamdev.jxbrowser.chromium.PopupHandler;
 import com.teamdev.jxbrowser.chromium.PopupParams;
@@ -51,6 +52,8 @@ public class Tab {
 	private boolean blockJSMessages = false;
 	
 	private HistoryEntry lastHistoryEntry = null;
+	
+	private int lastNavIndex = -1;
 	
 	public Tab(final Tabs parent, String url, final HistoryConfig history) {
 		this.id = -1;
@@ -139,9 +142,9 @@ public class Tab {
             		lastHistoryEntry.setURL(event.getBrowser().getURL());
             	}*/
             	
-            	System.out.println(event.getBrowser().getURL());
+            	//System.out.println(event.getBrowser().getURL());
             	
-            	history.addEntry(new HistoryEntry("", event.getTitle(), event.getBrowser().getURL()));
+            	//history.addEntry(new HistoryEntry("", event.getTitle(), event.getBrowser().getURL()));
             	for (TabListener listener : tabListeners) 
 					listener.onTitleChange(event.getTitle());
             }
@@ -150,13 +153,22 @@ public class Tab {
 		this.browser.addLoadListener(new LoadAdapter() {
 			@Override
 			public void onDocumentLoadedInMainFrame(LoadEvent arg0) {
-				super.onDocumentLoadedInMainFrame(arg0);
-				
-				Browser b = arg0.getBrowser();
-				
-				lastHistoryEntry = new HistoryEntry("", b.getTitle(), b.getURL());
-				
-				history.addEntry(lastHistoryEntry);
+				final Browser b = arg0.getBrowser();
+				int index = b.getCurrentNavigationEntryIndex();
+				if (index > lastNavIndex) {
+					final NavigationEntry entry = b.getNavigationEntryAtIndex(index);
+					
+					(new Thread() {
+						public void run() {
+							Utils.wait(2000);
+							lastHistoryEntry = new HistoryEntry(entry.getTimestamp(), "", b.getTitle(), entry.getURL());
+							
+							System.out.println(entry.getURL()+", "+entry.getTitle()+", "+entry.getPageType().name());
+			
+							history.addEntry(lastHistoryEntry);
+						}
+					}).start();
+				}
 			}
 		});
 		

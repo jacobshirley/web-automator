@@ -61,6 +61,8 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private static final int ACTION_DEBUG_ELEMENTS = 11;
 	private static final int ACTION_CHECK_URL = 12;
 	private static final int ACTION_CLEAR_HISTORY = 13;
+	private static final int ACTION_CLEAR_COOKIES = 14;
+	private static final int ACTION_CLEAR_CACHE = 15;
 	
 	public static boolean mouseBlocked = false;
 	public static boolean keyboardBlocked = false;
@@ -157,8 +159,8 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		tabsMenu.add(new MenuActionItem("Go back", ACTION_TAB_GO_BACK));
 		tabsMenu.add(new MenuActionItem("Go forward", ACTION_TAB_GO_FORWARD));
 		tabsMenu.add(new MenuActionItem("Clear history", ACTION_CLEAR_HISTORY));
-		
-		
+		tabsMenu.add(new MenuActionItem("Clear cookies", ACTION_CLEAR_COOKIES));
+		tabsMenu.add(new MenuActionItem("Clear cache", ACTION_CLEAR_CACHE));
 		
 		return tabsMenu;
 	}
