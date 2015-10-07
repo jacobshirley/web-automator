@@ -1,6 +1,7 @@
 package org.auriferous.bot.scripts.blogscripts;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -10,7 +11,10 @@ import javax.swing.JMenuItem;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.gui.swing.script.JScriptGui;
 import org.auriferous.bot.script.ScriptContext;
+import org.auriferous.bot.scripts.blogscripts.Shufflr.MenuAction;
+import org.auriferous.bot.scripts.blogscripts.chrome.history.JHistoryFrame;
 import org.auriferous.bot.scripts.blogscripts.events.Events;
+import org.auriferous.bot.scripts.blogscripts.gui.JBlackListFrame;
 import org.auriferous.bot.scripts.blogscripts.gui.JTaskManagerFrame;
 import org.auriferous.bot.scripts.blogscripts.gui.adclicker.JSetSignatureFrame;
 import org.auriferous.bot.shared.data.DataEntry;
@@ -23,6 +27,9 @@ public class AdClicker extends BlogScript implements PaintListener, JScriptGui, 
 	
 	private DataEntry historyConfig = new DataEntry("click-history");
 	public DataEntry signatureConfig = new DataEntry("signature", "");
+	private DataEntry blacklistConfig = new DataEntry("blacklist");
+	
+	private List<String> blacklist = new ArrayList<String>();
 	
 	public AdClicker(ScriptManifest manifest, ScriptContext context) {
 		super(manifest, context);
@@ -36,6 +43,11 @@ public class AdClicker extends BlogScript implements PaintListener, JScriptGui, 
 			//*/
 		
 		new JTaskManagerFrame(getTasks(), false, getPreviousTasks());
+		//new JBlackListFrame(getBlacklist());
+	}
+	
+	public List<String> getBlacklist() {
+		return blacklist;
 	}
 	
 	public DataEntry getHistoryConfig() {
@@ -78,6 +90,14 @@ public class AdClicker extends BlogScript implements PaintListener, JScriptGui, 
 			signatureConfig = signature;
 		}
 		
+		l = configEntries.get("//"+blacklistConfig.getKey());
+		for (DataEntry blacklist : l) {
+			blacklistConfig = blacklist;
+			for (DataEntry entry : blacklistConfig.getChildren()) {
+				this.blacklist.add(""+entry.getValue());
+			}
+		}
+		
 		setSigFrame.setText(signatureConfig.getValue().toString());
 	}
 	
@@ -87,6 +107,13 @@ public class AdClicker extends BlogScript implements PaintListener, JScriptGui, 
 		
 		root.add(historyConfig, true);
 		root.add(signatureConfig, true);
+
+		blacklistConfig.clear();
+		for (String s : blacklist) {
+			blacklistConfig.add(new DataEntry("entry", s));
+		}
+		
+		root.add(blacklistConfig, true);
 	}
 
 	private JMenuItem executeTasks = new JMenuItem(new MenuAction("Execute Tasks", 1));
@@ -98,6 +125,8 @@ public class AdClicker extends BlogScript implements PaintListener, JScriptGui, 
 		JMenuItem skipTask = new JMenuItem(new MenuAction("Skip Task", 3));
 		JMenuItem stepExec = new JMenuItem(new MenuAction("Step execution", 4));
 		JMenuItem openFb = new JMenuItem(new MenuAction("Open Facebook", 5));
+		JMenuItem history = new JMenuItem(new MenuAction("History", 6));
+		JMenuItem openBlacklist = new JMenuItem(new MenuAction("Blacklist", 7));
 		
 		menu.add(manageTasks);
 		menu.add(setSignature);
@@ -106,6 +135,8 @@ public class AdClicker extends BlogScript implements PaintListener, JScriptGui, 
 		menu.add(skipTask);
 		menu.add(stepExec);
 		menu.add(openFb);
+		menu.add(history);
+		menu.add(openBlacklist);
 	}
 
 	class MenuAction extends AbstractAction {
@@ -131,6 +162,10 @@ public class AdClicker extends BlogScript implements PaintListener, JScriptGui, 
 				case 4:	getStateMachine().pushEvent(Events.EVENT_PAGE_LOADED);
 						break;
 				case 5: openTab("www.facebook.com");
+						break;
+				case 6: new JHistoryFrame(context.getHistory());
+						break;
+				case 7: new JBlackListFrame(getBlacklist());
 						break;
 			}
 		}

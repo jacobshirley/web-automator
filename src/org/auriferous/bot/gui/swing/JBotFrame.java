@@ -60,6 +60,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	private static final int ACTION_TAB_REFRESH = 10;
 	private static final int ACTION_DEBUG_ELEMENTS = 11;
 	private static final int ACTION_CHECK_URL = 12;
+	private static final int ACTION_CLEAR_HISTORY = 13;
 	
 	public static boolean mouseBlocked = false;
 	public static boolean keyboardBlocked = false;
@@ -147,13 +148,17 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 	}
 	
 	private JMenu createTabsMenu() {
-		JMenu tabsMenu = new JMenu("Tabs");
+		JMenu tabsMenu = new JMenu("Browser");
+		
+		tabsMenu.add(new MenuActionItem("Create tab", ACTION_CREATE_TAB));
+		tabsMenu.addSeparator();
+		
 		tabsMenu.add(new MenuActionItem("Refresh", ACTION_TAB_REFRESH));
 		tabsMenu.add(new MenuActionItem("Go back", ACTION_TAB_GO_BACK));
 		tabsMenu.add(new MenuActionItem("Go forward", ACTION_TAB_GO_FORWARD));
+		tabsMenu.add(new MenuActionItem("Clear history", ACTION_CLEAR_HISTORY));
 		
-		tabsMenu.addSeparator();
-		tabsMenu.add(new MenuActionItem("Create", ACTION_CREATE_TAB));
+		
 		
 		return tabsMenu;
 	}
@@ -350,7 +355,11 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 					}
 					break;
 				case ACTION_CHECK_URL:
-					System.out.println("URL: "+current.getURL());
+					if (current != null)
+						System.out.println("URL: "+current.getURL());
+					break;
+				case ACTION_CLEAR_HISTORY:
+					JBotFrame.this.bot.getHistoryConfig().clear();
 					break;
 				case ACTION_EXIT_BOT:
 					System.exit(1);

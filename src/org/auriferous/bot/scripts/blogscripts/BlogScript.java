@@ -3,6 +3,7 @@ package org.auriferous.bot.scripts.blogscripts;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -48,7 +49,7 @@ public abstract class BlogScript extends Script implements PaintListener, Config
 	private List<Task> previousTasks = new LinkedList<Task>();
 	
 	private String blogURL;
-
+	
 	private ElementBounds debugElement = null;
 	
 	private DataEntry taskConfig = new DataEntry("tasks");
@@ -268,6 +269,8 @@ public abstract class BlogScript extends Script implements PaintListener, Config
 				this.previousTasks.add(t);
 			}
 		}
+		
+		
 	}
 
 	@Override

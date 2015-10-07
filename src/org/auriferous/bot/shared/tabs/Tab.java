@@ -1,5 +1,6 @@
 package org.auriferous.bot.shared.tabs;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.teamdev.jxbrowser.chromium.BrowserContext;
 import com.teamdev.jxbrowser.chromium.BrowserFunction;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
+import com.teamdev.jxbrowser.chromium.LoadHTMLParams;
 import com.teamdev.jxbrowser.chromium.PopupContainer;
 import com.teamdev.jxbrowser.chromium.PopupHandler;
 import com.teamdev.jxbrowser.chromium.PopupParams;
@@ -70,19 +72,6 @@ public class Tab {
 		
 		BROWSER_INSTANCES.add(this.browser);
 		
-		this.browser.addTitleListener(new TitleListener() {
-            @Override
-			public void onTitleChange(TitleEvent event) {
-            	/*if (lastHistoryEntry != null) {
-            		lastHistoryEntry.setTitle(event.getTitle());
-            		lastHistoryEntry.setURL(event.getBrowser().getURL());
-            	}*/
-            	history.addEntry(new HistoryEntry("", event.getTitle(), event.getBrowser().getURL()));
-            	for (TabListener listener : tabListeners) 
-					listener.onTitleChange(event.getTitle());
-            }
-        });
-		
 		this.browser.registerFunction("tabCallback", new BrowserFunction() {
 			@Override
 		    public JSValue invoke(JSValue... args) {
@@ -136,28 +125,27 @@ public class Tab {
 					@Override
 					public void insertBrowser(final Browser browser,
 							java.awt.Rectangle dimensions) {
-						System.out.println("Popup");
-						/*final String url = browser.getURL();
-						browser.stop();
-						new Thread(new Runnable() {
-							@Override
-							public void run() {
-								Utils.wait(1000);
-								synchronized (Tab.this.browser) {
-									if (openPopupsInNewTab)
-										parent.openTab(url);
-									else
-										loadURL(url);
-								}
-							}
-						}).start();*/
-
-						
 						setBrowser(browser);
 					}
 		        };
 		    }
 		});
+		
+		this.browser.addTitleListener(new TitleListener() {
+            @Override
+			public void onTitleChange(TitleEvent event) {
+            	/*if (lastHistoryEntry != null) {
+            		lastHistoryEntry.setTitle(event.getTitle());
+            		lastHistoryEntry.setURL(event.getBrowser().getURL());
+            	}*/
+            	
+            	System.out.println(event.getBrowser().getURL());
+            	
+            	history.addEntry(new HistoryEntry("", event.getTitle(), event.getBrowser().getURL()));
+            	for (TabListener listener : tabListeners) 
+					listener.onTitleChange(event.getTitle());
+            }
+        });
 		
 		this.browser.addLoadListener(new LoadAdapter() {
 			@Override

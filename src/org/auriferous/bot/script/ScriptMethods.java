@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.auriferous.bot.ResourceLoader;
+import org.auriferous.bot.ResourceLoaderStatic;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.callbacks.JSCallback;
 import org.auriferous.bot.script.dom.ElementBounds;
@@ -65,7 +65,7 @@ public class ScriptMethods {
 	public void injectJQuery(long frameID) {
 		try {
 			if (!isJQueryInjected(frameID))
-				target.getBrowserInstance().executeJavaScript(frameID, ResourceLoader.loadResourceAsString("resources/js/jquery.min.js", true));
+				target.getBrowserInstance().executeJavaScript(frameID, ResourceLoaderStatic.loadResourceAsString("resources/js/jquery.min.js", true));
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}
@@ -74,7 +74,7 @@ public class ScriptMethods {
 	public void injectCode(long frameID) {
 		try {
 			if (!isCodeInjected(frameID)) {
-				target.getBrowserInstance().executeJavaScript(frameID,  ResourceLoader.loadResourceAsString("resources/js/inject.js", true));
+				target.getBrowserInstance().executeJavaScript(frameID,  ResourceLoaderStatic.loadResourceAsString("resources/js/inject.js", true));
 			}
 		} catch (Exception e) {
 			//e.printStackTrace();

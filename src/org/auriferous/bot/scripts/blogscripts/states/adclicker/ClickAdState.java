@@ -134,7 +134,7 @@ public class ClickAdState extends AdClickerState {
     		shouldCheckAdOnClick = true;
     		
     		if (!adURL.equals("")) {
-    			if (!historyConfig.contains("//history-entry[url/@value='"+adURL+"']")) {
+    			if (!doesBlackListContain(adURL) && !historyConfig.contains("//history-entry[url/@value='"+adURL+"']")) {
     				System.out.println("Haven't clicked "+adURL +" recently!");
     				DataEntry entry = new HistoryEntry("", "", adURL);
     				
@@ -146,7 +146,7 @@ public class ClickAdState extends AdClickerState {
     				
     				shouldCheckAdOnClick = false;
     			} else {
-    				System.out.println("Already clicked this recently.");
+    				System.out.println("Already clicked this recently, or it was blacklist.");
     				
     				triggerError();
     				this.reloadingPage = true;
@@ -286,7 +286,7 @@ public class ClickAdState extends AdClickerState {
 				
 				System.out.println("Getting url of "+url);
 
-				if (!historyConfig.contains("//history-entry[url/@value='"+url+"']")) {
+				if (!doesBlackListContain(url) && !historyConfig.contains("//history-entry[url/@value='"+url+"']")) {
 					DataEntry entry = new HistoryEntry("", "", url);
 					
 					if (historyConfig.size() >= MAX_CLICKS) {
@@ -311,5 +311,16 @@ public class ClickAdState extends AdClickerState {
 			}
 			
 		}
+	}
+	
+	private boolean doesBlackListContain(String url) {
+		List<String> blacklist = adClicker.getBlacklist();
+		
+		for (String s : blacklist) {
+			if (!s.equals("") && url.matches(s)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

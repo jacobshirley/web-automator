@@ -18,7 +18,9 @@ import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.scripts.blogscripts.AdClicker.MenuAction;
+import org.auriferous.bot.scripts.blogscripts.chrome.history.JHistoryFrame;
 import org.auriferous.bot.scripts.blogscripts.events.Events;
+import org.auriferous.bot.scripts.blogscripts.gui.JBlackListFrame;
 import org.auriferous.bot.scripts.blogscripts.gui.JTaskManagerFrame;
 import org.auriferous.bot.scripts.blogscripts.states.TaskNextState;
 import org.auriferous.bot.scripts.blogscripts.task.Task;
@@ -53,6 +55,7 @@ public class Shufflr extends BlogScript implements JScriptGui {
 		JMenuItem skipTask = new JMenuItem(new MenuAction("Skip Task", 3));
 		JMenuItem stepExec = new JMenuItem(new MenuAction("Step execution", 4));
 		JMenuItem openFb = new JMenuItem(new MenuAction("Open Facebook", 5));
+		JMenuItem history = new JMenuItem(new MenuAction("History", 6));
 		
 		menu.add(manageTasks);
 		menu.add(executeTasks);
@@ -60,6 +63,7 @@ public class Shufflr extends BlogScript implements JScriptGui {
 		menu.add(skipTask);
 		menu.add(stepExec);
 		menu.add(openFb);
+		menu.add(history);
 	}
 
 	class MenuAction extends AbstractAction {
@@ -83,6 +87,8 @@ public class Shufflr extends BlogScript implements JScriptGui {
 				case 4:	getStateMachine().pushEvent(Events.EVENT_PAGE_LOADED);
 						break;
 				case 5: openTab("www.facebook.com");
+						break;
+				case 6: new JHistoryFrame(context.getHistory());
 						break;
 			}
 		}
