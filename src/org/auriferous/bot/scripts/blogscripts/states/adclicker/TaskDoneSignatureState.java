@@ -3,9 +3,7 @@ package org.auriferous.bot.scripts.blogscripts.states.adclicker;
 import java.util.List;
 
 import org.auriferous.bot.scripts.blogscripts.AdClicker;
-import org.auriferous.bot.scripts.blogscripts.BlogScript;
 import org.auriferous.bot.scripts.blogscripts.states.TaskNextState;
-import org.auriferous.bot.scripts.blogscripts.states.TaskState;
 import org.auriferous.bot.scripts.blogscripts.task.Task;
 import org.auriferous.bot.shared.fsm.State;
 

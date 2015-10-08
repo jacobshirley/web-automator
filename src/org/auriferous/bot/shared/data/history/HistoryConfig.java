@@ -9,8 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.auriferous.bot.shared.data.DataEntry;
-
 public class HistoryConfig {
 	private Connection database = null;
 	

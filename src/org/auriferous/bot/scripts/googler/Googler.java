@@ -125,17 +125,17 @@ public class Googler extends Script implements JScriptGui, PaintListener{
 	}
 	
 	private int getWaitTime() {
-		return getWaitTime(methods.getElements(methods.LINK_JQUERY));
+		return getWaitTime(methods.getElements(ScriptMethods.LINK_JQUERY));
 	}
 	
 	private boolean tickSaveURL() {
 		subClicks = 0;
 		saveURL = googleTab.getURL();
 		
-		elements = methods.getElements(methods.LINK_JQUERY);
+		elements = methods.getElements(ScriptMethods.LINK_JQUERY);
 		if (elements == null) {
 			Utils.wait(5000);
-			elements = methods.getElements(methods.LINK_JQUERY);
+			elements = methods.getElements(ScriptMethods.LINK_JQUERY);
 		}
 		int waitTime = getWaitTime(elements);
 		System.out.println("Waiting "+(waitTime/1000)+" seconds");
@@ -151,7 +151,7 @@ public class Googler extends Script implements JScriptGui, PaintListener{
 			subClicks++;
 			System.out.println("Started clicking links "+subClicks+"/"+MAX_CLICKS);
 			
-			ElementBounds clickable = (ElementBounds)Utils.getRandomObject(elements);
+			ElementBounds clickable = Utils.getRandomObject(elements);
 			
 			System.out.println("Got clickable");
 			

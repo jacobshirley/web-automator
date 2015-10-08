@@ -1,35 +1,32 @@
 package org.auriferous.bot.shared.tabs;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import org.auriferous.bot.Bot;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.shared.data.history.HistoryConfig;
 import org.auriferous.bot.shared.data.history.HistoryEntry;
 import org.auriferous.bot.shared.tabs.view.TabView;
 
+import com.teamdev.jxbrowser.chromium.BeforeRedirectParams;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
 import com.teamdev.jxbrowser.chromium.BrowserFunction;
-import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
-import com.teamdev.jxbrowser.chromium.LoadHTMLParams;
 import com.teamdev.jxbrowser.chromium.NavigationEntry;
 import com.teamdev.jxbrowser.chromium.PopupContainer;
 import com.teamdev.jxbrowser.chromium.PopupHandler;
 import com.teamdev.jxbrowser.chromium.PopupParams;
 import com.teamdev.jxbrowser.chromium.events.ConsoleListener;
-import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
-import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
-import com.teamdev.jxbrowser.chromium.events.LoadEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadListener;
 import com.teamdev.jxbrowser.chromium.events.RenderListener;
 import com.teamdev.jxbrowser.chromium.events.StatusListener;
 import com.teamdev.jxbrowser.chromium.events.TitleEvent;
 import com.teamdev.jxbrowser.chromium.events.TitleListener;
+import com.teamdev.jxbrowser.chromium.javafx.DefaultNetworkDelegate;
 
 public class Tab {
 	private static final boolean TEST_MODE = false;
@@ -48,7 +45,6 @@ public class Tab {
 	
 	private HistoryConfig history;
 	
-	private boolean openPopupsInNewTab = false;
 	private boolean blockJSMessages = false;
 	
 	private HistoryEntry lastHistoryEntry = null;
@@ -67,7 +63,7 @@ public class Tab {
 		if (TEST_MODE) {
 			context = new BrowserContext("test");
 		} else {
-			context = new BrowserContext(System.getProperty("user.dir")+"/jxbrowser-cache");
+			context = new BrowserContext(Bot.JXBROWSER_CACHE_DIRECTORY);
 		}
 		
 		this.browser = new Browser();
@@ -142,11 +138,12 @@ public class Tab {
 				
             	if (index > lastNavIndex) {
             		(new Thread() {
-            			public void run() {
+            			@Override
+						public void run() {
             				Utils.wait(500);
 
             				final NavigationEntry entry = b.getNavigationEntryAtIndex(index);
-        					lastHistoryEntry = new HistoryEntry(entry.getTimestamp(), "NONE", b.getTitle(), b.getURL());
+        					lastHistoryEntry = new HistoryEntry(entry.getTimestamp(), "DEFAULT", b.getTitle(), b.getURL());
 
         					history.addEntry(lastHistoryEntry);
             			};
@@ -180,11 +177,14 @@ public class Tab {
 			}
 		});*/
 		
+		this.browser.getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate() {
+			@Override
+			public void onBeforeRedirect(BeforeRedirectParams arg0) {
+				
+			}
+		});
+		
 		loadURL(url);
-	}
-	
-	public void setOpenPopupsInNewTab(boolean openPopupsInNewTab) {
-		this.openPopupsInNewTab = openPopupsInNewTab;
 	}
 	
 	public void setBlockJSMessages(boolean blockJSMessages) {

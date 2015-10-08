@@ -28,6 +28,7 @@
                                         <button id="button2">Remove selected items</button>
                                 </div>
                                 <div id="history-cont">
+                                
                                 <?php
                                         $xml = simplexml_load_file("assets/xml/history.xml");
                                         $result = $xml-> xpath("//history-entry");
@@ -50,6 +51,7 @@
                                                 echo "<div class='favicon'><img src='".$fav."'></div>";
                                                 echo "<a href='".$realurl."' class='title'>".$title."</a>";
                                                 echo "<div class='url'>".$url['host']."</div>";
+                                                echo '<button class="drop-down custom-appearance menu-button using-mouse" value="Open action menu" title="Actions" menu="#action-menu" aria-haspopup="true" tabindex="0" column-type="menu">ahhh</button>';
                                                 echo "</div>";
                                         }
                                 ?>

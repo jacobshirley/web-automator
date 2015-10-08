@@ -95,6 +95,7 @@ public class TestAdChecking extends Script {
 		class CheckerCallback implements JSCallback {
 			private String url = "";
 
+			@Override
 			public boolean onResult(JSValue value) {
 				if (!value.isNull()) {
 					url = value.getString();

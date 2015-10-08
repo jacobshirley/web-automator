@@ -48,16 +48,14 @@ public class JPasteTable extends JTable implements ActionListener{
 		}
 	}
 	
-	private void pasteIn(String[] parts) throws UnsupportedFlavorException {
-		if (parts.length <= getColumnCount()) {
-			String[] dest = new String[6];
+	private void pasteIn(String[] parts)  {
+		String[] dest = new String[getColumnCount()];
 
-			System.arraycopy(parts, 0, dest, 0, parts.length);
-			
-			DefaultTableModel model = (DefaultTableModel) getModel();
-			
-	        model.addRow(dest);
-		} else throw new UnsupportedFlavorException(DataFlavor.stringFlavor);
+		System.arraycopy(parts, 0, dest, 0, dest.length);
+		
+		DefaultTableModel model = (DefaultTableModel) getModel();
+		
+        model.addRow(dest);
 	}
 
 	@Override

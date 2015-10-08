@@ -400,7 +400,7 @@ public class ScriptMethods {
 		int height = target.getTabView().getHeight();
 		int pageHeight = (int) getPageHeight();
 		if (pageHeight > height) {
-			int y = (int)Math.round(Utils.random(height, pageHeight));
+			int y = Math.round(Utils.random(height, pageHeight));
 			
 			System.out.println("Scrolling to random "+y);
 			scrollTo(y);

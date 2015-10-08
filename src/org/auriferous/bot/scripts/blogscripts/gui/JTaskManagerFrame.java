@@ -20,8 +20,6 @@ import javax.swing.event.ChangeListener;
 import org.auriferous.bot.scripts.blogscripts.gui.table.JPasteTable;
 import org.auriferous.bot.scripts.blogscripts.gui.table.models.TaskTableModel;
 import org.auriferous.bot.scripts.blogscripts.task.Task;
-import org.auriferous.bot.scripts.blogscripts.task.TaskConfigEntry;
-import org.auriferous.bot.shared.data.DataEntry;
 
 public class JTaskManagerFrame extends JFrame{
 	//http://sadiebrookes.com

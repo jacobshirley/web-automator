@@ -1,13 +1,6 @@
 package org.auriferous.bot.scripts.blogscripts.states.adclicker;
 
 import java.awt.Point;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -186,6 +179,7 @@ public class ClickAdState extends AdClickerState {
 		class CheckerCallback implements JSCallback {
 			private String url = "";
 
+			@Override
 			public boolean onResult(JSValue value) {
 				if (!value.isNull()) {
 					url = value.getString();

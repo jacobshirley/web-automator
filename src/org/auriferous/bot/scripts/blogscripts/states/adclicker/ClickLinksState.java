@@ -7,7 +7,6 @@ import org.auriferous.bot.Utils;
 import org.auriferous.bot.script.ScriptMethods;
 import org.auriferous.bot.script.dom.ElementBounds;
 import org.auriferous.bot.scripts.blogscripts.AdClicker;
-import org.auriferous.bot.scripts.blogscripts.events.Events;
 import org.auriferous.bot.scripts.blogscripts.task.Task;
 import org.auriferous.bot.shared.fsm.State;
 import org.auriferous.bot.shared.tabs.Tab;

@@ -12,16 +12,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import org.auriferous.bot.scripts.blogscripts.gui.JTaskManagerFrame.ButtonAction;
 import org.auriferous.bot.scripts.blogscripts.gui.table.JPasteTable;
 import org.auriferous.bot.scripts.blogscripts.gui.table.models.BlacklistTableModel;
-import org.auriferous.bot.scripts.blogscripts.gui.table.models.TaskTableModel;
-import org.auriferous.bot.scripts.blogscripts.task.Task;
 
 public class JBlackListFrame extends JFrame {
 	private List<String> blacklist;

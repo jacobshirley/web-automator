@@ -14,7 +14,6 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import org.auriferous.bot.scripts.blogscripts.AdClicker;
-import org.auriferous.bot.scripts.blogscripts.BlogScript;
 
 public class JSetSignatureFrame extends JFrame {
 	final JTextArea textArea = new JTextArea();

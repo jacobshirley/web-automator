@@ -176,7 +176,7 @@ body{
 #history-cont{
         width:100%;
         height:auto;
-        margin-top:20px;
+        margin-top:10px;
         cursor:default;
 }
  
@@ -222,7 +222,7 @@ input[type="checkbox"]{
 .title{
         color: rgb(48, 57, 66);
         font-size:13px;
-        font-family:Arial, sans-serif;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
         line-height:20px;
         vertical-align: middle;
         width:auto;
@@ -230,7 +230,10 @@ input[type="checkbox"]{
         float:left;
         text-decoration:none;
         max-width:400px;
-        overflow:hidden;
+                overflow-x: hidden;
+        overflow-y: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
 }
  
 .title:hover{
@@ -242,8 +245,16 @@ input[type="checkbox"]{
         float:left;
         height:20px;
         line-height:20px;
-        margin-left:10px;
+        margin-left:5px;
         font-size:13px;
         font-family:Arial, sans-serif;
         vertical-align: middle;
+}
+ 
+ 
+#todaydate{
+        cursor:default;
+        color:black;
+        font-size:1em;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
 }

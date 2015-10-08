@@ -1,16 +1,22 @@
 package org.auriferous.bot.scripts.blogscripts.chrome.history;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 import org.auriferous.bot.ResourceLoaderStatic;
-import org.auriferous.bot.Utils;
+import org.auriferous.bot.gui.swing.JDebugFrame;
 import org.auriferous.bot.shared.data.history.HistoryConfig;
 import org.auriferous.bot.shared.data.history.HistoryEntry;
 
@@ -37,8 +43,23 @@ public class JHistoryFrame extends JFrame{
 		refresh();
 		
 		add(historyViewer);
+		
+		JMenuBar menuBar = new JMenuBar();
+		
+		JMenu file = new JMenu("File");
+		file.add(new JMenuItem(new MenuAction("Refresh", 0)));
+		file.addSeparator();
+		file.add(new JMenuItem(new MenuAction("Exit", 1)));
+		menuBar.add(file);
+		
+		JMenu tools = new JMenu("Tools");
+		tools.add(new JMenuItem(new MenuAction("Inspect", 2)));
+		
+		menuBar.add(tools);
+		
 		setSize(1000, 1000);
 		setLocationRelativeTo(null);
+		setJMenuBar(menuBar);
 		setVisible(true);
 	}
 	
@@ -49,12 +70,37 @@ public class JHistoryFrame extends JFrame{
 			String htmlEntry = "";
 			
 			List<HistoryEntry> entries = history.getEntries();
-			SimpleDateFormat dateFormatter = new SimpleDateFormat("hh:mm a");
+			
+			SimpleDateFormat headingFormatter = new SimpleDateFormat("EEEE, d MMMM y");
+			SimpleDateFormat entryFormatter = new SimpleDateFormat("hh:mm a");
+			
+			Date todayMidnight = getToday();
+			Date yesterdayMidnight = getYesterday();
+			
+			String mainDate = "";
 			
 			for (int i = entries.size()-1; i >= 0; i--) {
 				HistoryEntry entry = entries.get(i);
+				
+				Date date = new Date(entry.getTimeStamp());
+				String tempDate = headingFormatter.format(date);
+				
+				if (date.after(todayMidnight)) {
+					tempDate = "Today - "+tempDate;
+				} else if (date.before(todayMidnight) && date.after(yesterdayMidnight)) {
+					tempDate = "Yesterday - "+tempDate;
+				}
+				
+				if (!tempDate.equals(mainDate)) {
+					mainDate = tempDate;
+					
+					htmlEntry += "<div id='todaydate'>"+
+								  mainDate+
+								  "</div>";
+				}
+				
 				if (!entry.getURL().equals("about:blank")) {
-					String time = dateFormatter.format(new Date(entry.getTimeStamp())).toString();
+					String time = entryFormatter.format(date).toString();
 					String url = entry.getURL();
 					
 					String fav = entry.getFaviconPath();
@@ -84,6 +130,50 @@ public class JHistoryFrame extends JFrame{
 			historyBrowser.loadHTML(params);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private Date getToday() {
+		Calendar c = Calendar.getInstance();
+		
+	    c.set(Calendar.HOUR_OF_DAY, 0);
+	    c.set(Calendar.MINUTE, 0);
+	    c.set(Calendar.SECOND, 0);
+	    
+	    return c.getTime();
+	}
+	
+	private Date getYesterday() {
+		Calendar c = Calendar.getInstance();
+		
+	    c.add(Calendar.DATE, -1);
+	    c.set(Calendar.HOUR_OF_DAY, 0);
+	    c.set(Calendar.MINUTE, 0);
+	    c.set(Calendar.SECOND, 0);
+	    
+	    return c.getTime();
+	}
+	
+	class MenuAction extends AbstractAction {
+		private int id;
+
+		public MenuAction(String text, int id) {
+			super(text);
+			this.id = id;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			switch (this.id) {
+				case 0: refresh();
+						break;
+				case 1: JHistoryFrame.this.dispose();
+						break;
+				case 2: JDebugFrame debugger = new JDebugFrame(JHistoryFrame.this);
+						debugger.setVisible(true);
+						debugger.debug(historyBrowser);
+						break;
+			}
 		}
 	}
 }

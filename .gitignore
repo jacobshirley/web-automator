@@ -2,6 +2,7 @@
 *.xml
 /chrome
 /config
+/jxbrowser
 /jxbrowser-cache
 /test
 *.log
