@@ -13,6 +13,7 @@ import org.auriferous.bot.internal.executor.ScriptExecutionListener;
 import org.auriferous.bot.internal.executor.ScriptExecutor;
 import org.auriferous.bot.internal.loader.CachedScriptLoader;
 import org.auriferous.bot.internal.loader.ScriptLoader;
+import org.auriferous.bot.internal.loader.ScriptLoaderImpl;
 import org.auriferous.bot.script.Script;
 import org.auriferous.bot.script.ScriptContext;
 import org.auriferous.bot.shared.data.DataEntry;
@@ -25,8 +26,11 @@ import org.auriferous.bot.shared.data.library.xml.XMLScriptLibrary;
 import org.auriferous.bot.shared.data.library.xml.XMLScriptManifest;
 import org.auriferous.bot.shared.tabs.Tabs;
 
+import com.teamdev.jxbrowser.chromium.BeforeURLRequestParams;
+import com.teamdev.jxbrowser.chromium.BrowserContext;
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.LoggerProvider;
+import com.teamdev.jxbrowser.chromium.swing.DefaultNetworkDelegate;
 
 public class Bot implements ScriptExecutionListener, Configurable {
 	public static final String JXBROWSER_DIRECTORY = System.getProperty("user.dir")+"/jxbrowser";

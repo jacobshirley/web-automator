@@ -1,6 +1,7 @@
 package org.auriferous.bot.script.input;
 
 import org.auriferous.bot.shared.tabs.Tab;
+import org.auriferous.bot.shared.tabs.view.TabView;
 
 public class Keyboard extends Input {
 	

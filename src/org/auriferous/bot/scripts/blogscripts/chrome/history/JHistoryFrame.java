@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -16,6 +17,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import org.auriferous.bot.ResourceLoaderStatic;
+import org.auriferous.bot.Utils;
 import org.auriferous.bot.gui.swing.JDebugFrame;
 import org.auriferous.bot.shared.data.history.HistoryConfig;
 import org.auriferous.bot.shared.data.history.HistoryEntry;

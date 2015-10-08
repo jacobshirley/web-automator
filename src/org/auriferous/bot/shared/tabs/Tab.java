@@ -1,5 +1,6 @@
 package org.auriferous.bot.shared.tabs;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,12 +16,19 @@ import com.teamdev.jxbrowser.chromium.BeforeRedirectParams;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
 import com.teamdev.jxbrowser.chromium.BrowserFunction;
+import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
+import com.teamdev.jxbrowser.chromium.LoadHTMLParams;
 import com.teamdev.jxbrowser.chromium.NavigationEntry;
 import com.teamdev.jxbrowser.chromium.PopupContainer;
 import com.teamdev.jxbrowser.chromium.PopupHandler;
 import com.teamdev.jxbrowser.chromium.PopupParams;
+import com.teamdev.jxbrowser.chromium.RequestCompletedParams;
+import com.teamdev.jxbrowser.chromium.SendHeadersParams;
 import com.teamdev.jxbrowser.chromium.events.ConsoleListener;
+import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
+import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
+import com.teamdev.jxbrowser.chromium.events.LoadEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadListener;
 import com.teamdev.jxbrowser.chromium.events.RenderListener;
 import com.teamdev.jxbrowser.chromium.events.StatusListener;
@@ -138,8 +146,7 @@ public class Tab {
 				
             	if (index > lastNavIndex) {
             		(new Thread() {
-            			@Override
-						public void run() {
+            			public void run() {
             				Utils.wait(500);
 
             				final NavigationEntry entry = b.getNavigationEntryAtIndex(index);

@@ -3,6 +3,10 @@ package org.auriferous.bot.shared.data.xml;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
@@ -15,10 +19,17 @@ import javax.xml.transform.stream.StreamResult;
 import org.auriferous.bot.shared.data.DataEntry;
 import org.auriferous.bot.shared.data.DataStore;
 import org.auriferous.bot.shared.data.RootEntry;
+import org.auriferous.bot.shared.data.config.Configurable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xml.sax.Attributes;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLDataStore extends DataStore{
 	private Document document;

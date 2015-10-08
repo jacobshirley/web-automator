@@ -96,7 +96,7 @@ public class TestElementSearch extends Script implements PaintListener {
 				int y = (int) methods.getPageYOffset();
 				for (ElementBounds elem : elements) {
 					g.setColor(Color.green);
-					g.drawRect(elem.x-x, elem.y-y, elem.width, elem.height);
+					g.drawRect((int)(elem.x-x), (int)(elem.y-y), elem.width, elem.height);
 				}
 			}
 		}

@@ -11,6 +11,7 @@ import javax.swing.JMenuItem;
 import org.auriferous.bot.Utils;
 import org.auriferous.bot.gui.swing.script.JScriptGui;
 import org.auriferous.bot.script.ScriptContext;
+import org.auriferous.bot.scripts.blogscripts.Shufflr.MenuAction;
 import org.auriferous.bot.scripts.blogscripts.chrome.history.JHistoryFrame;
 import org.auriferous.bot.scripts.blogscripts.events.Events;
 import org.auriferous.bot.scripts.blogscripts.gui.JBlackListFrame;
