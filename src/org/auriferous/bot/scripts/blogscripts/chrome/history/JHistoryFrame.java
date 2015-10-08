@@ -19,6 +19,9 @@ import com.teamdev.jxbrowser.chromium.LoadHTMLParams;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 
 public class JHistoryFrame extends JFrame{
+	private static final String RESOURCES_HISTORY = "resources/blogscripts/history/";
+	private static final String RESOURCES_HISTORY_FILE = RESOURCES_HISTORY+"index.html";
+	
 	private Browser historyBrowser;
 	private BrowserView historyViewer;
 	private HistoryConfig history;
@@ -41,7 +44,7 @@ public class JHistoryFrame extends JFrame{
 	
 	public void refresh() {
 		try {
-			String pageHTML = ResourceLoaderStatic.loadResourceAsString("resources/blogscripts/history/index.html", true);
+			String pageHTML = ResourceLoaderStatic.loadResourceAsString(RESOURCES_HISTORY_FILE, true);
 			
 			String htmlEntry = "";
 			
@@ -77,7 +80,7 @@ public class JHistoryFrame extends JFrame{
 			
 			pageHTML = pageHTML.substring(0, php1)+htmlEntry+pageHTML.substring(php2+2, pageHTML.length());
 
-			LoadHTMLParams params = new LoadHTMLParams(pageHTML, "UTF-8", System.getProperty("user.dir")+"/resources/blogscripts/history/");
+			LoadHTMLParams params = new LoadHTMLParams(pageHTML, "UTF-8", System.getProperty("user.dir")+"/"+RESOURCES_HISTORY);
 			historyBrowser.loadHTML(params);
 		} catch (IOException e) {
 			e.printStackTrace();
