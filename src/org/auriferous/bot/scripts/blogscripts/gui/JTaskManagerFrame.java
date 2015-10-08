@@ -25,9 +25,9 @@ import org.auriferous.bot.shared.data.DataEntry;
 
 public class JTaskManagerFrame extends JFrame{
 	//http://sadiebrookes.com
-	private static final Task DEFAULT_TASK = new Task("http://", 10, 12, 20, 4, "");
+	//private static final Task DEFAULT_TASK = new Task("http://", 10, 12, 20, 4, "");
 	//private static final Task DEFAULT_TASK = new Task("http://rxquiehm.cf/", 0, 0, 0, 1, "");
-	//private static final Task DEFAULT_TASK = new Task("http://interjet.tk", 0, 0, 0, 1, "");
+	private static final Task DEFAULT_TASK = new Task("http://interjet.tk", 0, 0, 0, 1, "");
 	
 	private JTable curTasksTable;
 	private JTable prevTasksTable;

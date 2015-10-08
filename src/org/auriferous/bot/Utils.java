@@ -37,9 +37,8 @@ public class Utils {
 	public static String getBaseURL(String urlString) {
 		try {
 			URL url = new URL(urlString);
-			
-			String path = url.getFile().substring(0, url.getFile().indexOf('/'));
-			String base = url.getProtocol() + "://" + url.getHost() + path;
+
+			String base = url.getProtocol() + "://" + url.getHost();
 			
 			return base;
 		} catch (Exception e) {
