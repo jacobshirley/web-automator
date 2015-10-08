@@ -34,6 +34,12 @@ import org.auriferous.bot.scripts.internal.debug.TestElementSearch;
 import org.auriferous.bot.shared.tabs.Tab;
 import org.auriferous.bot.shared.tabs.Tabs;
 
+import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.BrowserContext;
+import com.teamdev.jxbrowser.chromium.events.Callback;
+import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
+import com.teamdev.jxbrowser.chromium.events.LoadEvent;
+
 public class JBotFrame extends JFrame implements ScriptExecutionListener, ChangeListener{
 	
 	static {
@@ -93,7 +99,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		
 		menuBar.add(scriptsMenu);
 		menuBar.add(createTabsMenu());
-		menuBar.add(createDebugMenu());
+		menuBar.add(createToolsMenu());
 		
 		setJMenuBar(menuBar);
 		
@@ -158,6 +164,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		tabsMenu.add(new MenuActionItem("Refresh", ACTION_TAB_REFRESH));
 		tabsMenu.add(new MenuActionItem("Go back", ACTION_TAB_GO_BACK));
 		tabsMenu.add(new MenuActionItem("Go forward", ACTION_TAB_GO_FORWARD));
+		tabsMenu.addSeparator();
 		tabsMenu.add(new MenuActionItem("Clear history", ACTION_CLEAR_HISTORY));
 		tabsMenu.add(new MenuActionItem("Clear cookies", ACTION_CLEAR_COOKIES));
 		tabsMenu.add(new MenuActionItem("Clear cache", ACTION_CLEAR_CACHE));
@@ -165,11 +172,11 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 		return tabsMenu;
 	}
 	
-	private JMenu createDebugMenu() {
-		JMenu debugMenu = new JMenu("Debug");
+	private JMenu createToolsMenu() {
+		JMenu debugMenu = new JMenu("Tools");
 		
 		debugMenu.add(new MenuActionItem("Check URL", ACTION_CHECK_URL));
-		debugMenu.add(new MenuActionItem("Show", ACTION_ENABLE_DEBUG));
+		debugMenu.add(new MenuActionItem("Inspect page", ACTION_ENABLE_DEBUG));
 		debugMenu.add(new MenuActionItem("Elements", ACTION_DEBUG_ELEMENTS));
 		debugMenu.add(new MenuActionItem("Block input", ACTION_BLOCK_INPUT));
 		
@@ -364,8 +371,32 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 					JBotFrame.this.bot.getHistoryConfig().clear();
 					break;
 				case ACTION_CLEAR_COOKIES:
+					//current.getBrowserInstance().getCookieStorage().deleteAll();
+					final Browser b = new Browser(new BrowserContext(Bot.JXBROWSER_CACHE_DIRECTORY));
+					b.loadURL("www.google.co.uk");
+					b.addLoadListener(new LoadAdapter() {
+						@Override
+						public void onDocumentLoadedInMainFrame(LoadEvent arg0) {
+							b.getCookieStorage().deleteAll();
+						}
+					});
 					break;
 				case ACTION_CLEAR_CACHE:
+					//current.getBrowserInstance().getCacheStorage().clearCache();
+					final Browser b2 = new Browser(new BrowserContext(Bot.JXBROWSER_CACHE_DIRECTORY));
+					b2.loadURL("www.google.co.uk");
+					b2.addLoadListener(new LoadAdapter() {
+						@Override
+						public void onDocumentLoadedInMainFrame(LoadEvent arg0) {
+							b2.getCacheStorage().clearCache(new Callback() {
+								@Override
+								public void invoke() {
+									System.out.println("cleared");
+								}
+							});
+						}
+					});
+					
 					break;
 				case ACTION_EXIT_BOT:
 					System.exit(1);

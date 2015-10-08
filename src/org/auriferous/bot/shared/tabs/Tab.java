@@ -59,6 +59,8 @@ public class Tab {
 	
 	private int lastNavIndex = -1;
 	
+	private boolean shouldAddToHistory = false;
+	
 	public Tab(final Tabs parent, String url, final HistoryConfig history) {
 		this.id = -1;
 		this.parent = parent;
@@ -141,53 +143,34 @@ public class Tab {
 		this.browser.addTitleListener(new TitleListener() {
             @Override
 			public void onTitleChange(TitleEvent event) {
-            	final Browser b = event.getBrowser();
-				final int index = b.getCurrentNavigationEntryIndex();
-				
-            	if (index > lastNavIndex) {
-            		(new Thread() {
-            			public void run() {
-            				Utils.wait(500);
+            	if (shouldAddToHistory) {
+            		shouldAddToHistory = false;
+            		final Browser b = event.getBrowser();
+    				final int index = b.getCurrentNavigationEntryIndex();
+    				
+                	if (index > lastNavIndex) {
+                		(new Thread() {
+                			public void run() {
+                				Utils.wait(500);
 
-            				final NavigationEntry entry = b.getNavigationEntryAtIndex(index);
-        					lastHistoryEntry = new HistoryEntry(entry.getTimestamp(), "DEFAULT", b.getTitle(), b.getURL());
+                				final NavigationEntry entry = b.getNavigationEntryAtIndex(index);
+            					lastHistoryEntry = new HistoryEntry(entry.getTimestamp(), "DEFAULT", b.getTitle(), b.getURL());
 
-        					history.addEntry(lastHistoryEntry);
-            			};
-            		}).start();
-				}
+            					history.addEntry(lastHistoryEntry);
+                			};
+                		}).start();
+    				}
+            	}
             	
             	for (TabListener listener : tabListeners) 
 					listener.onTitleChange(event.getTitle());
             }
         });
 		
-		/*this.browser.addLoadListener(new LoadAdapter() {
+		this.browser.addLoadListener(new LoadAdapter() {
 			@Override
 			public void onDocumentLoadedInMainFrame(LoadEvent arg0) {
-				final Browser b = arg0.getBrowser();
-				int index = b.getCurrentNavigationEntryIndex();
-				if (index > lastNavIndex) {
-					final NavigationEntry entry = b.getNavigationEntryAtIndex(index);
-					
-					(new Thread() {
-						public void run() {
-							Utils.wait(2000);
-							lastHistoryEntry = new HistoryEntry(entry.getTimestamp(), "", b.getTitle(), entry.getURL());
-							
-							//System.out.println(entry.getURL()+", "+entry.getTitle()+", "+entry.getPageType().name());
-			
-							history.addEntry(lastHistoryEntry);
-						}
-					}).start();
-				}
-			}
-		});*/
-		
-		this.browser.getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate() {
-			@Override
-			public void onBeforeRedirect(BeforeRedirectParams arg0) {
-				
+				shouldAddToHistory = true;
 			}
 		});
 		

@@ -55,7 +55,7 @@ public class JHistoryFrame extends JFrame{
 		menuBar.add(file);
 		
 		JMenu tools = new JMenu("Tools");
-		tools.add(new JMenuItem(new MenuAction("Inspect", 2)));
+		tools.add(new JMenuItem(new MenuAction("Inspect page", 2)));
 		
 		menuBar.add(tools);
 		
