@@ -363,6 +363,10 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 				case ACTION_CLEAR_HISTORY:
 					JBotFrame.this.bot.getHistoryConfig().clear();
 					break;
+				case ACTION_CLEAR_COOKIES:
+					break;
+				case ACTION_CLEAR_CACHE:
+					break;
 				case ACTION_EXIT_BOT:
 					System.exit(1);
 				}

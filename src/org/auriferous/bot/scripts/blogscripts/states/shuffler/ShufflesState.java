@@ -26,7 +26,7 @@ public class ShufflesState extends TaskState {
 		if (events.contains(Events.EVENT_PAGE_LOADED)) {
 			Task curTask = blogScript.getCurrentTask();
 			
-			String url = blogScript.getBotTab().getURL();
+			String url = blogScript.getBotTab().getURL()+"#_=_";
 			blogScript.getContext().getHistory().addEntry(new HistoryEntry("NONE", url, url));
 			
 			if (curShuffles < curTask.shuffles) {
