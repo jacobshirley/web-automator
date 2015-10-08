@@ -137,20 +137,28 @@ public class Tab {
 		this.browser.addTitleListener(new TitleListener() {
             @Override
 			public void onTitleChange(TitleEvent event) {
-            	/*if (lastHistoryEntry != null) {
-            		lastHistoryEntry.setTitle(event.getTitle());
-            		lastHistoryEntry.setURL(event.getBrowser().getURL());
-            	}*/
+            	final Browser b = event.getBrowser();
+				final int index = b.getCurrentNavigationEntryIndex();
+				
+            	if (index > lastNavIndex) {
+            		(new Thread() {
+            			public void run() {
+            				Utils.wait(500);
+
+            				final NavigationEntry entry = b.getNavigationEntryAtIndex(index);
+        					lastHistoryEntry = new HistoryEntry(entry.getTimestamp(), "NONE", b.getTitle(), b.getURL());
+
+        					history.addEntry(lastHistoryEntry);
+            			};
+            		}).start();
+				}
             	
-            	//System.out.println(event.getBrowser().getURL());
-            	
-            	//history.addEntry(new HistoryEntry("", event.getTitle(), event.getBrowser().getURL()));
             	for (TabListener listener : tabListeners) 
 					listener.onTitleChange(event.getTitle());
             }
         });
 		
-		this.browser.addLoadListener(new LoadAdapter() {
+		/*this.browser.addLoadListener(new LoadAdapter() {
 			@Override
 			public void onDocumentLoadedInMainFrame(LoadEvent arg0) {
 				final Browser b = arg0.getBrowser();
@@ -163,14 +171,14 @@ public class Tab {
 							Utils.wait(2000);
 							lastHistoryEntry = new HistoryEntry(entry.getTimestamp(), "", b.getTitle(), entry.getURL());
 							
-							System.out.println(entry.getURL()+", "+entry.getTitle()+", "+entry.getPageType().name());
+							//System.out.println(entry.getURL()+", "+entry.getTitle()+", "+entry.getPageType().name());
 			
 							history.addEntry(lastHistoryEntry);
 						}
 					}).start();
 				}
 			}
-		});
+		});*/
 		
 		loadURL(url);
 	}

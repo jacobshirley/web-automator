@@ -46,7 +46,6 @@ public class Bot implements ScriptExecutionListener, Configurable {
 	private ScriptExecutor scriptExecutor;
 	
 	private ClassDataStore mainConfig;
-	private ClassDataStore historyConfigFile;
 	
 	private HistoryConfig historyConfig = new HistoryConfig();
 	
@@ -55,7 +54,6 @@ public class Bot implements ScriptExecutionListener, Configurable {
 	public Bot(String args[], boolean createGUI) {
 		try {
 			mainConfig = new ClassDataStore(new File("config/config.xml"));
-			historyConfigFile = new ClassDataStore(new File("config/history.xml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -88,8 +86,6 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		
 		userTabs = new Tabs(historyConfig);
 		
-		
-		
 		//mainConfig.addConfigurable(this);
 		//historyConfigFile.addConfigurable(historyConfig);
 		
@@ -101,7 +97,6 @@ public class Bot implements ScriptExecutionListener, Configurable {
 					super.windowClosing(e);
 					try {
 						mainConfig.save();
-						historyConfigFile.save();
 					} catch (Exception e2) {
 						e2.printStackTrace();
 					}
@@ -113,16 +108,6 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//*/
-		
-		//userTabs.openTab("www.google.co.uk");
-		
-		/*config.addConfigurable(this);
-		try {
-			config.save();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 	}
 	
 	public Tabs getUserTabs() {

@@ -1,4 +1,4 @@
-package org.auriferous.bot.scripts.blogscripts.gui.table;
+package org.auriferous.bot.scripts.blogscripts.gui.table.models;
 
 import java.util.List;
 

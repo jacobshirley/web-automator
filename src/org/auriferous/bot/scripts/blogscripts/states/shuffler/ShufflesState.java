@@ -11,6 +11,7 @@ import org.auriferous.bot.scripts.blogscripts.states.TaskNextState;
 import org.auriferous.bot.scripts.blogscripts.states.TaskState;
 import org.auriferous.bot.scripts.blogscripts.states.adclicker.ClickAdState;
 import org.auriferous.bot.scripts.blogscripts.task.Task;
+import org.auriferous.bot.shared.data.history.HistoryEntry;
 import org.auriferous.bot.shared.fsm.State;
 
 public class ShufflesState extends TaskState {
@@ -24,6 +25,10 @@ public class ShufflesState extends TaskState {
 	public State process(List<Integer> events) {
 		if (events.contains(Events.EVENT_PAGE_LOADED)) {
 			Task curTask = blogScript.getCurrentTask();
+			
+			String url = blogScript.getBotTab().getURL();
+			blogScript.getContext().getHistory().addEntry(new HistoryEntry("DEFAULT", url, url));
+			
 			if (curShuffles < curTask.shuffles) {
 				curShuffles++;
 				System.out.println("Doing shuffle "+curShuffles);

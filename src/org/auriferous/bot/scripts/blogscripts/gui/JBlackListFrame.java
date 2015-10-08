@@ -18,9 +18,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.auriferous.bot.scripts.blogscripts.gui.JTaskManagerFrame.ButtonAction;
-import org.auriferous.bot.scripts.blogscripts.gui.table.BlacklistTableModel;
 import org.auriferous.bot.scripts.blogscripts.gui.table.JPasteTable;
-import org.auriferous.bot.scripts.blogscripts.gui.table.TaskTableModel;
+import org.auriferous.bot.scripts.blogscripts.gui.table.models.BlacklistTableModel;
+import org.auriferous.bot.scripts.blogscripts.gui.table.models.TaskTableModel;
 import org.auriferous.bot.scripts.blogscripts.task.Task;
 
 public class JBlackListFrame extends JFrame {

@@ -290,4 +290,8 @@ public abstract class BlogScript extends Script implements PaintListener, Config
 		
 		root.add(taskHistoryConfig, true);
 	}
+
+	public ScriptContext getContext() {
+		return context;
+	}
 }

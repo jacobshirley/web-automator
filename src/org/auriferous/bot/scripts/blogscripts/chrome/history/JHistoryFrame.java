@@ -41,20 +41,26 @@ public class JHistoryFrame extends JFrame{
 	
 	public void refresh() {
 		try {
-			String pageHTML = ResourceLoaderStatic.loadResourceAsString("resources/history/index.html", true);
+			String pageHTML = ResourceLoaderStatic.loadResourceAsString("resources/blogscripts/history/index.html", true);
 			
 			String htmlEntry = "";
 			
 			List<HistoryEntry> entries = history.getEntries();
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("hh:mm a");
 			
 			for (int i = entries.size()-1; i >= 0; i--) {
 				HistoryEntry entry = entries.get(i);
 				if (!entry.getURL().equals("about:blank")) {
-					String time = new SimpleDateFormat("hh:mm a").format(new Date(entry.getTimeStamp())).toString();
+					String time = dateFormatter.format(new Date(entry.getTimeStamp())).toString();
 					String url = entry.getURL();
 					
-					String fav = "http://www.google.com/s2/favicons?domain="+URLEncoder.encode(url, "UTF-8");
+					String fav = entry.getFaviconPath();
 					
+					if (fav.equals("DEFAULT")) {
+						fav = "http://www.google.com/s2/favicons?domain="+URLEncoder.encode(url, "UTF-8");
+					} else if (fav.equals("NONE")) {
+						fav = "assets/fav.png";
+					}
 					
 					htmlEntry += "<div class='hist-line'>"+
 								 "<input type='checkbox'>"+
@@ -70,8 +76,8 @@ public class JHistoryFrame extends JFrame{
 			int php2 = pageHTML.indexOf("?>");
 			
 			pageHTML = pageHTML.substring(0, php1)+htmlEntry+pageHTML.substring(php2+2, pageHTML.length());
-		
-			LoadHTMLParams params = new LoadHTMLParams(pageHTML, "UTF-8", "C:/Users/Jacob/workspace/ad-clicker-bot/resources/history/");
+
+			LoadHTMLParams params = new LoadHTMLParams(pageHTML, "UTF-8", System.getProperty("user.dir")+"/resources/blogscripts/history/");
 			historyBrowser.loadHTML(params);
 		} catch (IOException e) {
 			e.printStackTrace();
