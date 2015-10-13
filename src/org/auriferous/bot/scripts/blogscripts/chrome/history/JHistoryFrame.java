@@ -6,6 +6,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -71,7 +73,16 @@ public class JHistoryFrame extends JFrame{
 			
 			String htmlEntry = "";
 			
+			history.addEntry(new HistoryEntry(System.currentTimeMillis()-(24*3600*1000), "DEFAULT", "Google", "http://www.google.co.uk/"));
+			
 			List<HistoryEntry> entries = history.getEntries();
+			
+			Collections.sort(entries, new Comparator<HistoryEntry>() {
+				@Override
+				public int compare(HistoryEntry o1, HistoryEntry o2) {
+					return (int) (o1.getTimeStamp()-o2.getTimeStamp());
+				}
+			});
 			
 			SimpleDateFormat headingFormatter = new SimpleDateFormat("EEEE, d MMMM y");
 			SimpleDateFormat entryFormatter = new SimpleDateFormat("hh:mm a");
@@ -96,9 +107,9 @@ public class JHistoryFrame extends JFrame{
 				if (!tempDate.equals(mainDate)) {
 					mainDate = tempDate;
 					
-					htmlEntry += "<div id='todaydate'>"+
+					htmlEntry += "<div class='hist-line'><div class='todaydate'>"+
 								  mainDate+
-								  "</div>";
+								  "</div></div>";
 				}
 				
 				if (!entry.getURL().equals("about:blank")) {
@@ -120,8 +131,9 @@ public class JHistoryFrame extends JFrame{
 								 "<div class='timestamp'>"+time+"</div>"+
 								 "<div class='favicon'><img src='"+fav+"'></div>"+
 								 "<a href='"+url+"' class='title'>"+entry.getTitle()+"</a>"+
-								 "<div class='url'>"+new URL(url).getHost()+"</div>";//+
-								 //"</div><div class='hist-but'></div>";
+								 "<div class='url'>"+new URL(url).getHost()+
+								 "</div><img style='margin-top:4px; margin-left:10px;' src='"+"assets/dropdown.png"+"'></div>";//+
+								 //"</div><div class='hist-but'></div> check fb";
 				}
 			}
 			

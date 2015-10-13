@@ -252,7 +252,7 @@ input[type="checkbox"]{
 }
  
  
-#todaydate{
+.todaydate{
         cursor:default;
         color:black;
         font-size:1em;
