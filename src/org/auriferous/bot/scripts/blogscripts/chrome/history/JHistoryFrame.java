@@ -73,8 +73,6 @@ public class JHistoryFrame extends JFrame{
 			
 			String htmlEntry = "";
 			
-			history.addEntry(new HistoryEntry(System.currentTimeMillis()-(24*3600*1000), "DEFAULT", "Google", "http://www.google.co.uk/"));
-			
 			List<HistoryEntry> entries = history.getEntries();
 			
 			Collections.sort(entries, new Comparator<HistoryEntry>() {
@@ -123,8 +121,6 @@ public class JHistoryFrame extends JFrame{
 					} else if (fav.equals("NONE")) {
 						fav = "assets/fav.png";
 					}
-					
-					System.out.println(fav);
 					
 					htmlEntry += "<div class='hist-line'>"+
 								 "<input type='checkbox'>"+
