@@ -42,9 +42,9 @@ public class AdClicker extends BlogScript implements PaintListener, JScriptGui, 
 			tasks.add(new Task("trippins.tumblr.com", 1, 0, 0, 1, ""));
 			//*/
 		
-		//new JTaskManagerFrame(getTasks(), false, getPreviousTasks());
+		new JTaskManagerFrame(getTasks(), false, getPreviousTasks());
 		//new JBlackListFrame(getBlacklist());
-		new JHistoryFrame(context.getHistory());
+		//new JHistoryFrame(context.getHistory());
 	}
 	
 	public List<String> getBlacklist() {

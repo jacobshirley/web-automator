@@ -25,6 +25,7 @@ public class TaskConfigEntry extends DataEntry{
 		children.add(new DataEntry("sub-clicks", task.subClicks));
 		children.add(new DataEntry("fb-link", task.fbLink));
 
+		children.add(new DataEntry("ad-clicked", task.adClicked));
 		children.add(new DataEntry("status", task.status));
 		children.add(new DataEntry("info", task.info));
 		

@@ -98,7 +98,6 @@ public class ClickAdState extends AdClickerState {
 
     	methods = adClicker.getScriptMethods();
     	Tab botTab = adClicker.getBotTab();
-    	
  
 		if (!adClicker.onBlog()) {
 			adClicker.resetTimer();
@@ -179,7 +178,7 @@ public class ClickAdState extends AdClickerState {
     	}
     	
     	adClicker.resetTimer();
-    	return new CheckAdState(adClicker, this);
+    	return new CheckAndWaitAdState(adClicker, this);
 	}
 	
 	private synchronized String getBaseAdURL() {
@@ -236,7 +235,7 @@ public class ClickAdState extends AdClickerState {
 			
 			if (rootAds.length > 0) {
 				//moveElements(botTab.getBrowserInstance(), methods, search, "$('body')");
-				removeAllElementsButOne(search);
+				//removeAllElementsButOne(search);
 			
 				/*for (String search2 : randomList) {
 					if (!search2.equals(search)) {
@@ -245,7 +244,7 @@ public class ClickAdState extends AdClickerState {
 					}
 				}*/
 				ElementBounds bounds = rootAds[0];
-				ElementBounds[] iframe1 = methods.getElements("$('iframe[id^=\"google_ads_frame\"]')");
+				ElementBounds[] iframe1 = methods.getElements(adClicker.getMainFrameID(), "$('iframe[id^=\"google_ads_frame\"]')");
 				
 				if (iframe1.length > 0) {
 					System.out.println("Found google_ads_frame");

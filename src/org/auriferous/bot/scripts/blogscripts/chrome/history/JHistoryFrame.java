@@ -113,13 +113,15 @@ public class JHistoryFrame extends JFrame{
 						fav = "assets/fav.png";
 					}
 					
+					System.out.println(fav);
+					
 					htmlEntry += "<div class='hist-line'>"+
 								 "<input type='checkbox'>"+
 								 "<div class='timestamp'>"+time+"</div>"+
 								 "<div class='favicon'><img src='"+fav+"'></div>"+
 								 "<a href='"+url+"' class='title'>"+entry.getTitle()+"</a>"+
-								 "<div class='url'>"+new URL(url).getHost()+"</div>"+
-								 "</div>";
+								 "<div class='url'>"+new URL(url).getHost()+"</div>";//+
+								 //"</div><div class='hist-but'></div>";
 				}
 			}
 			

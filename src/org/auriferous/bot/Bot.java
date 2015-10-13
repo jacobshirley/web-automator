@@ -41,7 +41,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 		LoggerProvider.setLevel(Level.SEVERE);
 		
 		BrowserPreferences.setUserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-		BrowserPreferences.setChromiumSwitches("--remote-debugging-port=9222");
+		BrowserPreferences.setChromiumSwitches("--remote-debugging-port=9229");
 		BrowserPreferences.setChromiumDir(JXBROWSER_DIRECTORY);
 	}
 	

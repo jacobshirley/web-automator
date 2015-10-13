@@ -9,10 +9,10 @@ import org.auriferous.bot.scripts.blogscripts.task.Task;
 
 public class TaskTableModel extends DefaultTableModel{
 	private List<Task> tasks = new ArrayList<Task>();
-
+	private boolean justShuffler = false;
 	public TaskTableModel(List<Task> tasks, boolean justShuffler, boolean previousTasks) {
 		super(new String[] {"URL", "Shuffles", "Shuffle Time Interval (seconds)"}, tasks.size());
-
+		this.justShuffler = justShuffler;
 		if (!justShuffler) {
 			addColumn("Time On Ad (seconds)");
 			addColumn("Clicks In Ad");
@@ -20,6 +20,9 @@ public class TaskTableModel extends DefaultTableModel{
 		}
 		
 		if (previousTasks) {
+			if (!justShuffler)
+				addColumn("Ad Clicked");
+			
 			addColumn("Status");
 			addColumn("Info");
 		}
@@ -68,8 +71,10 @@ public class TaskTableModel extends DefaultTableModel{
 			case 3: return task.timeOnAd;
 			case 4: return task.subClicks;
 			case 5: return task.fbLink;
-			case 6: return task.status;
-			case 7: return task.info;
+			case 6: if (!justShuffler)
+						return task.adClicked;
+			case 7: return task.status;
+			case 8: return task.info;
 		}
 		return null;
 	}
@@ -90,9 +95,13 @@ public class TaskTableModel extends DefaultTableModel{
 					break;
 			case 5: task.fbLink = (String)aValue;
 					break;
-			case 6: task.status = Integer.parseInt((String)aValue);
+			case 6: if (!justShuffler) {
+						task.adClicked = (String)aValue;
+						break;
+					}
+			case 7: task.status = Integer.parseInt((String)aValue);
 					break;
-			case 7: task.info = (String)aValue;
+			case 8: task.info = (String)aValue;
 					break;
 		}
 	}

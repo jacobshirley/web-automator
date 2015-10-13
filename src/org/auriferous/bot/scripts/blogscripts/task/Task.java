@@ -15,6 +15,7 @@ public class Task {
 	public int subClicks;
 	public String fbLink;
 	
+	public String adClicked;
 	public int status;
 	public String info;
 	
@@ -23,10 +24,10 @@ public class Task {
 	}
 	
 	public Task(String url, int shuffles, int timeInterval, int timeOnAd, int subClicks, String fbLink) {
-		this(url, shuffles, timeInterval, timeOnAd, subClicks, fbLink, STATUS_NO_STATUS, "");
+		this(url, shuffles, timeInterval, timeOnAd, subClicks, fbLink, "", STATUS_NO_STATUS, "");
 	}
 	
-	public Task(String url, int shuffles, int timeInterval, int timeOnAd, int subClicks, String fbLink, int status, String reason) {
+	public Task(String url, int shuffles, int timeInterval, int timeOnAd, int subClicks, String fbLink, String adClicked, int status, String reason) {
 		this.url = url;
 		this.shuffles = shuffles;
 		this.timeInterval = timeInterval;
@@ -34,6 +35,7 @@ public class Task {
 		this.subClicks = subClicks;
 		this.fbLink = fbLink;
 		
+		this.adClicked = adClicked;
 		this.status = status;
 		this.info = reason;
 	}
@@ -48,11 +50,12 @@ public class Task {
 		this.subClicks = Integer.parseInt(""+config.getValue("sub-clicks", "0"));
 		this.fbLink = ""+config.getValue("fb-link", "");
 		
+		this.adClicked = ""+config.getValue("ad-clicked", "");
 		this.status = Integer.parseInt(""+config.getValue("status", ""+STATUS_NO_STATUS));
 		this.info = ""+config.getValue("info", "");
 	}
 	
 	public Task copy() {
-		return new Task(url, shuffles, timeInterval, timeOnAd, subClicks, fbLink, status, info);
+		return new Task(url, shuffles, timeInterval, timeOnAd, subClicks, fbLink, adClicked, status, info);
 	}
 }

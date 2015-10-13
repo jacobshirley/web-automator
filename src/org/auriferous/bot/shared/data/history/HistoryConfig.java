@@ -35,9 +35,9 @@ public class HistoryConfig {
 				
 				String sql = "CREATE TABLE HISTORY ("+
 							 "Timestamp bigint,"+
-							 "URL varchar(255),"+
-							 "Title varchar(255),"+
-							 "Favicon varchar(255))";
+							 "URL varchar(10000),"+
+							 "Title varchar(10000),"+
+							 "Favicon varchar(10000))";
 				
 				int result = stmt.executeUpdate(sql);
 				stmt.close();

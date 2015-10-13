@@ -178,7 +178,7 @@ public class Googler extends Script implements JScriptGui, PaintListener{
 		System.out.println("Waiting "+(waitTime/1000)+" seconds");
 		Utils.wait(waitTime);
 		
-		methods.moveMouseRandom();
+		methods.moveMouseRandom(false);
 		
 		System.out.println("Returning to original link");
 		googleTab.loadURL(saveURL);
