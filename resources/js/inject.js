@@ -1,5 +1,7 @@
 window.injectionLoaded = true;
 
+println("TEST TEST TEST");
+
 $ = jQuery;
 
 function Offset() {

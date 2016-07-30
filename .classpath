@@ -3,10 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry excluding="src/" kind="src" path=""/>
 	<classpathentry kind="lib" path="agent/asm-all-5.0.4.jar"/>
-	<classpathentry kind="lib" path="lib/jxbrowser-win.jar"/>
-	<classpathentry kind="lib" path="lib/jxbrowser.jar"/>
 	<classpathentry kind="lib" path="lib/commons-jxpath-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/derby/derby.jar"/>
+	<classpathentry kind="lib" path="lib/jxbrowser-win.jar"/>
+	<classpathentry kind="lib" path="lib/jxbrowser.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

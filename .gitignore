@@ -5,6 +5,9 @@
 /jxbrowser
 /jxbrowser-cache
 /test
+/lib/jxbrowser.jar
+/lib/jxbrowser-win.jar
+/temp
 /.settings
 *.log
 derby.txt
