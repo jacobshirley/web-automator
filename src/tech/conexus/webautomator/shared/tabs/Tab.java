@@ -93,7 +93,8 @@ public class Tab {
 		        window.asObject().setProperty("println", new JSFunctionCallback() {
 					@Override
 					public Object invoke(Object... args) {
-						System.out.println("JAVASCRIPT: "+args[0].toString());
+						if (!blockJSMessages)
+							System.out.println("JAVASCRIPT: "+args[0].toString());
 						return null;
 					}
 				});
@@ -238,6 +239,15 @@ public class Tab {
 			for (TabListener listener : tabListeners) 
 				listener.onTabReloaded();
 		}
+	}
+	
+	public void close() {
+		parent.closeTab(this);
+	}
+	
+	public void handleClose() {
+		for (TabListener listener : tabListeners) 
+			listener.onTabClosed();
 	}
 	
 	public String getTitle() {

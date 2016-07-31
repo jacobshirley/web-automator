@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.dom.By;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
@@ -22,6 +23,9 @@ import tech.conexus.webautomator.script.ScriptMethods;
 import tech.conexus.webautomator.script.dom.ElementBounds;
 import tech.conexus.webautomator.shared.data.library.ScriptManifest;
 import tech.conexus.webautomator.shared.tabs.Tab;
+import tech.conexus.webautomator.shared.tabs.TabAdapter;
+import tech.conexus.webautomator.shared.tabs.TabControlAdapter;
+import tech.conexus.webautomator.shared.tabs.TabListener;
 import tech.conexus.webautomator.shared.tabs.view.PaintListener;
 
 public class Googler extends Script implements JScriptGui, PaintListener{
@@ -67,6 +71,13 @@ public class Googler extends Script implements JScriptGui, PaintListener{
 				mainFrame = event.getFrameId();
 			}
 		});
+		googleTab.addTabListener(new TabAdapter() {
+			@Override
+			public void onTabClosed() {
+				status = Script.STATE_EXIT_FAILURE;
+			}
+		});
+				
 		methods = new ScriptMethods(googleTab);
 		
 		timer = System.currentTimeMillis();
@@ -85,7 +96,7 @@ public class Googler extends Script implements JScriptGui, PaintListener{
 			String search = searches.remove(random);
 			
 			System.out.println("Looking for input element");
-			debugElement = methods.getRandomElement(mainFrame, "$('*[maxlength=\"2048\"]')");
+			debugElement = methods.getRandomElement("$('*[maxlength=\"2048\"]')");
 			methods.clickElement(debugElement);
 			//methods.moveMouse(300, 300);
 			System.out.println("Found input element");

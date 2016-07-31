@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import tech.conexus.webautomator.script.Script;
 
@@ -37,6 +38,10 @@ public class ScriptExecutor {
 		scripts.put(script, execution);
 		
 		execution.start();
+	}
+	
+	public Set<Script> getScripts() {
+		return scripts.keySet();
 	}
 	
 	public void pauseScript(Script script) {
@@ -95,8 +100,9 @@ public class ScriptExecutor {
 		public void run() {
 			int state = 0;
 			
-			for (ScriptExecutionListener listener : listeners)
+			for (ScriptExecutionListener listener : listeners) {
 				listener.onRunScript(script);
+			}
 			
 			script.onStart();
 			

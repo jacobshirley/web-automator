@@ -96,4 +96,8 @@ public class JTab extends JPanel implements TabListener {
 		this.remove(old);
 		this.add(tabView);
 	}
+
+	@Override
+	public void onTabClosed() {
+	}
 }

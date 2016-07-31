@@ -31,6 +31,9 @@ import tech.conexus.webautomator.shared.data.library.ScriptLibrary;
 import tech.conexus.webautomator.shared.data.library.ScriptLibrary.FilterType;
 import tech.conexus.webautomator.shared.data.library.xml.XMLScriptLibrary;
 import tech.conexus.webautomator.shared.data.library.xml.XMLScriptManifest;
+import tech.conexus.webautomator.shared.tabs.Tab;
+import tech.conexus.webautomator.shared.tabs.TabControlAdapter;
+import tech.conexus.webautomator.shared.tabs.TabControlListener;
 import tech.conexus.webautomator.shared.tabs.Tabs;
 
 public class Bot implements ScriptExecutionListener, Configurable {

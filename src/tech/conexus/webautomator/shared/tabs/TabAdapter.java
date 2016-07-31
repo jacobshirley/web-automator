@@ -19,4 +19,8 @@ public class TabAdapter implements TabListener {
 	@Override
 	public void onTabBrowserChanged(Browser browser) {
 	}
+
+	@Override
+	public void onTabClosed() {
+	}
 }

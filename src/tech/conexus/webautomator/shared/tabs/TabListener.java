@@ -10,4 +10,6 @@ public interface TabListener {
 	public void onTabReloaded();
 	
 	public void onTabBrowserChanged(Browser browser);
+
+	public void onTabClosed();
 }

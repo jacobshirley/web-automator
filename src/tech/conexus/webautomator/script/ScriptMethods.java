@@ -69,7 +69,7 @@ public class ScriptMethods {
 				target.getBrowserInstance().executeJavaScript(frameID, ResourceLoaderStatic.loadResourceAsString("resources/js/jquery.min.js", true));
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 	
@@ -79,7 +79,7 @@ public class ScriptMethods {
 				target.getBrowserInstance().executeJavaScript(frameID,  ResourceLoaderStatic.loadResourceAsString("resources/js/inject.js", true));
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 	

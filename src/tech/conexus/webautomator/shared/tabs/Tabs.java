@@ -87,6 +87,8 @@ public class Tabs {
 			tab.getBrowserInstance().dispose();
 		}
 		
+		tab.handleClose();
+		
 		if (tabsList.contains(tab)) {
 			tabsList.remove(tab);
 			for (TabControlListener listener : tabListeners) {
