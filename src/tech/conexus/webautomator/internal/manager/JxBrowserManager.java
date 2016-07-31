@@ -50,9 +50,7 @@ public class JxBrowserManager {
 							
 							extractZipFile("lib/jxbrowser-6.6.jar", "lib/jxbrowser.jar");
 							extractZipFile("lib/jxbrowser-win-6.6.jar", "lib/jxbrowser-win.jar");
-							
-							System.out.println("Extraction complete. Please restart the bot.");
-							
+
 							finishedHandler.onFinish();
 						}
 					}
