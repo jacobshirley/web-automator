@@ -119,7 +119,7 @@ public class XMLScriptLibrary extends ScriptLibrary {
 	}
 
 	@Override
-	public ScriptManifest getScriptManifest(String selector) {
+	public ScriptManifest getScriptManifest(String selector, FilterType filterType) {
 		NodeList nodes = document.getElementsByTagName("script");
 		
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -129,9 +129,16 @@ public class XMLScriptLibrary extends ScriptLibrary {
 			String src = scriptElement.getAttribute("src");
 			
 			if (!empty) {
-				String id = XMLUtils.getElementAttr(scriptElement, "id");
+				String comparator = "";
+				switch (filterType) {
+					case ID: comparator = XMLUtils.getElementAttr(scriptElement, "id");
+							 break;
+					case NAME: 
+							 comparator = XMLUtils.getElementAttr(scriptElement, "name");
+							 break;
+				}
 				
-				if (id != null && id.equals(selector)) {
+				if (comparator != null && comparator.equals(selector)) {
 					return new XMLScriptManifest(scriptElement);
 				}
 			} else {
@@ -181,12 +188,12 @@ public class XMLScriptLibrary extends ScriptLibrary {
 	}
 
 	@Override
-	public boolean hasScript(String selector) {
-		return getScriptManifest(selector) != null;
+	public boolean hasScript(String selector, FilterType filterType) {
+		return getScriptManifest(selector, filterType) != null;
 	}
 
 	@Override
-	public void removeScript(String selector) {
+	public void removeScript(String selector, FilterType filterType) {
 		NodeList nodes = document.getElementsByTagName("script");
 		
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -196,9 +203,16 @@ public class XMLScriptLibrary extends ScriptLibrary {
 			String src = scriptElement.getAttribute("src");
 			
 			if (!empty) {
-				String id = XMLUtils.getElementAttr(scriptElement, "id");
+				String comparator = "";
+				switch (filterType) {
+					case ID: comparator = XMLUtils.getElementAttr(scriptElement, "id");
+							 break;
+					case NAME: 
+							 comparator = XMLUtils.getElementAttr(scriptElement, "name");
+							 break;
+				}
 				
-				if (id != null && id.equals(selector)) {
+				if (comparator != null && comparator.equals(selector)) {
 					scriptElement.getParentNode().removeChild(scriptElement);
 				}
 			} else {

@@ -2,6 +2,8 @@ package tech.conexus.webautomator.shared.data.library;
 
 import java.io.File;
 
+import tech.conexus.webautomator.shared.data.library.ScriptLibrary.FilterType;
+
 public abstract class ScriptLibrary {
 	
 	public ScriptLibrary() {
@@ -28,13 +30,13 @@ public abstract class ScriptLibrary {
 
 	public abstract void addScript(ScriptManifest manifest, boolean merge);
 	
-	public abstract ScriptManifest getScriptManifest(String selector);
+	public abstract ScriptManifest getScriptManifest(String selector, FilterType filter);
 	
 	public abstract ScriptManifest getScriptManifestAt(int index);
 	
-	public abstract boolean hasScript(String selector);
+	public abstract boolean hasScript(String selector, FilterType filterType);
 	
-	public abstract void removeScript(String selector);
+	public abstract void removeScript(String selector, FilterType filterType);
 	
 	public abstract ScriptManifest[] getScripts();
 
@@ -47,4 +49,6 @@ public abstract class ScriptLibrary {
 	public abstract ScriptLibrary[] getLibraries();
 	
 	public abstract boolean save(File file);
+	
+	public enum FilterType {ID, NAME};
 }

@@ -61,8 +61,6 @@ public class Googler extends Script implements JScriptGui, PaintListener{
 		googleTab.getTabView().addPaintListener(this);
 		
 		googleTab.getBrowserInstance().addLoadListener(new LoadAdapter() {
-			
-			
 			@Override
 			public void onFinishLoadingFrame(FinishLoadingEvent event) {
 				exec = true;
@@ -87,7 +85,7 @@ public class Googler extends Script implements JScriptGui, PaintListener{
 			String search = searches.remove(random);
 			
 			System.out.println("Looking for input element");
-			debugElement = methods.getRandomElement("$('*[maxlength=\"2048\"]')");
+			debugElement = methods.getRandomElement(mainFrame, "$('*[maxlength=\"2048\"]')");
 			methods.clickElement(debugElement);
 			//methods.moveMouse(300, 300);
 			System.out.println("Found input element");

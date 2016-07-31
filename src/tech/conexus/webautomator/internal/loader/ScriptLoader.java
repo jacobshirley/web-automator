@@ -6,6 +6,7 @@ import java.util.List;
 import tech.conexus.webautomator.script.Script;
 import tech.conexus.webautomator.script.ScriptContext;
 import tech.conexus.webautomator.shared.data.library.ScriptLibrary;
+import tech.conexus.webautomator.shared.data.library.ScriptLibrary.FilterType;
 import tech.conexus.webautomator.shared.data.library.ScriptManifest;
 
 public abstract class ScriptLoader {
@@ -32,9 +33,9 @@ public abstract class ScriptLoader {
 		libraries.remove(library);
 	}
 	
-	public Script loadScript(String selector) throws ClassNotFoundException {
+	public Script loadScript(String selector, FilterType filterType) throws ClassNotFoundException {
 		for (ScriptLibrary library : libraries) {
-			ScriptManifest manifest = library.getScriptManifest(selector);
+			ScriptManifest manifest = library.getScriptManifest(selector, filterType);
 			if (manifest != null) {
 				return loadScript(manifest);
 			}

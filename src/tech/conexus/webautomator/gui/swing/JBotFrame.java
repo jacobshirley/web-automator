@@ -40,6 +40,7 @@ import tech.conexus.webautomator.gui.swing.tabs.JTabBar;
 import tech.conexus.webautomator.internal.executor.ScriptExecutionListener;
 import tech.conexus.webautomator.script.Script;
 import tech.conexus.webautomator.scripts.internal.debug.TestElementSearch;
+import tech.conexus.webautomator.shared.data.library.ScriptLibrary.FilterType;
 import tech.conexus.webautomator.shared.tabs.Tab;
 import tech.conexus.webautomator.shared.tabs.Tabs;
 
@@ -367,7 +368,7 @@ public class JBotFrame extends JFrame implements ScriptExecutionListener, Change
 					break;
 				case ACTION_DEBUG_ELEMENTS:
 					try {
-						TestElementSearch elementSearcher = (TestElementSearch) bot.getScriptLoader().loadScript("6");
+						TestElementSearch elementSearcher = (TestElementSearch) bot.getScriptLoader().loadScript("6", FilterType.ID);
 						elementSearcher.setDebugTab(current);
 						bot.getScriptExecutor().runScript(elementSearcher);
 					} catch (ClassNotFoundException e1) {

@@ -28,6 +28,7 @@ import tech.conexus.webautomator.shared.data.config.ClassDataStore;
 import tech.conexus.webautomator.shared.data.config.Configurable;
 import tech.conexus.webautomator.shared.data.history.HistoryConfig;
 import tech.conexus.webautomator.shared.data.library.ScriptLibrary;
+import tech.conexus.webautomator.shared.data.library.ScriptLibrary.FilterType;
 import tech.conexus.webautomator.shared.data.library.xml.XMLScriptLibrary;
 import tech.conexus.webautomator.shared.data.library.xml.XMLScriptManifest;
 import tech.conexus.webautomator.shared.tabs.Tabs;
@@ -52,7 +53,7 @@ public class Bot implements ScriptExecutionListener, Configurable {
 	
 	private ClassDataStore mainConfig;
 	
-	private HistoryConfig historyConfig = new HistoryConfig();
+	private HistoryConfig historyConfig = null;//new HistoryConfig();
 	
 	private Tabs userTabs;
 	
@@ -105,11 +106,14 @@ public class Bot implements ScriptExecutionListener, Configurable {
 				}
 			});
 		}
-
-		try {
-			//scriptExecutor.runScript(scriptLoader.loadScript(manifest));
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		if (args.length > 0) {
+			try {
+				System.out.println("Loading script: "+args[0]);
+				scriptExecutor.runScript(scriptLoader.loadScript(args[0], FilterType.NAME));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

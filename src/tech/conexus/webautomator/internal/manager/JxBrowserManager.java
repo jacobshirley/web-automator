@@ -25,7 +25,7 @@ public class JxBrowserManager {
 	public JxBrowserManager() {
 	}
 	
-	public boolean downloadLatest(FinishedHandler finishedHandler) {
+	public boolean downloadLatest(final FinishedHandler finishedHandler) {
 		File tempFile = new File(TEMP_FILE);
 
 		if (!new File("lib/jxbrowser.jar").exists()) {

@@ -4,7 +4,7 @@ import tech.conexus.webautomator.internal.manager.JxBrowserManager;
 import tech.conexus.webautomator.internal.manager.JxBrowserManager.FinishedHandler;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
     	new JxBrowserManager().downloadLatest(new FinishedHandler() {
 			@Override
 			public void onFinish() {
