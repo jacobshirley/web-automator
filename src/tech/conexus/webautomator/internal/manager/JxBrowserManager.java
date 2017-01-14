@@ -16,9 +16,10 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 public class JxBrowserManager {
-	private static final String JX_VERSION = "6.6";
+	private static final String JX_VERSION = "6.11.1";
 	private static final String JX_URL = "http://cloud.teamdev.com/downloads/jxbrowser/jxbrowser-"+JX_VERSION+"-cross-desktop-win_mac_linux.zip";
-	private static final String TEMP_FILE = "temp/jxbrowser.zip";
+	private static final String TEMP_FILE = "temp/jxbrowser-"+JX_VERSION+".zip";
+	private static final String OUTPUT_FILE = "lib/jxbrowser.jar";
 	
 	private ZipFile zip;
 	
@@ -28,7 +29,7 @@ public class JxBrowserManager {
 	public boolean downloadLatest(final FinishedHandler finishedHandler) {
 		File tempFile = new File(TEMP_FILE);
 
-		if (!new File("lib/jxbrowser.jar").exists()) {
+		if (!new File(OUTPUT_FILE).exists()) {
 			if (!tempFile.getParentFile().exists())
 				tempFile.getParentFile().mkdirs();
 			
@@ -48,8 +49,8 @@ public class JxBrowserManager {
 						if (dl.getStatus() == Download.COMPLETE) {
 							System.out.println("Finished download. Extracting...");
 							
-							extractZipFile("lib/jxbrowser-6.6.jar", "lib/jxbrowser.jar");
-							extractZipFile("lib/jxbrowser-win-6.6.jar", "lib/jxbrowser-win.jar");
+							extractZipFile("lib/jxbrowser-"+JX_VERSION+".jar", "lib/jxbrowser.jar");
+							extractZipFile("lib/jxbrowser-win-"+JX_VERSION+".jar", "lib/jxbrowser-win.jar");
 
 							finishedHandler.onFinish();
 						}
